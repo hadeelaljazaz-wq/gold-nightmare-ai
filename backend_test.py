@@ -378,6 +378,317 @@ class AlKabousAITester:
             self.log_test("Chart Analysis", False, f"Test setup error: {str(e)}")
             return False
 
+    def test_advanced_chart_analysis_system(self):
+        """Test the new advanced chart analysis system with image optimization - HIGH PRIORITY"""
+        print("🚀 Testing Advanced Chart Analysis System...")
+        
+        try:
+            # Create a more complex test chart image with text and price elements
+            test_image = self.create_advanced_test_chart_image()
+            
+            # Test with user context
+            test_data = {
+                "image_data": test_image,
+                "currency_pair": "XAU/USD", 
+                "timeframe": "4H",
+                "analysis_notes": "اختبار النظام المتقدم مع تحسين الصورة وتحليل OCR محسن"
+            }
+            
+            start_time = time.time()
+            success, response = self.make_request('POST', '/api/analyze-chart', test_data)
+            end_time = time.time()
+            
+            response_time = (end_time - start_time) * 1000
+            
+            if not success:
+                self.log_test("Advanced Chart Analysis", False, "Request failed", response)
+                return False
+            
+            if not isinstance(response, dict) or not response.get('success'):
+                self.log_test("Advanced Chart Analysis", False, 
+                             f"Analysis failed: {response.get('error') if isinstance(response, dict) else 'Invalid response'}", response)
+                return False
+            
+            # Test 1: Check for advanced features in image_info
+            image_info = response.get('image_info', {})
+            advanced_features = image_info.get('advanced_features', {})
+            
+            if not advanced_features:
+                self.log_test("Advanced Features Check", False, 
+                             "No advanced_features found in response", image_info)
+                return False
+            
+            # Test 2: Check intelligent mode activation
+            intelligent_mode = advanced_features.get('intelligent_mode', False)
+            if not intelligent_mode:
+                self.log_test("Intelligent Mode", False, 
+                             "Intelligent mode not activated", advanced_features)
+                # This is not a failure, just fallback to legacy
+                self.log_test("Legacy Fallback", True, "System correctly fell back to legacy mode")
+            else:
+                self.log_test("Intelligent Mode", True, "Advanced intelligent mode activated")
+            
+            # Test 3: Check image optimization
+            optimization_applied = advanced_features.get('optimization_applied', [])
+            if optimization_applied:
+                expected_optimizations = ['Resolution upscale', 'Sharpening filter', 'CLAHE contrast', 'Bilateral noise reduction', 'Text clarity']
+                found_optimizations = len([opt for opt in expected_optimizations if any(opt.lower() in str(applied).lower() for applied in optimization_applied)])
+                
+                if found_optimizations >= 3:  # At least 3 optimizations should be applied
+                    self.log_test("Image Optimization", True, 
+                                 f"Applied {found_optimizations} optimizations: {optimization_applied}")
+                else:
+                    self.log_test("Image Optimization", False, 
+                                 f"Only {found_optimizations} optimizations applied: {optimization_applied}")
+            else:
+                self.log_test("Image Optimization", False, "No optimization steps found", advanced_features)
+            
+            # Test 4: Check enhanced OCR results
+            text_extraction_methods = advanced_features.get('text_extraction_methods', [])
+            if text_extraction_methods:
+                expected_methods = ['EasyOCR_Advanced', 'Tesseract_Multi_Config']
+                found_methods = [method for method in expected_methods if method in text_extraction_methods]
+                
+                if len(found_methods) >= 1:
+                    self.log_test("Enhanced OCR", True, 
+                                 f"OCR methods used: {found_methods}")
+                else:
+                    self.log_test("Enhanced OCR", False, 
+                                 f"Expected OCR methods not found: {text_extraction_methods}")
+            else:
+                self.log_test("Enhanced OCR", False, "No OCR extraction methods found", advanced_features)
+            
+            # Test 5: Check confidence scoring
+            average_confidence = advanced_features.get('average_confidence', 0.0)
+            if average_confidence > 0:
+                self.log_test("OCR Confidence Scoring", True, 
+                             f"Average confidence: {average_confidence:.2f}")
+            else:
+                self.log_test("OCR Confidence Scoring", False, 
+                             f"No confidence score or zero confidence: {average_confidence}")
+            
+            # Test 6: Check OHLC simulation data
+            ohlc_simulation = advanced_features.get('ohlc_simulation', {})
+            if ohlc_simulation:
+                self.log_test("OHLC Simulation", True, 
+                             f"OHLC data present: {list(ohlc_simulation.keys())}")
+            else:
+                self.log_test("OHLC Simulation", False, "No OHLC simulation data found", advanced_features)
+            
+            # Test 7: Check detected prices and visual signals
+            detected_prices = image_info.get('detected_prices', [])
+            visual_signals = image_info.get('visual_signals', [])
+            
+            if detected_prices or visual_signals:
+                self.log_test("Price & Signal Detection", True, 
+                             f"Detected {len(detected_prices)} prices, {len(visual_signals)} signals")
+            else:
+                self.log_test("Price & Signal Detection", False, 
+                             "No prices or visual signals detected", image_info)
+            
+            # Test 8: Check enhancement quality
+            enhancement_quality = advanced_features.get('enhancement_quality', 0.0)
+            if enhancement_quality > 0.5:  # At least 50% of enhancements applied
+                self.log_test("Enhancement Quality", True, 
+                             f"Enhancement quality: {enhancement_quality:.2f}")
+            else:
+                self.log_test("Enhancement Quality", False, 
+                             f"Low enhancement quality: {enhancement_quality:.2f}")
+            
+            # Test 9: Check analysis content quality
+            analysis_content = response.get('analysis', '')
+            if len(analysis_content) > 500:  # Should be comprehensive
+                self.log_test("Analysis Content Quality", True, 
+                             f"Comprehensive analysis: {len(analysis_content)} characters")
+            else:
+                self.log_test("Analysis Content Quality", False, 
+                             f"Analysis too short: {len(analysis_content)} characters")
+            
+            # Test 10: Check processing time (should be reasonable despite advanced processing)
+            if response_time < 30000:  # Less than 30 seconds
+                self.log_test("Advanced Processing Time", True, 
+                             f"Processing time: {response_time:.0f}ms")
+            else:
+                self.log_test("Advanced Processing Time", False, 
+                             f"Processing too slow: {response_time:.0f}ms")
+            
+            return True
+            
+        except Exception as e:
+            self.log_test("Advanced Chart Analysis System", False, f"Test error: {str(e)}")
+            return False
+
+    def create_advanced_test_chart_image(self):
+        """Create a more complex test chart image with text elements for OCR testing"""
+        try:
+            # Create a larger image for better OCR
+            img = Image.new('RGB', (800, 600), color='white')
+            draw = ImageDraw.Draw(img)
+            
+            # Draw chart axes
+            draw.line([(50, 550), (750, 550)], fill='black', width=2)  # X-axis
+            draw.line([(50, 50), (50, 550)], fill='black', width=2)   # Y-axis
+            
+            # Draw price levels on Y-axis (simulate price labels)
+            prices = [2650, 2660, 2670, 2680, 2690]
+            for i, price in enumerate(prices):
+                y_pos = 500 - (i * 90)
+                draw.line([(45, y_pos), (55, y_pos)], fill='black', width=1)
+                # Add price text
+                draw.text((10, y_pos-10), f"${price}", fill='black')
+            
+            # Draw time labels on X-axis
+            times = ["08:00", "12:00", "16:00", "20:00"]
+            for i, time_label in enumerate(times):
+                x_pos = 100 + (i * 150)
+                draw.line([(x_pos, 545), (x_pos, 555)], fill='black', width=1)
+                draw.text((x_pos-15, 560), time_label, fill='black')
+            
+            # Draw candlesticks (green and red)
+            candlestick_data = [
+                (100, 450, 480, 460, 'green'),  # x, high, low, close, color
+                (200, 460, 420, 440, 'red'),
+                (300, 440, 400, 420, 'green'),
+                (400, 420, 380, 400, 'red'),
+                (500, 400, 360, 380, 'green'),
+                (600, 380, 340, 360, 'red')
+            ]
+            
+            for x, high, low, close, color in candlestick_data:
+                # Draw high-low line
+                draw.line([(x, high), (x, low)], fill='black', width=1)
+                # Draw body
+                body_height = abs(high - close) if color == 'green' else abs(low - close)
+                body_top = close if color == 'green' else low
+                draw.rectangle([(x-8, body_top), (x+8, body_top + body_height)], 
+                             fill=color, outline='black')
+            
+            # Add chart title
+            draw.text((300, 20), "XAU/USD 4H Chart", fill='black')
+            
+            # Add some technical indicators text
+            draw.text((600, 100), "RSI: 65.4", fill='blue')
+            draw.text((600, 120), "MACD: +2.1", fill='blue')
+            
+            # Convert to base64
+            buffer = io.BytesIO()
+            img.save(buffer, format='PNG')
+            img_str = base64.b64encode(buffer.getvalue()).decode()
+            
+            return img_str
+            
+        except Exception as e:
+            print(f"Warning: Could not create advanced test image: {e}")
+            # Fallback to simple image
+            return self.create_test_chart_image()
+
+    def test_chart_analysis_user_context_passing(self):
+        """Test user context passing to the advanced analysis system - HIGH PRIORITY"""
+        print("📝 Testing User Context Passing...")
+        
+        try:
+            test_image = self.create_test_chart_image()
+            
+            # Test with comprehensive user context
+            user_context = "المستخدم يريد تحليل فني مفصل للذهب مع التركيز على مستويات الدعم والمقاومة والاتجاه العام"
+            
+            test_data = {
+                "image_data": test_image,
+                "currency_pair": "XAU/USD",
+                "timeframe": "1H", 
+                "analysis_notes": user_context
+            }
+            
+            success, response = self.make_request('POST', '/api/analyze-chart', test_data)
+            
+            if not success or not response.get('success'):
+                self.log_test("User Context Passing", False, 
+                             f"Request failed: {response.get('error') if isinstance(response, dict) else 'Invalid response'}", response)
+                return False
+            
+            # Check if the analysis reflects the user context
+            analysis_content = response.get('analysis', '')
+            
+            # Look for keywords from user context in the analysis
+            context_keywords = ['دعم', 'مقاومة', 'اتجاه', 'فني', 'مفصل']
+            found_keywords = [keyword for keyword in context_keywords if keyword in analysis_content]
+            
+            if len(found_keywords) >= 2:  # At least 2 context keywords should appear
+                self.log_test("User Context Integration", True, 
+                             f"Context keywords found: {found_keywords}")
+            else:
+                self.log_test("User Context Integration", False, 
+                             f"Context not well integrated. Found keywords: {found_keywords}")
+            
+            # Check if analysis is more detailed (should be longer with context)
+            if len(analysis_content) > 300:
+                self.log_test("Context-Enhanced Analysis", True, 
+                             f"Detailed analysis generated: {len(analysis_content)} characters")
+            else:
+                self.log_test("Context-Enhanced Analysis", False, 
+                             f"Analysis not detailed enough: {len(analysis_content)} characters")
+            
+            return True
+            
+        except Exception as e:
+            self.log_test("User Context Passing", False, f"Test error: {str(e)}")
+            return False
+
+    def test_chart_analysis_fallback_system(self):
+        """Test fallback to legacy system when advanced system fails - HIGH PRIORITY"""
+        print("🔄 Testing Chart Analysis Fallback System...")
+        
+        try:
+            # Test with a potentially problematic image (very small)
+            small_img = Image.new('RGB', (50, 50), color='white')
+            buffer = io.BytesIO()
+            small_img.save(buffer, format='PNG')
+            small_img_str = base64.b64encode(buffer.getvalue()).decode()
+            
+            test_data = {
+                "image_data": small_img_str,
+                "currency_pair": "XAU/USD",
+                "timeframe": "1M",
+                "analysis_notes": "اختبار النظام البديل"
+            }
+            
+            success, response = self.make_request('POST', '/api/analyze-chart', test_data)
+            
+            if not success:
+                self.log_test("Fallback System", False, "Request completely failed", response)
+                return False
+            
+            # Even if advanced system fails, we should get some response
+            if response.get('success'):
+                self.log_test("Fallback System", True, 
+                             "System handled problematic input gracefully")
+                
+                # Check if we got any analysis
+                analysis = response.get('analysis', '')
+                if analysis:
+                    self.log_test("Fallback Analysis Generation", True, 
+                                 f"Generated analysis despite issues: {len(analysis)} chars")
+                else:
+                    self.log_test("Fallback Analysis Generation", False, 
+                                 "No analysis generated in fallback")
+                
+                return True
+            else:
+                # Check if error message is informative
+                error_msg = response.get('error', '')
+                if error_msg and 'صورة' in error_msg:  # Arabic error about image
+                    self.log_test("Fallback Error Handling", True, 
+                                 f"Appropriate Arabic error message: {error_msg}")
+                    return True
+                else:
+                    self.log_test("Fallback Error Handling", False, 
+                                 f"Poor error handling: {error_msg}")
+                    return False
+            
+        except Exception as e:
+            self.log_test("Fallback System", False, f"Test error: {str(e)}")
+            return False
+
     def test_api_status_endpoint(self):
         """Test /api/api-status endpoint"""
         print("🔧 Testing API Status Endpoint...")
