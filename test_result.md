@@ -493,7 +493,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Authentication and subscription system fully tested and working"
+    - "Gold price system fix with new APIs"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
