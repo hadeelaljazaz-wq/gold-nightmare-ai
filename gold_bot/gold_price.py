@@ -68,6 +68,9 @@ class GoldPriceManager:
         # Sort APIs by priority
         self.apis = dict(sorted(self.apis.items(), key=lambda x: x[1]['priority']))
         
+        # Filter active APIs
+        self.active_apis = [(name, config) for name, config in self.apis.items() if config["active"]]
+        
         if not self.active_apis:
             logger.error("❌ No active gold price APIs configured!")
             raise ValueError("At least one gold price API must be configured")
