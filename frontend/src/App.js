@@ -1638,6 +1638,7 @@ function App() {
 
       {currentView === 'dashboard' && renderDashboard()}
       {currentView === 'analyze' && renderAnalyzeView()}
+      {currentView === 'chart-analysis' && renderChartAnalysisView()}
       {currentView === 'contact' && renderContactView()}
       {currentView === 'admin' && renderAdminView()}
       
