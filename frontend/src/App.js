@@ -18,6 +18,12 @@ function App() {
   const [analysisNotes, setAnalysisNotes] = useState('');
   const [chartAnalysisResult, setChartAnalysisResult] = useState(null);
   const [chartAnalysisLoading, setChartAnalysisLoading] = useState(false);
+  
+  // Forex Analysis States
+  const [forexPrices, setForexPrices] = useState({});
+  const [forexAnalysisResult, setForexAnalysisResult] = useState(null);
+  const [forexAnalysisLoading, setForexAnalysisLoading] = useState(false);
+  const [selectedForexPair, setSelectedForexPair] = useState('');
   const [quickQuestions] = useState([
     "تحليل الذهب الحالي",
     "ما هي توقعات الذهب للأسبوع القادم؟",
