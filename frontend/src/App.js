@@ -1603,107 +1603,36 @@ function App() {
       </div>
     </div>
   );
-                              onClick={() => toggleUserStatus(user.user_id)}
-                              className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                                user.is_active 
-                                  ? 'bg-red-600/30 hover:bg-red-600/50 text-red-300' 
-                                  : 'bg-green-600/30 hover:bg-green-600/50 text-green-300'
-                              }`}
-                            >
-                              {user.is_active ? '🚫 تعطيل' : '✅ تفعيل'}
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="text-6xl mb-4">👥</div>
-                  <p className="text-purple-300">لا يوجد مستخدمين</p>
-                </div>
-              )}
-            </div>
-
-            {/* Analysis Logs */}
-            {adminLogs.length > 0 && (
-              <div className="glass-card p-6">
-                <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-                  <span className="text-green-400 mr-3">📋</span>
-                  سجل التحليلات
-                </h2>
-                
-                <div className="overflow-x-auto">
-                  <table className="w-full text-white text-sm">
-                    <thead>
-                      <tr className="border-b border-purple-600/50">
-                        <th className="text-right p-2">المستخدم</th>
-                        <th className="text-right p-2">نوع التحليل</th>
-                        <th className="text-right p-2">السؤال</th>
-                        <th className="text-right p-2">الوقت</th>
-                        <th className="text-right p-2">الحالة</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {adminLogs.slice(0, 10).map((log, index) => (
-                        <tr key={log.id || index} className="border-b border-purple-600/30 hover:bg-purple-800/20">
-                          <td className="p-2">{log.user_id}</td>
-                          <td className="p-2">{log.analysis_type}</td>
-                          <td className="p-2 max-w-xs truncate">{log.user_question}</td>
-                          <td className="p-2">{log.created_at ? new Date(log.created_at).toLocaleString('ar-SA') : 'غير محدد'}</td>
-                          <td className="p-2">
-                            <span className={`px-2 py-1 rounded text-xs ${
-                              log.success ? 'bg-green-600/30 text-green-300' : 'bg-red-600/30 text-red-300'
-                            }`}>
-                              {log.success ? 'نجح' : 'فشل'}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {/* Logout Button */}
-            <div className="text-center">
-              <div className="flex gap-4 justify-center">
-                <button
-                  onClick={() => setCurrentView('dashboard')}
-                  className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
-                >
-                  العودة للرئيسية
-                </button>
-                <button
-                  onClick={() => {
-                    setAdminAuthenticated(false);
-                    setAdminUsername('');
-                    setAdminPassword('');
-                    setAdminData(null);
-                    setAdminUsers([]);
-                    setAdminLogs([]);
-                  }}
-                  className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors"
-                >
-                  <span className="mr-2">🚪</span>
-                  تسجيل الخروج
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-      </div>
-    </div>
-  );
 
   return (
     <div className="App">
+      <div className="header">
+        <h1 className="app-title">al_kabous ai</h1>
+        <div className="subtitle">مدرسة الكابوس الذهبية</div>
+        
+        <nav className="nav-menu">
+          <button 
+            onClick={() => setCurrentView('dashboard')}
+            className={currentView === 'dashboard' ? 'active' : ''}
+          >
+            🏠 الرئيسية
+          </button>
+          <button 
+            onClick={() => setCurrentView('contact')}
+            className={currentView === 'contact' ? 'active' : ''}
+          >
+            📞 تواصل معنا
+          </button>
+          <button 
+            onClick={() => setCurrentView('admin')}
+            className={currentView === 'admin' ? 'active' : ''}
+          >
+            🔧 لوحة التحكم
+          </button>
+        </nav>
+      </div>
+
       {currentView === 'dashboard' && renderDashboard()}
-      {currentView === 'analyze' && renderAnalyzeView()}
-      {currentView === 'results' && renderResultsView()}
       {currentView === 'contact' && renderContactView()}
       {currentView === 'admin' && renderAdminView()}
       
@@ -1829,8 +1758,6 @@ function App() {
           </div>
         </div>
       )}
-      {currentView === 'chart-analysis' && renderChartAnalysisView()}
-      {currentView === 'admin' && renderAdminView()}
     </div>
   );
 }
