@@ -295,7 +295,7 @@ function App() {
     }
 
     setChartAnalysisLoading(true);
-    setCurrentView('results');
+    setCurrentView('chart-analysis');
     
     try {
       // Convert image to base64
