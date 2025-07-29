@@ -16,15 +16,15 @@ class BotConfig:
     
     # Telegram Bot Settings
     telegram_token: str
-    master_user_id: int
+    master_user_id: int  
     activation_password: str
-    session_timeout: int
+    session_timeout: int = 86400
     
     # Claude AI Settings
     claude_api_key: str
-    claude_model: str
-    claude_max_tokens: int
-    claude_temperature: float
+    claude_model: str = "claude-sonnet-4-20250514"
+    claude_max_tokens: int = 4000
+    claude_temperature: float = 0.7
     
     # Gold API Settings
     gold_api_token: str
@@ -36,15 +36,15 @@ class BotConfig:
     bot_signature: str = "Gold Nightmare Bot"
     
     # Cache & Rate Limiting
-    price_cache_ttl: int
-    analysis_cache_ttl: int
-    rate_limit_basic: int
-    rate_limit_premium: int
-    rate_limit_vip: int
+    price_cache_ttl: int = 300
+    analysis_cache_ttl: int = 1800
+    rate_limit_basic: int = 5
+    rate_limit_premium: int = 20
+    rate_limit_vip: int = 50
     
     # Database
-    mongo_url: str
-    db_name: str
+    mongo_url: str = "mongodb://localhost:27017"
+    db_name: str = "gold_nightmare_bot"
 
 def load_config() -> BotConfig:
     """Load configuration from environment variables"""
