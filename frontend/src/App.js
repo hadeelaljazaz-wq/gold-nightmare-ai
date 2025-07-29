@@ -211,34 +211,120 @@ function App() {
             </div>
           </div>
         </div>
+        {/* Quick Analysis Section */}
         <div className="glass-card p-6 mb-8">
           <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
             <span className="text-purple-400 mr-2">⚡</span>
-            إجراءات سريعة
+            تحليل فوري للذهب
           </h2>
-          <p className="text-purple-200 mb-6">احصل على تحليل فوري للأسواق</p>
+          <p className="text-purple-200 mb-6">اضغط على نوع التحليل للحصول على تحليل فوري</p>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <button 
+              onClick={() => { 
+                setSelectedAnalysisType('quick'); 
+                setUserQuestion('تحليل سريع للذهب'); 
+                handleAnalyze(); 
+              }}
+              className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-4 rounded-xl font-semibold hover:from-yellow-600 hover:to-orange-600 transition-all transform hover:scale-105"
+            >
+              <div className="text-2xl mb-2">📉</div>
+              سريع
+            </button>
+            
+            <button 
+              onClick={() => { 
+                setSelectedAnalysisType('chart'); 
+                setUserQuestion('التحليل الفني للذهب'); 
+                handleAnalyze(); 
+              }}
+              className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-xl font-semibold hover:from-blue-600 hover:to-purple-600 transition-all transform hover:scale-105"
+            >
+              <div className="text-2xl mb-2">📊</div>
+              فني
+            </button>
+            
+            <button 
+              onClick={() => { 
+                setSelectedAnalysisType('news'); 
+                setUserQuestion('أخبار الذهب وتأثيرها على السوق'); 
+                handleAnalyze(); 
+              }}
+              className="bg-gradient-to-r from-green-500 to-teal-500 text-white p-4 rounded-xl font-semibold hover:from-green-600 hover:to-teal-600 transition-all transform hover:scale-105"
+            >
+              <div className="text-2xl mb-2">📰</div>
+              أخبار
+            </button>
+            
+            <button 
+              onClick={() => { 
+                setSelectedAnalysisType('forecast'); 
+                setUserQuestion('توقعات الذهب المستقبلية'); 
+                handleAnalyze(); 
+              }}
+              className="bg-gradient-to-r from-pink-500 to-red-500 text-white p-4 rounded-xl font-semibold hover:from-pink-600 hover:to-red-600 transition-all transform hover:scale-105"
+            >
+              <div className="text-2xl mb-2">📈</div>
+              توقعات
+            </button>
+            
+            <button 
+              onClick={() => { 
+                setSelectedAnalysisType('detailed'); 
+                setUserQuestion('تحليل مفصل وشامل للذهب'); 
+                handleAnalyze(); 
+              }}
+              className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-4 rounded-xl font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all transform hover:scale-105"
+            >
+              <div className="text-2xl mb-2">📋</div>
+              مفصل
+            </button>
+          </div>
+        </div>
+
+        {/* Currency Analysis Section */}
+        <div className="glass-card p-6 mb-8">
+          <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+            <span className="text-blue-400 mr-2">💱</span>
+            تحليل العملات
+          </h2>
+          <p className="text-purple-200 mb-6">تحليل العملات الرئيسية في السوق</p>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <button 
-              onClick={() => { setSelectedAnalysisType('quick'); setUserQuestion('تحليل الذهب السريع'); setCurrentView('analyze'); }}
-              className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-4 rounded-xl font-semibold hover:from-yellow-600 hover:to-orange-600 transition-all transform hover:scale-105"
+              onClick={() => { 
+                setSelectedAnalysisType('detailed'); 
+                setUserQuestion('تحليل زوج EUR/USD'); 
+                handleAnalyze(); 
+              }}
+              className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white p-4 rounded-xl font-semibold hover:from-blue-700 hover:to-cyan-700 transition-all transform hover:scale-105"
             >
-              <div className="text-2xl mb-2">💰</div>
-              تحليل الذهب السريع
+              <div className="text-2xl mb-2">🇪🇺</div>
+              EUR/USD
             </button>
+            
             <button 
-              onClick={() => { setSelectedAnalysisType('chart'); setUserQuestion('تحليل العملات'); setCurrentView('analyze'); }}
-              className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-xl font-semibold hover:from-blue-600 hover:to-purple-600 transition-all transform hover:scale-105"
+              onClick={() => { 
+                setSelectedAnalysisType('detailed'); 
+                setUserQuestion('تحليل زوج USD/JPY'); 
+                handleAnalyze(); 
+              }}
+              className="bg-gradient-to-r from-red-600 to-pink-600 text-white p-4 rounded-xl font-semibold hover:from-red-700 hover:to-pink-700 transition-all transform hover:scale-105"
             >
-              <div className="text-2xl mb-2">$</div>
-              تحليل العملات
+              <div className="text-2xl mb-2">🇯🇵</div>
+              USD/JPY
             </button>
+            
             <button 
-              onClick={() => { setSelectedAnalysisType('forecast'); setUserQuestion('تحليل المؤشرات'); setCurrentView('analyze'); }}
-              className="bg-gradient-to-r from-green-500 to-teal-500 text-white p-4 rounded-xl font-semibold hover:from-green-600 hover:to-teal-600 transition-all transform hover:scale-105"
+              onClick={() => { 
+                setSelectedAnalysisType('detailed'); 
+                setUserQuestion('تحليل زوج GBP/USD'); 
+                handleAnalyze(); 
+              }}
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-4 rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all transform hover:scale-105"
             >
-              <div className="text-2xl mb-2">📊</div>
-              تحليل المؤشرات
+              <div className="text-2xl mb-2">🇬🇧</div>
+              GBP/USD
             </button>
           </div>
         </div>
