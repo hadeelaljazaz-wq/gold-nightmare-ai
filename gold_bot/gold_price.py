@@ -28,16 +28,38 @@ class GoldPriceManager:
         self.cache_manager = None
         self.session: Optional[aiohttp.ClientSession] = None
         
-        # API endpoints and configurations with multiple free alternatives
+        # API endpoints and configurations with verified and reliable sources
         self.apis = {
-            "metals_api_primary": {
-                "url": f"https://api.metals.live/v1/spot/gold",
+            "api_ninjas": {
+                "url": "https://api.api-ninjas.com/v1/goldprice",
                 "headers": {
+                    "X-Api-Key": "NaT61QlnfdLJCzHdqkMpxA==si6FIKSTyqI28JCQ",
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
                 },
                 "active": True,
                 "priority": 1,
-                "cache_duration": 15 * 60  # 15 minutes for primary
+                "cache_duration": 15 * 60,  # 15 minutes for primary
+                "description": "API Ninjas - 50,000 requests/month"
+            },
+            "metals_api": {
+                "url": "https://metals-api.com/api/latest?access_key=demo&base=USD&symbols=XAU",
+                "headers": {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                },
+                "active": True,
+                "priority": 2,
+                "cache_duration": 15 * 60,
+                "description": "Metals-API - 50 requests/month (requires rate inversion)"
+            },
+            "metalpriceapi": {
+                "url": "https://api.metalpriceapi.com/v1/latest?api_key=80a4bf4c14dc0060fbf7a4548d1e1825&base=USD&currencies=XAU",
+                "headers": {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                },
+                "active": True,
+                "priority": 3,
+                "cache_duration": 15 * 60,
+                "description": "MetalpriceAPI - 100 requests/month"
             },
             "yahoo_finance": {
                 "url": "https://query1.finance.yahoo.com/v7/finance/quote?symbols=GC%3DF",
@@ -45,26 +67,9 @@ class GoldPriceManager:
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
                 },
                 "active": True,
-                "priority": 2,
-                "cache_duration": 15 * 60  # 15 minutes
-            },
-            "metalpriceapi": {
-                "url": "https://api.metalpriceapi.com/v1/latest?api_key=demo&base=USD&currencies=XAU",
-                "headers": {
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-                },
-                "active": True,
-                "priority": 3,
-                "cache_duration": 15 * 60  # 15 minutes
-            },
-            "commodities_api": {
-                "url": "https://api.commodities-api.com/v1/latest?access_key=demo&base=USD&symbols=XAU",
-                "headers": {
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-                },
-                "active": True,
                 "priority": 4,
-                "cache_duration": 15 * 60  # 15 minutes
+                "cache_duration": 15 * 60,
+                "description": "Yahoo Finance - Free with rate limits"
             }
         }
         
