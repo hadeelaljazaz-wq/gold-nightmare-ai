@@ -81,7 +81,6 @@ class AIAnalysisManager:
             # Get analysis prompt
             prompt = self.analysis_prompts[analysis_type].format(
                 context=context,
-                bot_signature=self.config.bot_signature,
                 timestamp=datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
             )
             
