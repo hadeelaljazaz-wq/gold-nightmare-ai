@@ -604,31 +604,20 @@ function App() {
   };
 
   const renderRegisterView = () => {
-    const [formData, setFormData] = useState({
-      email: '',
-      password: '',
-      confirmPassword: '',
-      username: '',
-      firstName: '',
-      lastName: ''
-    });
-    const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState('');
-
     const handleInputChange = (field, value) => {
-      setFormData(prev => ({ ...prev, [field]: value }));
+      setRegisterFormData(prev => ({ ...prev, [field]: value }));
     };
 
     const validateForm = () => {
-      if (!formData.email || !formData.password) {
-        return t('auth.messages.emailRequired');
+      if (!registerFormData.email || !registerFormData.password) {
+        return 'البريد الإلكتروني وكلمة المرور مطلوبان';
       }
       
-      if (formData.password !== formData.confirmPassword) {
-        return t('auth.messages.passwordMismatch');
+      if (registerFormData.password !== registerFormData.confirmPassword) {
+        return 'كلمات المرور غير متطابقة';
       }
 
-      if (formData.password.length < 6) {
+      if (registerFormData.password.length < 6) {
         return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
       }
 
@@ -640,22 +629,22 @@ function App() {
       
       const validationError = validateForm();
       if (validationError) {
-        setError(validationError);
+        setRegisterError(validationError);
         return;
       }
 
       const result = await handleRegister(
-        formData.email, 
-        formData.password,
+        registerFormData.email, 
+        registerFormData.password,
         {
-          username: formData.username,
-          firstName: formData.firstName,
-          lastName: formData.lastName
+          username: registerFormData.username,
+          firstName: registerFormData.firstName,
+          lastName: registerFormData.lastName
         }
       );
       
       if (!result.success) {
-        setError(result.error);
+        setRegisterError(result.error);
       }
     };
 
@@ -664,25 +653,25 @@ function App() {
         <div className="glass-card p-8 w-full max-w-md">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-white mb-2">
-              {t('auth.register.title')}
+              إنشاء حساب جديد
             </h1>
-            <p className="text-purple-200">{t('auth.register.subtitle')}</p>
+            <p className="text-purple-200">انضم إلينا واحصل على تحليلات الذهب المجانية</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
+            {registerError && (
               <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-3 text-red-300">
-                {error}
+                {registerError}
               </div>
             )}
 
             <div>
               <label className="block text-purple-200 text-sm font-medium mb-2">
-                {t('auth.register.email')} *
+                البريد الإلكتروني *
               </label>
               <input
                 type="email"
-                value={formData.email}
+                value={registerFormData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
                 className="w-full px-4 py-3 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-gold focus:outline-none transition-colors"
                 placeholder="example@email.com"
@@ -693,22 +682,22 @@ function App() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-purple-200 text-sm font-medium mb-2">
-                  {t('auth.register.firstName')}
+                  الاسم الأول
                 </label>
                 <input
                   type="text"
-                  value={formData.firstName}
+                  value={registerFormData.firstName}
                   onChange={(e) => handleInputChange('firstName', e.target.value)}
                   className="w-full px-4 py-2 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-gold focus:outline-none transition-colors"
                 />
               </div>
               <div>
                 <label className="block text-purple-200 text-sm font-medium mb-2">
-                  {t('auth.register.lastName')}
+                  اسم العائلة
                 </label>
                 <input
                   type="text"
-                  value={formData.lastName}
+                  value={registerFormData.lastName}
                   onChange={(e) => handleInputChange('lastName', e.target.value)}
                   className="w-full px-4 py-2 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-gold focus:outline-none transition-colors"
                 />
@@ -717,11 +706,11 @@ function App() {
 
             <div>
               <label className="block text-purple-200 text-sm font-medium mb-2">
-                {t('auth.register.username')}
+                اسم المستخدم
               </label>
               <input
                 type="text"
-                value={formData.username}
+                value={registerFormData.username}
                 onChange={(e) => handleInputChange('username', e.target.value)}
                 className="w-full px-4 py-2 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-gold focus:outline-none transition-colors"
               />
@@ -729,12 +718,12 @@ function App() {
 
             <div>
               <label className="block text-purple-200 text-sm font-medium mb-2">
-                {t('auth.register.password')} *
+                كلمة المرور *
               </label>
               <div className="relative">
                 <input
-                  type={showPassword ? "text" : "password"}
-                  value={formData.password}
+                  type={registerShowPassword ? "text" : "password"}
+                  value={registerFormData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   className="w-full px-4 py-3 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-gold focus:outline-none transition-colors pr-12"
                   placeholder="••••••••"
@@ -742,21 +731,21 @@ function App() {
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setRegisterShowPassword(!registerShowPassword)}
                   className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400 hover:text-gold transition-colors"
                 >
-                  {showPassword ? '🙈' : '👁️'}
+                  {registerShowPassword ? '🙈' : '👁️'}
                 </button>
               </div>
             </div>
 
             <div>
               <label className="block text-purple-200 text-sm font-medium mb-2">
-                {t('auth.register.confirmPassword')} *
+                تأكيد كلمة المرور *
               </label>
               <input
                 type="password"
-                value={formData.confirmPassword}
+                value={registerFormData.confirmPassword}
                 onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
                 className="w-full px-4 py-3 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-gold focus:outline-none transition-colors"
                 placeholder="••••••••"
@@ -769,18 +758,18 @@ function App() {
               disabled={authLoading}
               className="w-full royal-button py-3 font-semibold text-lg mt-6"
             >
-              {authLoading ? t('common.loading') : t('auth.register.submit')}
+              {authLoading ? 'جاري التحميل...' : 'إنشاء الحساب'}
             </button>
           </form>
 
           <div className="text-center mt-6 space-y-4">
             <p className="text-purple-300">
-              {t('auth.register.haveAccount')}{' '}
+              لديك حساب بالفعل؟{' '}
               <button
                 onClick={() => setCurrentView('login')}
                 className="text-gold hover:text-yellow-300 font-medium transition-colors"
               >
-                {t('auth.register.loginHere')}
+                تسجيل الدخول
               </button>
             </p>
             
@@ -788,7 +777,7 @@ function App() {
               onClick={() => setCurrentView('dashboard')}
               className="text-purple-400 hover:text-purple-200 transition-colors"
             >
-              {t('common.back')}
+              العودة
             </button>
           </div>
         </div>
