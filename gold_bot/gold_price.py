@@ -221,7 +221,7 @@ class GoldPriceManager:
             return None
     
     async def _fetch_from_api(self, api_name: str, api_config: Dict[str, Any]) -> Optional[GoldPrice]:
-        """Fetch price from specific API"""
+        """Fetch price from specific API with enhanced error handling"""
         if not self.session:
             raise GoldAPIError("HTTP session not initialized")
         
@@ -231,8 +231,18 @@ class GoldPriceManager:
                 headers=api_config["headers"]
             ) as response:
                 
-                if response.status != 200:
-                    raise GoldAPIError(f"HTTP {response.status}: {await response.text()}")
+                # Enhanced error handling based on status codes
+                if response.status == 401:
+                    raise GoldAPIError(f"{api_name}: Invalid API key (401)")
+                elif response.status == 429:
+                    raise GoldAPIError(f"{api_name}: Rate limit exceeded (429)")
+                elif response.status == 403:
+                    raise GoldAPIError(f"{api_name}: Access forbidden (403)")
+                elif response.status == 404:
+                    raise GoldAPIError(f"{api_name}: Endpoint not found (404)")
+                elif response.status != 200:
+                    error_text = await response.text()
+                    raise GoldAPIError(f"{api_name}: HTTP {response.status} - {error_text}")
                 
                 data = await response.json()
                 
@@ -258,11 +268,13 @@ class GoldPriceManager:
                     raise GoldAPIError(f"Unknown API: {api_name}")
                     
         except asyncio.TimeoutError:
-            raise GoldAPIError(f"{api_name} API timeout")
+            raise GoldAPIError(f"{api_name}: Request timeout")
         except aiohttp.ClientError as e:
-            raise GoldAPIError(f"{api_name} API client error: {e}")
+            raise GoldAPIError(f"{api_name}: Network error - {e}")
         except json.JSONDecodeError:
-            raise GoldAPIError(f"{api_name} API returned invalid JSON")
+            raise GoldAPIError(f"{api_name}: Invalid JSON response")
+        except Exception as e:
+            raise GoldAPIError(f"{api_name}: Unexpected error - {e}")
     
     def _parse_api_ninjas_response(self, data: Dict[str, Any]) -> GoldPrice:
         """Parse API Ninjas gold price response"""
