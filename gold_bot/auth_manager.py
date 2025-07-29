@@ -30,7 +30,7 @@ class AuthManager:
     async def initialize(self):
         """Initialize auth manager"""
         try:
-            self.db = await self.db_manager.get_database()
+            self.db = self.db_manager.db
             self.users_collection = self.db.users
             
             # Create indexes for better performance
