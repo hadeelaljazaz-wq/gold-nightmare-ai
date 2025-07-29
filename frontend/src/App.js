@@ -134,7 +134,83 @@ function App() {
           )}
         </div>
 
-        {/* Quick Analysis Section */}
+        {/* Contact Info & Channels */}
+        <div className="glass-card p-6 mb-8">
+          <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+            <span className="text-green-400 mr-2">🔗</span>
+            قنوات التوصيات والتواصل
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Telegram Channels */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-purple-200 flex items-center">
+                <span className="text-blue-400 mr-2">📱</span>
+                قنوات التليجرام
+              </h3>
+              <div className="space-y-3">
+                <a 
+                  href="https://t.me/odai_xauusdt" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center p-3 bg-blue-600/20 border border-blue-500/30 rounded-lg text-purple-200 hover:bg-blue-600/30 transition-all"
+                >
+                  <span className="text-2xl mr-3">📊</span>
+                  <div>
+                    <p className="font-medium text-white">قناة التوصيات</p>
+                    <p className="text-sm">توصيات الذهب والعملات</p>
+                  </div>
+                </a>
+                <a 
+                  href="https://t.me/odai_xau_usd" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center p-3 bg-blue-600/20 border border-blue-500/30 rounded-lg text-purple-200 hover:bg-blue-600/30 transition-all"
+                >
+                  <span className="text-2xl mr-3">💬</span>
+                  <div>
+                    <p className="font-medium text-white">قناة المناقشات</p>
+                    <p className="text-sm">نقاش وتحليل الأسواق</p>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            {/* Personal Contact */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-purple-200 flex items-center">
+                <span className="text-green-400 mr-2">👤</span>
+                التواصل الشخصي
+              </h3>
+              <div className="space-y-3">
+                <a 
+                  href="https://wa.me/962786275654" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center p-3 bg-green-600/20 border border-green-500/30 rounded-lg text-purple-200 hover:bg-green-600/30 transition-all"
+                >
+                  <span className="text-2xl mr-3">💬</span>
+                  <div>
+                    <p className="font-medium text-white">واتساب</p>
+                    <p className="text-sm">962786275654</p>
+                  </div>
+                </a>
+                <a 
+                  href="https://t.me/Odai_xau" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center p-3 bg-blue-600/20 border border-blue-500/30 rounded-lg text-purple-200 hover:bg-blue-600/30 transition-all"
+                >
+                  <span className="text-2xl mr-3">📱</span>
+                  <div>
+                    <p className="font-medium text-white">تليجرام شخصي</p>
+                    <p className="text-sm">@Odai_xau</p>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="glass-card p-6 mb-8">
           <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
             <span className="text-purple-400 mr-2">⚡</span>
