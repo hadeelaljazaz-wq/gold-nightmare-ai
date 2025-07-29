@@ -84,6 +84,85 @@ function App() {
     }
   };
 
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      // Validate file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        alert('حجم الصورة كبير جداً. يرجى اختيار صورة أصغر من 10 ميجابايت.');
+        return;
+      }
+      
+      setSelectedImage(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => setImagePreview(e.target.result);
+      reader.readAsDataURL(file);
+    } else {
+      alert('يرجى اختيار ملف صورة صحيح (JPG, PNG, etc.)');
+    }
+  };
+
+  const handleChartAnalysis = async () => {
+    if (!selectedImage) {
+      alert('يرجى اختيار صورة الشارت أولاً');
+      return;
+    }
+
+    setChartAnalysisLoading(true);
+    setCurrentView('results');
+    
+    try {
+      // Convert image to base64
+      const reader = new FileReader();
+      reader.readAsDataURL(selectedImage);
+      
+      reader.onload = async () => {
+        try {
+          const response = await fetch(`${API_URL}/api/analyze-chart`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              image_data: reader.result,
+              currency_pair: currencyPair,
+              timeframe: timeframe,
+              analysis_notes: analysisNotes
+            })
+          });
+          
+          const data = await response.json();
+          setChartAnalysisResult(data);
+          
+        } catch (err) {
+          console.error('Error analyzing chart:', err);
+          setChartAnalysisResult({
+            success: false,
+            error: 'حدث خطأ في تحليل الشارت'
+          });
+        } finally {
+          setChartAnalysisLoading(false);
+        }
+      };
+      
+      reader.onerror = () => {
+        setChartAnalysisResult({
+          success: false,
+          error: 'فشل في قراءة الصورة'
+        });
+        setChartAnalysisLoading(false);
+      };
+      
+    } catch (err) {
+      console.error('Error processing image:', err);
+      setChartAnalysisResult({
+        success: false,
+        error: 'حدث خطأ في معالجة الصورة'
+      });
+      setChartAnalysisLoading(false);
+    }
+  };
+
   const renderDashboard = () => (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900">
       
