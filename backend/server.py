@@ -25,6 +25,7 @@ load_dotenv(ROOT_DIR / '.env')
 
 # Import gold analysis components (no more telegram)
 from gold_bot.gold_price import get_current_gold_price, get_price_manager
+from gold_bot.forex_price import forex_manager
 from gold_bot.ai_manager import get_ai_manager
 from gold_bot.models import AnalysisType
 from gold_bot.database import get_database
