@@ -1331,6 +1331,7 @@ function App() {
       {currentView === 'results' && renderResultsView()}
       {currentView === 'contact' && renderContactView()}
       {currentView === 'chart-analysis' && renderChartAnalysisView()}
+      {currentView === 'admin' && renderAdminView()}
     </div>
   );
 }
