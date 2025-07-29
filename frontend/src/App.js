@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import './i18n'; // Initialize i18n
+import { useTranslation } from 'react-i18next';
 
 function App() {
   const [currentView, setCurrentView] = useState('dashboard'); // dashboard, analyze, results, contact, chart-analysis, admin
