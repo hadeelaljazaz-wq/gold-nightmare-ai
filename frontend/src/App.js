@@ -797,435 +797,164 @@ function App() {
             al_kabous ai
           </h1>
           <p className="text-purple-200 text-lg">
-            مدرسة الكابوس الذهبية - تحليل الذهب والعملات الذكي
+            {currentLanguage === 'ar' ? 'مدرسة الكابوس الذهبية - تحليل الذهب والعملات الذكي' : 'Gold Nightmare School - Smart Gold & Currency Analysis'}
           </p>
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 pb-8">
 
-        {/* User Subscription Info */}
-        {isAuthenticated && currentUser && (
-          <div className="glass-card p-6 mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white flex items-center">
-                <span className="text-blue-400 mr-3">👤</span>
-                {t('dashboard.welcome')}, {currentUser.email?.split('@')[0] || 'مستخدم'}
-              </h2>
-              <div className="text-sm text-purple-300">
-                ID: {currentUser.user_id}
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-              <div className="bg-black/20 border border-purple-500/30 rounded-lg p-4">
-                <p className="text-purple-300 text-sm mb-2">{t('dashboard.subscription.current')}</p>
-                <p className={`text-2xl font-bold ${
-                  currentUser.tier === 'basic' ? 'text-gray-400' :
-                  currentUser.tier === 'premium' ? 'text-blue-400' : 'text-yellow-400'
-                }`}>
-                  {currentUser.tier === 'basic' ? t('subscription.tiers.basic.name') :
-                   currentUser.tier === 'premium' ? t('subscription.tiers.premium.name') :
-                   t('subscription.tiers.vip.name')}
-                </p>
-              </div>
-              
-              <div className="bg-black/20 border border-purple-500/30 rounded-lg p-4">
-                <p className="text-purple-300 text-sm mb-2">{t('dashboard.subscription.analysesRemaining')}</p>
-                <p className="text-2xl font-bold text-green-400">
-                  {currentUser.daily_analyses_remaining === -1 ? 
-                    t('dashboard.subscription.unlimited') : 
-                    currentUser.daily_analyses_remaining || 0}
-                </p>
-              </div>
-              
-              <div className="bg-black/20 border border-purple-500/30 rounded-lg p-4">
-                <p className="text-purple-300 text-sm mb-2">إجمالي التحليلات</p>
-                <p className="text-2xl font-bold text-purple-400">
-                  {currentUser.total_analyses || 0}
-                </p>
-              </div>
-            </div>
-
-            {/* Upgrade message for basic users */}
-            {currentUser.tier === 'basic' && currentUser.daily_analyses_remaining === 0 && (
-              <div className="mt-4 p-4 bg-yellow-900/20 border border-yellow-500/30 rounded-lg text-center">
-                <p className="text-yellow-300 font-medium">
-                  ⚠️ تم استنفاد حد التحليلات اليومية
-                </p>
-                <p className="text-yellow-200 text-sm mt-2">
-                  تواصل مع الإدارة لترقية اشتراكك والحصول على المزيد من التحليلات
-                </p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Login prompt for non-authenticated users */}
+        {/* Welcome Section for Non-Authenticated Users */}
         {!isAuthenticated && (
-          <div className="glass-card p-6 mb-8 text-center">
-            <div className="text-4xl mb-4">🔐</div>
-            <h2 className="text-2xl font-bold text-white mb-4">
-              سجل دخولك للحصول على تحليلات مجانية
-            </h2>
-            <p className="text-purple-200 mb-6">
-              أنشئ حساب مجاني واحصل على تحليل يومي للذهب مدعوم بالذكاء الاصطناعي
-            </p>
-            <div className="flex gap-4 justify-center">
-              <button
-                onClick={() => setCurrentView('register')}
-                className="royal-button px-6 py-3 font-semibold"
-              >
-                📝 إنشاء حساب مجاني
-              </button>
-              <button
-                onClick={() => setCurrentView('login')}
-                className="px-6 py-3 bg-blue-600/20 border border-blue-500/30 rounded-lg text-blue-300 hover:bg-blue-600/30 transition-all font-semibold"
-              >
-                🔐 تسجيل الدخول
-              </button>
+          <div className="text-center mb-12">
+            {/* Welcome Message */}
+            <div className="glass-card p-8 mb-8">
+              <div className="text-6xl mb-6">🔐</div>
+              <h2 className="text-3xl font-bold text-white mb-4">
+                {currentLanguage === 'ar' ? 'مرحباً بك في al_kabous ai' : 'Welcome to al_kabous ai'}
+              </h2>
+              <p className="text-purple-200 text-lg mb-8 leading-relaxed">
+                {currentLanguage === 'ar' ? 
+                  'منصة متخصصة في تحليل الذهب والعملات باستخدام الذكاء الاصطناعي. سجل دخولك أو أنشئ حساب مجاني للبدء.' :
+                  'Specialized platform for gold and currency analysis using artificial intelligence. Log in or create a free account to get started.'}
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                <button
+                  onClick={() => setCurrentView('register')}
+                  className="royal-button px-8 py-4 font-semibold text-lg"
+                >
+                  📝 {currentLanguage === 'ar' ? 'إنشاء حساب مجاني' : 'Create Free Account'}
+                </button>
+                <button
+                  onClick={() => setCurrentView('login')}
+                  className="px-8 py-4 bg-blue-600/20 border border-blue-500/30 rounded-lg text-blue-300 hover:bg-blue-600/30 transition-all font-semibold text-lg"
+                >
+                  🔐 {currentLanguage === 'ar' ? 'تسجيل الدخول' : 'Login'}
+                </button>
+              </div>
+            </div>
+
+            {/* Features Preview */}
+            <div className="glass-card p-8 mb-8">
+              <h3 className="text-2xl font-bold text-white mb-6 flex items-center justify-center">
+                <span className="gold-text mr-3">✨</span>
+                {currentLanguage === 'ar' ? 'ميزات المنصة' : 'Platform Features'}
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center p-6 bg-black/20 border border-purple-500/30 rounded-lg">
+                  <div className="text-4xl mb-4">📊</div>
+                  <h4 className="text-lg font-bold text-white mb-2">
+                    {currentLanguage === 'ar' ? 'تحليل ذكي للذهب' : 'Smart Gold Analysis'}
+                  </h4>
+                  <p className="text-purple-200 text-sm">
+                    {currentLanguage === 'ar' ? 'تحليلات احترافية مدعومة بالذكاء الاصطناعي' : 'Professional AI-powered analysis'}
+                  </p>
+                </div>
+                
+                <div className="text-center p-6 bg-black/20 border border-purple-500/30 rounded-lg">
+                  <div className="text-4xl mb-4">💱</div>
+                  <h4 className="text-lg font-bold text-white mb-2">
+                    {currentLanguage === 'ar' ? 'تحليل العملات' : 'Currency Analysis'}
+                  </h4>
+                  <p className="text-purple-200 text-sm">
+                    {currentLanguage === 'ar' ? 'تحليل أزواج العملات الرئيسية' : 'Major currency pairs analysis'}
+                  </p>
+                </div>
+                
+                <div className="text-center p-6 bg-black/20 border border-purple-500/30 rounded-lg">
+                  <div className="text-4xl mb-4">📈</div>
+                  <h4 className="text-lg font-bold text-white mb-2">
+                    {currentLanguage === 'ar' ? 'تحليل الشارت' : 'Chart Analysis'}
+                  </h4>
+                  <p className="text-purple-200 text-sm">
+                    {currentLanguage === 'ar' ? 'تحليل الشارت بالصور باستخدام الذكاء الاصطناعي' : 'AI-powered image chart analysis'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Subscription Tiers Preview */}
+            <div className="glass-card p-8">
+              <h3 className="text-2xl font-bold text-white mb-6 flex items-center justify-center">
+                <span className="gold-text mr-3">💎</span>
+                {currentLanguage === 'ar' ? 'باقات الاشتراك' : 'Subscription Plans'}
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center p-6 bg-gray-900/30 border border-gray-500/30 rounded-lg">
+                  <div className="text-3xl mb-2">🆓</div>
+                  <h4 className="text-lg font-bold text-gray-300 mb-2">
+                    {currentLanguage === 'ar' ? 'أساسي' : 'Basic'}
+                  </h4>
+                  <p className="text-lg font-bold text-gray-400 mb-4">
+                    {currentLanguage === 'ar' ? 'مجاني' : 'Free'}
+                  </p>
+                  <ul className="text-sm text-gray-300 text-left space-y-1">
+                    <li>✓ {currentLanguage === 'ar' ? 'تحليل واحد يومياً' : '1 analysis per day'}</li>
+                    <li>✓ {currentLanguage === 'ar' ? 'تحليل أساسي للذهب' : 'Basic gold analysis'}</li>
+                    <li>✓ {currentLanguage === 'ar' ? 'دعم عبر البريد' : 'Email support'}</li>
+                  </ul>
+                </div>
+                
+                <div className="text-center p-6 bg-blue-900/30 border border-blue-500/50 rounded-lg relative">
+                  <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
+                    <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                      {currentLanguage === 'ar' ? 'الأكثر شعبية' : 'Most Popular'}
+                    </span>
+                  </div>
+                  <div className="text-3xl mb-2">⭐</div>
+                  <h4 className="text-lg font-bold text-blue-300 mb-2">
+                    {currentLanguage === 'ar' ? 'مميز' : 'Premium'}
+                  </h4>
+                  <p className="text-lg font-bold text-blue-400 mb-4">$19/{currentLanguage === 'ar' ? 'شهر' : 'month'}</p>
+                  <ul className="text-sm text-blue-200 text-left space-y-1">
+                    <li>✓ {currentLanguage === 'ar' ? '5 تحليلات يومياً' : '5 analyses per day'}</li>
+                    <li>✓ {currentLanguage === 'ar' ? 'حفظ سجل التحليلات' : 'Analysis history'}</li>
+                    <li>✓ {currentLanguage === 'ar' ? 'تحليلات متقدمة' : 'Advanced analysis'}</li>
+                    <li>✓ {currentLanguage === 'ar' ? 'الرسوم البيانية المتقدمة' : 'Advanced charts'}</li>
+                  </ul>
+                </div>
+                
+                <div className="text-center p-6 bg-yellow-900/30 border border-yellow-500/50 rounded-lg">
+                  <div className="text-3xl mb-2">👑</div>
+                  <h4 className="text-lg font-bold text-yellow-300 mb-2">VIP</h4>
+                  <p className="text-lg font-bold text-yellow-400 mb-4">$49/{currentLanguage === 'ar' ? 'شهر' : 'month'}</p>
+                  <ul className="text-sm text-yellow-200 text-left space-y-1">
+                    <li>✓ {currentLanguage === 'ar' ? 'تحليلات غير محدودة' : 'Unlimited analyses'}</li>
+                    <li>✓ {currentLanguage === 'ar' ? 'دعم أولوية' : 'Priority support'}</li>
+                    <li>✓ {currentLanguage === 'ar' ? 'تحليل صوتي' : 'Voice analysis'}</li>
+                    <li>✓ {currentLanguage === 'ar' ? 'مؤشرات مخصصة' : 'Custom indicators'}</li>
+                    <li>✓ {currentLanguage === 'ar' ? 'جميع الميزات' : 'All features'}</li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         )}
 
-        
-        {/* Current Gold Price */}
-        {goldPrice && (
-          <div className="glass-card p-6 mb-8">
-            <h2 className="text-2xl font-bold royal-text mb-6 flex items-center justify-center">
-              <span className="gold-text mr-3">💰</span>
-              السعر الحالي للذهب
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-              <div>
-                <p className="text-purple-300 text-sm">السعر الحالي</p>
-                <p className="text-3xl font-bold gold-text">${goldPrice.price_usd?.toFixed(2) || '---'}</p>
-              </div>
-              <div>
-                <p className="text-purple-300 text-sm">التغيير اليومي</p>
-                <p className={`text-2xl font-bold ${goldPrice.price_change >= 0 ? 'price-high' : 'price-low'}`}>
-                  {goldPrice.price_change >= 0 ? '+' : ''}{goldPrice.price_change?.toFixed(2) || '---'}
-                </p>
-              </div>
-              <div>
-                <p className="text-purple-300 text-sm">أعلى سعر</p>
-                <p className="text-2xl font-bold price-high">${goldPrice.high_24h?.toFixed(2) || '---'}</p>
-              </div>
-              <div>
-                <p className="text-purple-300 text-sm">أقل سعر</p>
-                <p className="text-2xl font-bold price-low">${goldPrice.low_24h?.toFixed(2) || '---'}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Contact Info & Channels */}
-        <div className="glass-card p-6 mb-8">
-          <h2 className="text-2xl font-bold royal-text mb-6 flex items-center">
-            <span className="gold-text mr-2">🔗</span>
-            قنوات التوصيات والتواصل
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Telegram Channels */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-purple-200 flex items-center">
-                <span className="text-blue-400 mr-2">📱</span>
-                قنوات التليجرام
-              </h3>
-              <div className="space-y-3">
-                <a 
-                  href="https://t.me/odai_xauusdt" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="contact-link"
-                >
-                  <span className="text-2xl mr-3">📊</span>
-                  <div>
-                    <p className="font-medium royal-text">قناة التوصيات</p>
-                    <p className="text-sm text-purple-200">توصيات الذهب والعملات</p>
-                  </div>
-                </a>
-                <a 
-                  href="https://t.me/odai_xau_usd" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="contact-link"
-                >
-                  <span className="text-2xl mr-3">💬</span>
-                  <div>
-                    <p className="font-medium royal-text">قناة المناقشات</p>
-                    <p className="text-sm text-purple-200">نقاش وتحليل الأسواق</p>
-                  </div>
-                </a>
-              </div>
-            </div>
-
-            {/* Personal Contact */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-purple-200 flex items-center">
-                <span className="gold-text mr-2">👤</span>
-                Personal Contact
-              </h3>
-              <div className="space-y-3">
-                <a 
-                  href="https://wa.me/962786275654" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="contact-link"
-                >
-                  <span className="text-2xl mr-3">💬</span>
-                  <div>
-                    <p className="font-medium royal-text">WhatsApp</p>
-                    <p className="text-sm price-high">+962786275654</p>
-                  </div>
-                </a>
-                <a 
-                  href="https://t.me/Odai_xau" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="contact-link"
-                >
-                  <span className="text-2xl mr-3">📱</span>
-                  <div>
-                    <p className="font-medium royal-text">Personal Telegram</p>
-                    <p className="text-sm text-blue-300">@Odai_xau</p>
-                  </div>
-                </a>
-                <a 
-                  href="https://www.instagram.com/odai_xau?igsh=MWtrOXNleGlnY3k1aQ==" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="contact-link"
-                >
-                  <span className="text-2xl mr-3">📷</span>
-                  <div>
-                    <p className="font-medium royal-text">Instagram</p>
-                    <p className="text-sm text-pink-300">@odai_xau</p>
-                  </div>
-                </a>
-                <a 
-                  href="https://www.facebook.com/odaiaboamera" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="contact-link"
-                >
-                  <span className="text-2xl mr-3">📘</span>
-                  <div>
-                    <p className="font-medium royal-text">Facebook</p>
-                    <p className="text-sm text-blue-300">Odai Abu Amera</p>
-                  </div>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* Quick Analysis Section */}
-        <div className="glass-card p-6 mb-8">
-          <h2 className="text-2xl font-bold royal-text mb-6 flex items-center">
-            <span className="gold-text mr-2">⚡</span>
-            تحليل فوري للذهب
-          </h2>
-          <p className="text-purple-200 mb-6">اضغط على نوع التحليل للحصول على تحليل فوري</p>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            <button 
-              onClick={() => handleAnalyze('quick', 'تحليل سريع للذهب')}
-              className="analysis-button font-semibold transition-all transform hover:scale-105"
-            >
-              <div className="text-2xl mb-2">📉</div>
-              سريع
-            </button>
-            
-            <button 
-              onClick={() => handleAnalyze('chart', 'التحليل الفني للذهب')}
-              className="analysis-button font-semibold transition-all transform hover:scale-105"
-            >
-              <div className="text-2xl mb-2">📊</div>
-              فني
-            </button>
-            
-            <button 
-              onClick={() => handleAnalyze('news', 'أخبار الذهب وتأثيرها على السوق')}
-              className="analysis-button font-semibold transition-all transform hover:scale-105"
-            >
-              <div className="text-2xl mb-2">📰</div>
-              أخبار
-            </button>
-            
-            <button 
-              onClick={() => handleAnalyze('forecast', 'توقعات الذهب المستقبلية')}
-              className="analysis-button font-semibold transition-all transform hover:scale-105"
-            >
-              <div className="text-2xl mb-2">📈</div>
-              توقعات
-            </button>
-            
-            <button 
-              onClick={() => handleAnalyze('detailed', 'تحليل مفصل وشامل للذهب')}
-              className="analysis-button font-semibold transition-all transform hover:scale-105"
-            >
-              <div className="text-2xl mb-2">📋</div>
-              مفصل
-            </button>
-          </div>
-        </div>
-
-        {/* Forex Analysis Section */}
-        <div className="glass-card p-6 mb-8">
-          <h2 className="text-2xl font-bold royal-text mb-6 flex items-center">
-            <span className="gold-text mr-2">💱</span>
-            تحليل العملات الأجنبية - Forex
-          </h2>
-          <p className="text-purple-200 mb-6">تحليل العملات الرئيسية مع الأسعار الحية</p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            <button 
-              onClick={() => handleForexAnalysis('EUR/USD')}
-              className="analysis-button font-semibold transition-all transform hover:scale-105 p-4"
-            >
-              <div className="text-2xl mb-2">🇪🇺</div>
-              <div className="font-bold">EUR/USD</div>
-              <div className="text-sm text-purple-200">اليورو/دولار</div>
-            </button>
-            
-            <button 
-              onClick={() => handleForexAnalysis('GBP/USD')}
-              className="analysis-button font-semibold transition-all transform hover:scale-105 p-4"
-            >
-              <div className="text-2xl mb-2">🇬🇧</div>
-              <div className="font-bold">GBP/USD</div>
-              <div className="text-sm text-purple-200">الباوند/دولار</div>
-            </button>
-            
-            <button 
-              onClick={() => handleForexAnalysis('USD/JPY')}
-              className="analysis-button font-semibold transition-all transform hover:scale-105 p-4"
-            >
-              <div className="text-2xl mb-2">🇯🇵</div>
-              <div className="font-bold">USD/JPY</div>
-              <div className="text-sm text-purple-200">الدولار/ين</div>
-            </button>
-            
-            <button 
-              onClick={() => handleForexAnalysis('AUD/USD')}
-              className="analysis-button font-semibold transition-all transform hover:scale-105 p-4"
-            >
-              <div className="text-2xl mb-2">🇦🇺</div>
-              <div className="font-bold">AUD/USD</div>
-              <div className="text-sm text-purple-200">الأسترالي/دولار</div>
-            </button>
-            
-            <button 
-              onClick={() => handleForexAnalysis('USD/CAD')}
-              className="analysis-button font-semibold transition-all transform hover:scale-105 p-4"
-            >
-              <div className="text-2xl mb-2">🇨🇦</div>
-              <div className="font-bold">USD/CAD</div>
-              <div className="text-sm text-purple-200">الدولار/كندي</div>
-            </button>
-            
-            <button 
-              onClick={() => handleForexAnalysis('USD/CHF')}
-              className="analysis-button font-semibold transition-all transform hover:scale-105 p-4"
-            >
-              <div className="text-2xl mb-2">🇨🇭</div>
-              <div className="font-bold">USD/CHF</div>
-              <div className="text-sm text-purple-200">الدولار/فرنك</div>
-            </button>
-            
-            <button 
-              onClick={() => handleForexAnalysis('NZD/USD')}
-              className="analysis-button font-semibold transition-all transform hover:scale-105 p-4"
-            >
-              <div className="text-2xl mb-2">🇳🇿</div>
-              <div className="font-bold">NZD/USD</div>
-              <div className="text-sm text-purple-200">النيوزلندي/دولار</div>
-            </button>
-          </div>
-        </div>
-
-        {/* Currency Analysis Section */}
-        <div className="glass-card p-6 mb-8">
-          <h2 className="text-2xl font-bold royal-text mb-6 flex items-center">
-            <span className="gold-text mr-2">💱</span>
-            تحليل العملات
-          </h2>
-          <p className="text-purple-200 mb-6">تحليل العملات الرئيسية في السوق</p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button 
-              onClick={() => handleForexAnalysis('EUR/USD')}
-              className="analysis-button font-semibold transition-all transform hover:scale-105"
-            >
-              <div className="text-2xl mb-2">🇪🇺</div>
-              EUR/USD
-            </button>
-            
-            <button 
-              onClick={() => handleForexAnalysis('USD/JPY')}
-              className="analysis-button font-semibold transition-all transform hover:scale-105"
-            >
-              <div className="text-2xl mb-2">🇯🇵</div>
-              USD/JPY
-            </button>
-            
-            <button 
-              onClick={() => handleForexAnalysis('GBP/USD')}
-              className="analysis-button font-semibold transition-all transform hover:scale-105"
-            >
-              <div className="text-2xl mb-2">🇬🇧</div>
-              GBP/USD
-            </button>
-          </div>
-        </div>
-
-        {/* Chart Analysis Section */}
-        <div className="glass-card p-6 mb-8">
-          <h2 className="text-2xl font-bold royal-text mb-6 flex items-center">
-            <span className="gold-text mr-2">📊</span>
-            تحليل الشارت بالصورة
-          </h2>
-          <p className="text-purple-200 mb-6">ارفع صورة الشارت واحصل على تحليل فني احترافي مدعوم بالذكاء الاصطناعي</p>
-          
+        {/* Authenticated Users - Redirect to Analysis Dashboard */}
+        {isAuthenticated && (
           <div className="text-center">
-            <button
-              onClick={() => setCurrentView('chart-analysis')}
-              className="royal-button px-8 py-4 text-lg font-bold shadow-xl"
-            >
-              <span className="mr-2">📷</span>
-              تحليل الشارت بالصورة
-            </button>
+            <div className="glass-card p-8">
+              <div className="text-6xl mb-6">🎉</div>
+              <h2 className="text-3xl font-bold text-white mb-4">
+                {currentLanguage === 'ar' ? `مرحباً ${currentUser?.email?.split('@')[0] || 'مستخدم'}!` : `Welcome ${currentUser?.email?.split('@')[0] || 'User'}!`}
+              </h2>
+              <p className="text-purple-200 text-lg mb-8">
+                {currentLanguage === 'ar' ? 'تم تسجيل الدخول بنجاح. انتقل إلى لوحة التحليل للبدء.' : 'Successfully logged in. Go to analysis dashboard to get started.'}
+              </p>
+              
+              <button
+                onClick={() => setCurrentView('analysis-dashboard')}
+                className="royal-button px-8 py-4 font-semibold text-lg"
+              >
+                📊 {currentLanguage === 'ar' ? 'انتقل إلى لوحة التحليل' : 'Go to Analysis Dashboard'}
+              </button>
+            </div>
           </div>
-        </div>
-
-        {/* Custom Analysis Button */}
-        <div className="text-center">
-          <div className="flex gap-4 justify-center">
-            <button
-              onClick={() => setCurrentView('analyze')}
-              className="royal-button px-8 py-4 text-lg font-bold shadow-xl"
-            >
-              <span className="mr-2">🎯</span>
-              طلب تحليل مخصص
-            </button>
-            <button
-              onClick={() => setCurrentView('contact')}
-              className="royal-button px-8 py-4 text-lg font-bold shadow-xl"
-            >
-              <span className="mr-2">📞</span>
-              التواصل معنا
-            </button>
-            <button
-              onClick={() => setCurrentView('admin')}
-              className="royal-button px-8 py-4 text-lg font-bold shadow-xl"
-            >
-              <span className="mr-2">🔧</span>
-              لوحة التحكم
-            </button>
-          </div>
-        </div>
-
+        )}
       </div>
     </div>
   );
