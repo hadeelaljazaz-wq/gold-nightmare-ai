@@ -562,11 +562,160 @@ function App() {
     </div>
   );
 
+  const renderContactView = () => (
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 p-4">
+      <div className="max-w-4xl mx-auto">
+        
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-white mb-4 flex items-center justify-center">
+            <span className="text-green-400 mr-3">📞</span>
+            التواصل مع al_kabous ai
+          </h1>
+          <p className="text-purple-200">مدرسة الكابوس الذهبية - جميع وسائل التواصل والقنوات</p>
+        </div>
+
+        {/* Contact Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          
+          {/* Personal Contact Card */}
+          <div className="glass-card p-6">
+            <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+              <span className="text-green-400 mr-3">👤</span>
+              التواصل المباشر
+            </h2>
+            <div className="space-y-4">
+              <a 
+                href="https://wa.me/962786275654" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center p-4 bg-green-600/20 border border-green-500/30 rounded-lg text-purple-200 hover:bg-green-600/30 transition-all transform hover:scale-105"
+              >
+                <span className="text-3xl mr-4">💬</span>
+                <div>
+                  <p className="font-bold text-white text-lg">واتساب</p>
+                  <p className="text-green-300">962786275654</p>
+                  <p className="text-sm">للاستفسارات الشخصية</p>
+                </div>
+              </a>
+              
+              <a 
+                href="https://t.me/Odai_xau" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center p-4 bg-blue-600/20 border border-blue-500/30 rounded-lg text-purple-200 hover:bg-blue-600/30 transition-all transform hover:scale-105"
+              >
+                <span className="text-3xl mr-4">📱</span>
+                <div>
+                  <p className="font-bold text-white text-lg">تليجرام شخصي</p>
+                  <p className="text-blue-300">@Odai_xau</p>
+                  <p className="text-sm">للتواصل المباشر</p>
+                </div>
+              </a>
+              
+              <a 
+                href="https://www.instagram.com/odai_xau?igsh=MWtrOXNleGlnY3k1aQ==" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center p-4 bg-pink-600/20 border border-pink-500/30 rounded-lg text-purple-200 hover:bg-pink-600/30 transition-all transform hover:scale-105"
+              >
+                <span className="text-3xl mr-4">📷</span>
+                <div>
+                  <p className="font-bold text-white text-lg">انستغرام</p>
+                  <p className="text-pink-300">@odai_xau</p>
+                  <p className="text-sm">أحدث المنشورات</p>
+                </div>
+              </a>
+              
+              <a 
+                href="https://www.facebook.com/odaiaboamera" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center p-4 bg-blue-800/20 border border-blue-700/30 rounded-lg text-purple-200 hover:bg-blue-800/30 transition-all transform hover:scale-105"
+              >
+                <span className="text-3xl mr-4">📘</span>
+                <div>
+                  <p className="font-bold text-white text-lg">فيسبوك</p>
+                  <p className="text-blue-300">عدي أبو عامرة</p>
+                  <p className="text-sm">متابعة أخبار السوق</p>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          {/* Channels Card */}
+          <div className="glass-card p-6">
+            <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+              <span className="text-blue-400 mr-3">📡</span>
+              القنوات الرسمية
+            </h2>
+            <div className="space-y-4">
+              <a 
+                href="https://t.me/odai_xauusdt" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center p-4 bg-yellow-600/20 border border-yellow-500/30 rounded-lg text-purple-200 hover:bg-yellow-600/30 transition-all transform hover:scale-105"
+              >
+                <span className="text-3xl mr-4">📊</span>
+                <div>
+                  <p className="font-bold text-white text-lg">قناة التوصيات</p>
+                  <p className="text-yellow-300">@odai_xauusdt</p>
+                  <p className="text-sm">توصيات الذهب والعملات اليومية</p>
+                </div>
+              </a>
+              
+              <a 
+                href="https://t.me/odai_xau_usd" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center p-4 bg-purple-600/20 border border-purple-500/30 rounded-lg text-purple-200 hover:bg-purple-600/30 transition-all transform hover:scale-105"
+              >
+                <span className="text-3xl mr-4">💬</span>
+                <div>
+                  <p className="font-bold text-white text-lg">قناة المناقشات</p>
+                  <p className="text-purple-300">@odai_xau_usd</p>
+                  <p className="text-sm">نقاش وتحليل الأسواق مع المتابعين</p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* About Section */}
+        <div className="glass-card p-6 mb-6 text-center">
+          <h2 className="text-2xl font-bold text-white mb-4 flex items-center justify-center">
+            <span className="text-yellow-400 mr-3">🏆</span>
+            مدرسة الكابوس الذهبية
+          </h2>
+          <p className="text-purple-200 text-lg leading-relaxed mb-4">
+            خبرة أكثر من 20 سنة في تحليل الأسواق المالية، متخصصون في تحليل الذهب والعملات الأجنبية
+          </p>
+          <p className="text-purple-300">
+            نقدم تحليلات دقيقة ومدروسة لمساعدة المتداولين على اتخاذ قرارات صحيحة في الأسواق
+          </p>
+        </div>
+
+        {/* Back Button */}
+        <div className="text-center">
+          <button
+            onClick={() => setCurrentView('dashboard')}
+            className="px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg font-medium transition-all transform hover:scale-105"
+          >
+            <span className="mr-2">🏠</span>
+            العودة للرئيسية
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
+
   return (
     <div className="App">
       {currentView === 'dashboard' && renderDashboard()}
       {currentView === 'analyze' && renderAnalyzeView()}
       {currentView === 'results' && renderResultsView()}
+      {currentView === 'contact' && renderContactView()}
     </div>
   );
 }
