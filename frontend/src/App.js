@@ -403,7 +403,7 @@ function App() {
               العودة
             </button>
             <button
-              onClick={handleAnalyze}
+              onClick={() => handleAnalyze(selectedAnalysisType, userQuestion)}
               disabled={!userQuestion.trim()}
               className="flex-1 py-3 px-6 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-gray-500 disabled:to-gray-600 text-white rounded-lg font-bold transition-all disabled:cursor-not-allowed"
             >
