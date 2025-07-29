@@ -997,12 +997,15 @@ function App() {
                 if (chartAnalysisResult) {
                   setCurrentView('chart-analysis');
                   setChartAnalysisResult(null);
+                } else if (forexAnalysisResult) {
+                  setCurrentView('dashboard');
+                  setForexAnalysisResult(null);
                 } else {
                   setCurrentView('analyze');
                   setAnalysisResult(null);
                 }
               }}
-              className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
+              className="royal-button px-6 py-3 font-medium"
             >
               طلب تحليل جديد
             </button>
