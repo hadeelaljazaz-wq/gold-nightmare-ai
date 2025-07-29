@@ -15,7 +15,7 @@ from typing import Dict, Any, Optional
 class AlKabousAuthTester:
     """Comprehensive tester for Al Kabous AI Authentication & Subscription System"""
     
-    def __init__(self, base_url: str = "https://c9cd155b-70dd-4483-8184-bdd38c4aef10.preview.emergentagent.com"):
+    def __init__(self, base_url: str = "https://33206162-97aa-4ab2-bf61-8029b938fa88.preview.emergentagent.com"):
         self.base_url = base_url.rstrip('/')
         self.tests_run = 0
         self.tests_passed = 0
