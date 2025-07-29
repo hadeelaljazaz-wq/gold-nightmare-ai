@@ -639,7 +639,7 @@ function App() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <button 
-              onClick={() => handleAnalyze('detailed', 'تحليل زوج EUR/USD')}
+              onClick={() => handleForexAnalysis('EUR/USD')}
               className="analysis-button font-semibold transition-all transform hover:scale-105"
             >
               <div className="text-2xl mb-2">🇪🇺</div>
@@ -647,7 +647,7 @@ function App() {
             </button>
             
             <button 
-              onClick={() => handleAnalyze('detailed', 'تحليل زوج USD/JPY')}
+              onClick={() => handleForexAnalysis('USD/JPY')}
               className="analysis-button font-semibold transition-all transform hover:scale-105"
             >
               <div className="text-2xl mb-2">🇯🇵</div>
@@ -655,7 +655,7 @@ function App() {
             </button>
             
             <button 
-              onClick={() => handleAnalyze('detailed', 'تحليل زوج GBP/USD')}
+              onClick={() => handleForexAnalysis('GBP/USD')}
               className="analysis-button font-semibold transition-all transform hover:scale-105"
             >
               <div className="text-2xl mb-2">🇬🇧</div>
