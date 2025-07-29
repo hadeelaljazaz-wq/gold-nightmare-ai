@@ -32,7 +32,10 @@ class GoldPriceManager:
         self.apis = {
             "goldapi": {
                 "url": "https://www.goldapi.io/api/XAU/USD",
-                "headers": {"X-API-KEY": self.config.gold_api_token},
+                "headers": {
+                    "x-access-token": self.config.gold_api_token,
+                    "Content-Type": "application/json"
+                },
                 "active": bool(self.config.gold_api_token),
                 "priority": 1
             },
