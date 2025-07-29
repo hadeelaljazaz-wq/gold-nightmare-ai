@@ -383,13 +383,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Direct analysis buttons functionality - navigation issues"
-    - "Chart analysis functionality - navigation issues" 
-    - "Forex analysis functionality - navigation issues"
-  stuck_tasks:
-    - "Direct analysis buttons functionality"
-    - "Chart analysis functionality"
-    - "Forex analysis functionality"
+    - "All critical navigation issues have been resolved"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
