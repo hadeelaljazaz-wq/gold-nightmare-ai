@@ -30,6 +30,39 @@ class UserStatus(Enum):
     SUSPENDED = "suspended"
 
 @dataclass
+class UserRegistrationRequest:
+    """User registration request model"""
+    email: str
+    password: str
+    username: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+
+@dataclass
+class UserLoginRequest:
+    """User login request model"""
+    email: str
+    password: str
+
+@dataclass
+class UserAuthResponse:
+    """User authentication response model"""
+    success: bool
+    user_id: Optional[int] = None
+    email: Optional[str] = None
+    tier: Optional[str] = None
+    daily_analyses_remaining: Optional[int] = None
+    error: Optional[str] = None
+
+@dataclass
+class UserSubscriptionUpdate:
+    """User subscription update model for admin"""
+    user_id: int
+    new_tier: str
+    admin_id: str
+    notes: Optional[str] = None
+
+@dataclass
 class AdminUser:
     """Admin user data model for admin panel access"""
     admin_id: str
