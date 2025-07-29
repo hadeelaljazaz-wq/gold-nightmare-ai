@@ -45,6 +45,7 @@ api_router = APIRouter(prefix="/api")
 price_manager = None
 ai_manager = None
 db_manager = None
+admin_manager = None
 
 @app.on_event("startup")
 async def startup_event():
