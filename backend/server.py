@@ -27,6 +27,7 @@ load_dotenv(ROOT_DIR / '.env')
 from gold_bot.gold_price import get_current_gold_price, get_price_manager
 from gold_bot.forex_price import forex_manager
 from gold_bot.ai_manager import get_ai_manager
+from gold_bot.image_processor import chart_processor
 from gold_bot.models import AnalysisType
 from gold_bot.database import get_database
 
