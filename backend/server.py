@@ -530,6 +530,21 @@ async def analyze_gold(request: AnalysisRequest):
             additional_context=request.additional_context or request.user_question or ""
         )
         
+        end_time = datetime.utcnow()
+        processing_time = (end_time - start_time).total_seconds()
+        
+        # Log the analysis request
+        if admin_manager:
+            await admin_manager.log_analysis(
+                user_id=1,  # Default web user
+                analysis_type=analysis_type,
+                success=analysis is not None,
+                processing_time=processing_time,
+                error_message=None if analysis else "Analysis generation failed",
+                gold_price=gold_price.price_usd if gold_price else None,
+                user_tier=UserTier.BASIC
+            )
+        
         if not analysis:
             return AnalysisResponse(
                 success=False,
