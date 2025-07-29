@@ -1227,7 +1227,7 @@ function App() {
     </div>
   );
 
-  const renderAnalysisDashboard = () => (
+  const renderChartAnalysisView = () => (
     <div className="min-h-screen royal-text" style={{
       background: 'linear-gradient(135deg, #0A0F2C, #3C1E70, #8C00FF)',
       fontFamily: "'Cairo', sans-serif"
