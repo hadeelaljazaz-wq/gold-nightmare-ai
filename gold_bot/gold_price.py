@@ -110,6 +110,37 @@ class GoldPriceManager:
             await self.session.close()
             logger.info("🔚 Gold Price Manager closed")
     
+    def _validate_price_data(self, price: GoldPrice) -> bool:
+        """Validate that price data is reasonable and not None/NaN"""
+        try:
+            # Check for None or NaN values
+            if (price.price_usd is None or 
+                price.price_usd != price.price_usd or  # NaN check
+                price.price_usd <= 0):
+                logger.warning(f"❌ Invalid price_usd: {price.price_usd}")
+                return False
+            
+            # Check reasonable price range for gold (should be between $1000-$5000)
+            if not (1000 <= price.price_usd <= 5000):
+                logger.warning(f"❌ Price outside reasonable range: ${price.price_usd}")
+                return False
+            
+            # Check that other fields are not None
+            if (price.price_change is None or 
+                price.price_change_pct is None or
+                price.ask is None or 
+                price.bid is None):
+                logger.warning("❌ Some price fields are None")
+                return False
+            
+            # All validations passed
+            logger.info(f"✅ Price validation passed: ${price.price_usd:.2f}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"❌ Price validation error: {e}")
+            return False
+
     async def get_current_price(self, use_cache: bool = True) -> Optional[GoldPrice]:
         """
         Get current gold price with 15-minute internal cache and API fallback
