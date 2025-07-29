@@ -336,6 +336,151 @@ class ChartImageProcessor:
             logger.error(f"❌ Chart context building failed: {e}")
             return f"خطأ في بناء سياق الشارت: {str(e)}"
 
+    def get_ohlc_data_simulation(self, symbol: str = 'XAUUSD', timeframe: str = '4h') -> Dict[str, Any]:
+        """
+        محاكاة بيانات OHLC للشارت (يمكن ربطها بـ APIs حقيقية لاحقاً)
+        """
+        try:
+            # بيانات تجريبية محاكية (في التطبيق الحقيقي، استخدم API)
+            sample_data = [
+                {"time": "2024-01-30 08:00", "open": 2650.45, "high": 2658.30, "low": 2648.20, "close": 2655.80},
+                {"time": "2024-01-30 12:00", "open": 2655.80, "high": 2662.15, "low": 2652.40, "close": 2659.70},
+                {"time": "2024-01-30 16:00", "open": 2659.70, "high": 2665.90, "low": 2657.30, "close": 2661.25},
+                {"time": "2024-01-30 20:00", "open": 2661.25, "high": 2668.45, "low": 2659.80, "close": 2665.15},
+                {"time": "2024-01-31 00:00", "open": 2665.15, "high": 2670.30, "low": 2663.70, "close": 2668.90},
+            ]
+            
+            # تنسيق البيانات
+            formatted_data = f"بيانات {symbol} - الإطار الزمني {timeframe}:\n"
+            formatted_data += "الوقت | فتح | أعلى | أدنى | إغلاق\n"
+            formatted_data += "-" * 50 + "\n"
+            
+            for candle in sample_data:
+                formatted_data += f"{candle['time']} | {candle['open']:.2f} | {candle['high']:.2f} | {candle['low']:.2f} | {candle['close']:.2f}\n"
+            
+            # حساب إحصائيات
+            prices = [candle['close'] for candle in sample_data]
+            stats = {
+                "current_price": prices[-1],
+                "highest": max([candle['high'] for candle in sample_data]),
+                "lowest": min([candle['low'] for candle in sample_data]),
+                "average": sum(prices) / len(prices),
+                "volatility": max(prices) - min(prices)
+            }
+            
+            formatted_data += f"\nإحصائيات:\n"
+            formatted_data += f"السعر الحالي: ${stats['current_price']:.2f}\n"
+            formatted_data += f"أعلى سعر: ${stats['highest']:.2f}\n"
+            formatted_data += f"أدنى سعر: ${stats['lowest']:.2f}\n"
+            formatted_data += f"المتوسط: ${stats['average']:.2f}\n"
+            formatted_data += f"التقلبات: ${stats['volatility']:.2f}\n"
+            
+            return {
+                "raw_data": sample_data,
+                "formatted_text": formatted_data,
+                "statistics": stats,
+                "symbol": symbol,
+                "timeframe": timeframe
+            }
+            
+        except Exception as e:
+            logger.error(f"❌ OHLC data simulation failed: {e}")
+            return {"error": str(e)}
+
+    def analyze_chart_intelligently(self, image_data: bytes, user_context: Optional[str] = None) -> Dict[str, Any]:
+        """
+        تحليل ذكي شامل للشارت - النهج المختلط المقترح
+        """
+        try:
+            analysis_result = {
+                "optimization_log": {},
+                "text_extraction": {},
+                "ohlc_simulation": {},
+                "comprehensive_prompt": "",
+                "optimized_image_data": None,
+                "confidence_score": 0.0
+            }
+            
+            logger.info("🔍 Starting intelligent chart analysis...")
+            
+            # 1. تحسين الصورة
+            optimized_data, optimization_log = self.optimize_chart_image(image_data)
+            analysis_result["optimization_log"] = optimization_log
+            analysis_result["optimized_image_data"] = optimized_data
+            
+            # 2. استخراج النصوص المتقدم
+            text_data = self.extract_text_from_chart_advanced(optimized_data)
+            analysis_result["text_extraction"] = text_data
+            
+            # 3. محاكاة بيانات OHLC
+            ohlc_data = self.get_ohlc_data_simulation()
+            analysis_result["ohlc_simulation"] = ohlc_data
+            
+            # 4. بناء السياق الشامل
+            chart_context = self.chart_to_data_context(optimized_data, user_context)
+            
+            # 5. بناء الـ Prompt الشامل
+            comprehensive_prompt = f"""
+تحليل شامل ومتقدم لشارت الذهب - نهج مختلط ذكي
+
+=== البيانات المستخرجة من الصورة ===
+{chart_context}
+
+=== بيانات OHLC المحاكية ===
+{ohlc_data.get('formatted_text', 'غير متوفر')}
+
+=== تحسينات الصورة المطبقة ===
+الخطوات المطبقة: {', '.join(optimization_log.get('steps_applied', []))}
+الثقة في استخراج النصوص: {text_data.get('average_confidence', 0):.2f}
+
+=== السياق الإضافي ===
+{user_context or 'لا يوجد سياق إضافي مقدم من المستخدم'}
+
+=== المطلوب ===
+بناءً على:
+1. الصورة المحسنة المرفقة
+2. البيانات النصية المستخرجة أعلاه  
+3. بيانات OHLC المحاكية
+4. السياق المقدم
+
+قدم تحليلاً فنياً شاملاً يتضمن:
+- تحليل الاتجاه العام
+- مستويات الدعم والمقاومة المحددة
+- توقعات قصيرة ومتوسطة المدى
+- نقاط الدخول والخروج المقترحة
+- إدارة المخاطر
+- توصيات تداول محددة مع الأسباب
+
+ملاحظة: إذا كانت البيانات المستخرجة غير دقيقة، اعتمد بشكل أكبر على التحليل البصري للصورة المحسنة.
+            """.strip()
+            
+            analysis_result["comprehensive_prompt"] = comprehensive_prompt
+            
+            # حساب درجة الثقة الإجمالية
+            confidence_factors = []
+            
+            if optimization_log.get("steps_applied"):
+                confidence_factors.append(0.2)  # تحسين الصورة
+            
+            if text_data.get("prices"):
+                confidence_factors.append(0.3)  # استخراج الأسعار
+            
+            if text_data.get("average_confidence", 0) > 0.7:
+                confidence_factors.append(0.2)  # جودة OCR
+            
+            if ohlc_data.get("raw_data"):
+                confidence_factors.append(0.3)  # بيانات إضافية
+            
+            analysis_result["confidence_score"] = sum(confidence_factors)
+            
+            logger.info(f"✅ Intelligent analysis complete. Confidence: {analysis_result['confidence_score']:.2f}")
+            
+            return analysis_result
+            
+        except Exception as e:
+            logger.error(f"❌ Intelligent chart analysis failed: {e}")
+            return {"error": str(e)}
+
     async def process_chart_image(self, image_data: bytes) -> Dict[str, Any]:
         """معالجة شاملة لصورة الشارت مع استخراج المعلومات"""
         try:
