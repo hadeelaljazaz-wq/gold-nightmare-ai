@@ -112,16 +112,21 @@ class GoldPriceManager:
     
     async def get_current_price(self, use_cache: bool = True) -> Optional[GoldPrice]:
         """
-        Get current gold price with automatic fallback between APIs
-        Returns cached price if available and recent enough
+        Get current gold price with 15-minute internal cache and API fallback
+        Returns cached price if available and within 15 minutes
         """
         try:
-            # Try to get from cache first
-            if use_cache and self.cache_manager:
-                cached_price = await self.cache_manager.get_gold_price()
-                if cached_price:
-                    logger.info(f"📦 Using cached gold price: ${cached_price.price_usd:.2f}")
-                    return cached_price
+            import time
+            now = time.time()
+            
+            # Check internal 15-minute cache first
+            if use_cache and self.gold_cache["price"] is not None:
+                cache_age = now - self.gold_cache["timestamp"]
+                if cache_age < self.gold_cache["cache_duration"]:
+                    logger.info(f"📦 Using internal cached gold price (age: {cache_age/60:.1f}min): ${self.gold_cache['price'].price_usd:.2f}")
+                    return self.gold_cache["price"]
+                else:
+                    logger.info(f"⏰ Cache expired (age: {cache_age/60:.1f}min), fetching fresh price...")
             
             # Try each API in order of priority
             for api_name, api_config in self.active_apis:
@@ -130,7 +135,11 @@ class GoldPriceManager:
                     price = await self._fetch_from_api(api_name, api_config)
                     
                     if price:
-                        # Cache the successful result
+                        # Store in internal 15-minute cache
+                        self.gold_cache["price"] = price
+                        self.gold_cache["timestamp"] = now
+                        
+                        # Also cache in external cache manager if available
                         if self.cache_manager:
                             await self.cache_manager.cache_gold_price(price)
                         
@@ -141,23 +150,31 @@ class GoldPriceManager:
                     logger.warning(f"⚠️ {api_name} API failed: {e}")
                     continue
             
-            # If all APIs fail, return demo data for development
-            logger.warning("⚠️ All APIs failed, using current market demo data")
+            # If all APIs fail, check if we have any cached price (even expired) 
+            if self.gold_cache["price"] is not None:
+                logger.warning("⚠️ All APIs failed, using last cached price with error message")
+                cached_price = self.gold_cache["price"]
+                # Update the source to indicate it's cached data
+                cached_price.source = "❌ تعذر جلب السعر الآن، سيتم استخدام آخر سعر محفوظ"
+                return cached_price
+            
+            # Final fallback: return demo data with error message
+            logger.warning("⚠️ All APIs failed and no cache available, using demo data")
             demo_price = GoldPrice(
-                price_usd=3320.45,  # Current market price as per user
+                price_usd=3320.45,
                 price_change=12.82,
                 price_change_pct=0.39,
                 ask=3322.00,
                 bid=3318.90,
                 high_24h=3331.22,
                 low_24h=3305.18,
-                source="demo_data",
+                source="❌ تعذر جلب السعر الآن، سيتم استخدام آخر سعر محفوظ",
                 timestamp=datetime.utcnow()
             )
             
-            # Cache demo data for short period
-            if self.cache_manager:
-                await self.cache_manager.cache_gold_price(demo_price)
+            # Store demo data in cache
+            self.gold_cache["price"] = demo_price
+            self.gold_cache["timestamp"] = now
                 
             return demo_price
             
