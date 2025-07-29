@@ -510,31 +510,42 @@ class GoldPriceManager:
             raise GoldAPIError(f"Failed to parse Yahoo Finance response: {e}")
     
     def _parse_metals_api_response(self, data: Dict[str, Any]) -> GoldPrice:
-        """Parse Metals-API response (free version)"""
+        """Parse Metals-API response (handles rate inversion)"""
         try:
-            # Free metals API typically returns simple structure
-            # This is a fallback implementation for free APIs
-            price = data.get("price", 0)
-            if not price:
-                # Try alternative structure
-                rates = data.get("rates", {})
-                price = rates.get("XAU", 0) or rates.get("GOLD", 0)
+            # Metals-API response format
+            if not data.get("success", False):
+                raise GoldAPIError("Metals-API returned error status")
             
-            # For free APIs, we might not have all data
+            rates = data.get("rates", {})
+            if "XAU" not in rates:
+                raise GoldAPIError("XAU rate not found in response")
+            
+            # Metals-API returns inverted rate (1/price), need to invert it back
+            xau_rate = float(rates["XAU"])
+            if xau_rate <= 0:
+                raise GoldAPIError("Invalid XAU rate from Metals-API")
+                
+            # Convert inverted rate back to actual price
+            price_usd = 1.0 / xau_rate
+            
+            # Validate the price
+            if not price_usd or price_usd <= 0:
+                raise GoldAPIError("Invalid calculated price from Metals-API")
+            
             return GoldPrice(
-                price_usd=float(price) if price else 2650.0,
-                price_change=12.5,  # Default values for free API
-                price_change_pct=0.47,
-                ask=float(price) + 2 if price else 2652.0,
-                bid=float(price) - 2 if price else 2648.0,
-                high_24h=float(price) + 15 if price else 2665.0,
-                low_24h=float(price) - 15 if price else 2635.0,
-                source="metals_api",
+                price_usd=price_usd,
+                price_change=12.5,  # Default for free API
+                price_change_pct=0.38,
+                ask=price_usd + 2.0,
+                bid=price_usd - 2.0,
+                high_24h=price_usd + 15.0,
+                low_24h=price_usd - 15.0,
+                source="Metals-API",
                 timestamp=datetime.utcnow()
             )
             
         except (KeyError, ValueError, TypeError) as e:
-            raise GoldAPIError(f"Failed to parse Metals API response: {e}")
+            raise GoldAPIError(f"Failed to parse Metals-API response: {e}")
     
     def _parse_fxempire_response(self, data: Dict[str, Any]) -> GoldPrice:
         """Parse FXEmpire response"""
