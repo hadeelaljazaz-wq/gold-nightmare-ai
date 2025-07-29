@@ -70,7 +70,7 @@ def load_config() -> BotConfig:
             bot_signature=os.environ.get('BOT_SIGNATURE', 'Gold Nightmare – عدي'),
             
             # Cache & Rate Limiting
-            price_cache_ttl=int(os.environ.get('PRICE_CACHE_TTL', 300)),
+            price_cache_ttl=int(os.environ.get('PRICE_CACHE_TTL', 120)),
             analysis_cache_ttl=int(os.environ.get('ANALYSIS_CACHE_TTL', 1800)),
             rate_limit_basic=int(os.environ.get('RATE_LIMIT_BASIC', 5)),
             rate_limit_premium=int(os.environ.get('RATE_LIMIT_PREMIUM', 20)),
