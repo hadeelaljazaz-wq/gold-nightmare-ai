@@ -1117,18 +1117,26 @@ class AlKabousAITester:
         return True
 
     def run_all_tests(self):
-        """Run all backend tests"""
-        print("🧪 Starting Al Kabous AI Backend Tests")
+        """Run all backend tests with focus on Gold Price System"""
+        print("🧪 Starting Al Kabous AI Backend Tests - GOLD PRICE SYSTEM FOCUS")
         print("=" * 60)
         
         start_time = time.time()
         
         # Core API Tests (High Priority)
         self.test_health_endpoint()
-        self.test_gold_price_endpoint()  # HIGH PRIORITY
-        self.test_gold_price_cache_system()  # HIGH PRIORITY - New cache system
+        
+        # GOLD PRICE SYSTEM TESTS (HIGHEST PRIORITY - NEW IMPLEMENTATION)
+        print("\n🏆 === GOLD PRICE SYSTEM TESTS (NEW APIS) ===")
+        self.test_gold_price_endpoint()  # HIGH PRIORITY - Updated with new APIs
+        self.test_gold_price_cache_system()  # HIGH PRIORITY - 15-minute cache system
+        self.test_gold_price_api_fallback_system()  # HIGH PRIORITY - API fallback
+        self.test_gold_price_conversion_functions()  # HIGH PRIORITY - Gram/karat conversions
+        self.test_gold_price_error_handling()  # HIGH PRIORITY - Error handling (401, 429, 403, 404)
+        self.test_gold_price_response_time()  # HIGH PRIORITY - Response time under 5s
         
         # Admin Panel Tests (High Priority)
+        print("\n🔐 === ADMIN PANEL TESTS ===")
         self.test_admin_authentication()  # HIGH PRIORITY
         self.test_admin_dashboard()  # HIGH PRIORITY
         self.test_admin_users_management()  # HIGH PRIORITY
@@ -1137,15 +1145,18 @@ class AlKabousAITester:
         self.test_admin_system_status()  # HIGH PRIORITY
         
         # Analysis Tests (High Priority)
+        print("\n🧠 === ANALYSIS TESTS ===")
         self.test_regular_analysis_endpoint()  # HIGH PRIORITY
         self.test_chart_analysis_endpoint()  # HIGH PRIORITY  
         self.test_analysis_logging_integration()  # HIGH PRIORITY - New logging system
         
         # Supporting API Tests
+        print("\n📊 === SUPPORTING API TESTS ===")
         self.test_analysis_types_endpoint()
         self.test_api_status_endpoint()
         
         # Performance and Error Tests
+        print("\n⚡ === PERFORMANCE & ERROR TESTS ===")
         self.test_performance_and_response_times()
         self.test_error_handling()
         
@@ -1154,7 +1165,7 @@ class AlKabousAITester:
         
         # Print summary
         print("=" * 60)
-        print("📋 TEST SUMMARY")
+        print("📋 TEST SUMMARY - GOLD PRICE SYSTEM FOCUS")
         print("=" * 60)
         print(f"Total Tests: {self.tests_run}")
         print(f"Passed: {self.tests_passed}")
@@ -1169,42 +1180,89 @@ class AlKabousAITester:
             for test in failed_tests:
                 print(f"  • {test['test']}: {test['details']}")
         
-        print("\n🎯 RECOMMENDATIONS:")
+        print("\n🎯 GOLD PRICE SYSTEM ANALYSIS:")
+        
+        # Analyze gold price specific tests
+        gold_price_tests = [
+            "Gold Price API",
+            "Gold Price Cache System", 
+            "Gold Price API Fallback System",
+            "Gold Price Conversion Functions",
+            "Gold Price Error Handling",
+            "Gold Price Response Time"
+        ]
+        
+        gold_price_results = {}
+        for test_name in gold_price_tests:
+            test_result = next((r for r in self.test_results if r['test'] == test_name), None)
+            if test_result:
+                gold_price_results[test_name] = test_result['success']
+        
+        gold_price_passed = sum(gold_price_results.values())
+        gold_price_total = len(gold_price_results)
+        
+        if gold_price_total > 0:
+            gold_price_success_rate = (gold_price_passed / gold_price_total) * 100
+            print(f"  💰 Gold Price System: {gold_price_passed}/{gold_price_total} tests passed ({gold_price_success_rate:.1f}%)")
+            
+            if gold_price_success_rate >= 80:
+                print("  ✅ Gold Price System is working well!")
+            elif gold_price_success_rate >= 60:
+                print("  ⚠️ Gold Price System has some issues but is functional")
+            else:
+                print("  ❌ Gold Price System has significant issues")
+        
+        print("\n🔧 RECOMMENDATIONS:")
         
         if self.tests_passed == self.tests_run:
-            print("  ✅ All tests passed! Backend is working correctly.")
+            print("  ✅ All tests passed! Gold Price System and Backend are working correctly.")
         else:
             print("  ⚠️ Some tests failed. Check the details above.")
             
         # Specific recommendations based on results
         gold_price_passed = any(r['test'] == 'Gold Price API' and r['success'] for r in self.test_results)
         gold_cache_passed = any(r['test'] == 'Gold Price Cache System' and r['success'] for r in self.test_results)
-        admin_auth_passed = any(r['test'] == 'Admin Login - Valid Credentials' and r['success'] for r in self.test_results)
-        admin_dashboard_passed = any(r['test'] == 'Admin Dashboard' and r['success'] for r in self.test_results)
-        analysis_logging_passed = any(r['test'] == 'Analysis Logging Integration' and r['success'] for r in self.test_results)
-        chart_analysis_passed = any(r['test'] == 'Chart Analysis' and r['success'] for r in self.test_results)
-        regular_analysis_passed = any('Analysis -' in r['test'] and r['success'] for r in self.test_results)
+        gold_fallback_passed = any(r['test'] == 'Gold Price API Fallback System' and r['success'] for r in self.test_results)
+        gold_conversion_passed = any(r['test'] == 'Gold Price Conversion Functions' and r['success'] for r in self.test_results)
+        gold_error_passed = any(r['test'] == 'Gold Price Error Handling' and r['success'] for r in self.test_results)
+        gold_response_passed = any(r['test'] == 'Gold Price Response Time' and r['success'] for r in self.test_results)
         
         if not gold_price_passed:
-            print("  💰 Gold price API issues - check gold price providers and API keys")
+            print("  💰 CRITICAL: Gold price API issues - check API keys and endpoints")
         
         if not gold_cache_passed:
             print("  ⏰ Gold price cache system issues - check 15-minute cache implementation")
         
-        if not admin_auth_passed:
-            print("  🔐 Admin authentication issues - check admin credentials (admin/GOLD_NIGHTMARE_205)")
+        if not gold_fallback_passed:
+            print("  🔄 Gold price fallback system issues - check API priority and error handling")
         
-        if not admin_dashboard_passed:
-            print("  📊 Admin dashboard issues - check admin_manager initialization and database")
+        if not gold_conversion_passed:
+            print("  ⚖️ Gold price conversion issues - check gram/karat calculation functions")
         
-        if not analysis_logging_passed:
-            print("  📝 Analysis logging issues - check admin_manager integration")
+        if not gold_error_passed:
+            print("  🚫 Gold price error handling issues - check 401/429/403/404 error responses")
         
-        if not chart_analysis_passed:
-            print("  📈 Chart analysis issues - check Claude AI integration and image processing")
+        if not gold_response_passed:
+            print("  ⏱️ Gold price response time issues - check API performance and timeouts")
         
-        if not regular_analysis_passed:
-            print("  🧠 Analysis issues - check Claude AI API key and prompts")
+        # Overall gold price system status
+        gold_system_issues = [
+            not gold_price_passed,
+            not gold_cache_passed, 
+            not gold_fallback_passed,
+            not gold_conversion_passed,
+            not gold_error_passed,
+            not gold_response_passed
+        ]
+        
+        critical_issues = sum(gold_system_issues)
+        
+        if critical_issues == 0:
+            print("  🏆 GOLD PRICE SYSTEM: Fully functional with all new APIs working!")
+        elif critical_issues <= 2:
+            print("  ⚠️ GOLD PRICE SYSTEM: Mostly functional with minor issues")
+        else:
+            print("  ❌ GOLD PRICE SYSTEM: Significant issues need attention")
         
         print("\n📊 Detailed results saved in test_results list")
         
