@@ -1,0 +1,255 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "back": "Back",
+    "next": "Next",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "header": {
+    "title": "al_kabous ai",
+    "subtitle": "Gold Nightmare School",
+    "nav": {
+      "home": "🏠 Home",
+      "contact": "📞 Contact Us",
+      "admin": "🔧 Admin Panel",
+      "login": "🔐 Login",
+      "register": "📝 Register",
+      "logout": "🚪 Logout"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Login",
+      "subtitle": "Enter your credentials to access your account",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Login",
+      "noAccount": "Don't have an account?",
+      "createAccount": "Create new account",
+      "forgotPassword": "Forgot password?"
+    },
+    "register": {
+      "title": "Create New Account",
+      "subtitle": "Join us and get free gold analysis",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "username": "Username (optional)",
+      "firstName": "First Name (optional)",
+      "lastName": "Last Name (optional)",
+      "submit": "Create Account",
+      "haveAccount": "Already have an account?",
+      "loginHere": "Login here",
+      "terms": "By creating an account, you agree to",
+      "termsLink": "Terms of Service",
+      "and": "and",
+      "privacyLink": "Privacy Policy"
+    },
+    "messages": {
+      "loginSuccess": "Login successful",
+      "registerSuccess": "Account created successfully",
+      "logoutSuccess": "Logout successful",
+      "invalidCredentials": "Invalid credentials",
+      "emailRequired": "Email is required",
+      "passwordRequired": "Password is required",
+      "passwordMismatch": "Passwords do not match",
+      "emailInvalid": "Invalid email format"
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome",
+    "goldPrice": "Current Gold Price",
+    "subscription": {
+      "current": "Current Subscription",
+      "basic": "Basic",
+      "premium": "Premium",
+      "vip": "VIP",
+      "analysesRemaining": "Analyses Remaining Today",
+      "unlimited": "Unlimited",
+      "upgrade": "Upgrade Subscription"
+    }
+  },
+  "analysis": {
+    "title": "Gold Analysis",
+    "subtitle": "Get professional AI-powered gold analysis",
+    "types": {
+      "quick": "Quick",
+      "detailed": "Detailed",
+      "technical": "Technical",
+      "news": "News",
+      "forecast": "Forecast"
+    },
+    "buttons": {
+      "customAnalysis": "Custom Analysis Request",
+      "chartAnalysis": "Chart Analysis by Image",
+      "analyzeNow": "Analyze Now"
+    },
+    "form": {
+      "question": "What's your question about gold?",
+      "questionPlaceholder": "Write your question here...",
+      "analysisType": "Analysis Type",
+      "submit": "Perform Analysis"
+    },
+    "results": {
+      "title": "Analysis Results",
+      "type": "Analysis Type",
+      "currentPrice": "Current Price",
+      "noResults": "No results available"
+    },
+    "limits": {
+      "exceeded": "Daily analysis limit exceeded",
+      "upgrade": "Upgrade your subscription for more analyses"
+    }
+  },
+  "chart": {
+    "title": "Chart Analysis by Image",
+    "subtitle": "Upload chart image and get professional technical analysis",
+    "upload": {
+      "title": "Upload Chart",
+      "dragDrop": "Drag image here or click to select",
+      "supportedFormats": "Supported formats: PNG, JPG, GIF",
+      "maxSize": "Max size: 5MB"
+    },
+    "form": {
+      "currencyPair": "Currency Pair",
+      "timeframe": "Timeframe",
+      "notes": "Additional Notes",
+      "analyze": "Analyze Chart Now"
+    },
+    "results": {
+      "title": "Chart Analysis Results",
+      "analyzing": "Analyzing chart...",
+      "failed": "Chart analysis failed"
+    }
+  },
+  "forex": {
+    "title": "Forex Analysis",
+    "subtitle": "Analysis of major currency pairs in the market",
+    "results": {
+      "title": "Forex Analysis Results",
+      "currentPrice": "Current Price",
+      "analyzing": "Analyzing forex..."
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "We're here to help you",
+    "personal": {
+      "title": "Personal Contact",
+      "whatsapp": "WhatsApp",
+      "telegram": "Personal Telegram",
+      "instagram": "Instagram",
+      "facebook": "Facebook"
+    },
+    "channels": {
+      "title": "Official Channels",
+      "recommendations": "Recommendations Channel",
+      "discussions": "Discussions Channel"
+    },
+    "company": {
+      "title": "Company Information",
+      "name": "Gold Nightmare School",
+      "description": "Specialized platform for gold and currency analysis using artificial intelligence"
+    }
+  },
+  "admin": {
+    "title": "Admin Control Panel",
+    "login": {
+      "title": "Admin Login",
+      "username": "Username",
+      "password": "Password",
+      "submit": "Login"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "users": {
+        "total": "Total Users",
+        "active": "Active Users",
+        "basic": "Basic",
+        "premium": "Premium",
+        "vip": "VIP"
+      },
+      "analyses": {
+        "today": "Today's Analyses",
+        "total": "Total Analyses",
+        "success": "Success Rate"
+      }
+    },
+    "users": {
+      "title": "User Management",
+      "email": "Email",
+      "subscription": "Subscription",
+      "status": "Status",
+      "created": "Registration Date",
+      "todayCount": "Today's Count",
+      "actions": "Actions",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "updateTier": "Update Subscription"
+    },
+    "logs": {
+      "title": "Analysis Logs",
+      "user": "User",
+      "type": "Type",
+      "time": "Time",
+      "result": "Result",
+      "success": "Success",
+      "failed": "Failed"
+    }
+  },
+  "subscription": {
+    "tiers": {
+      "basic": {
+        "name": "Basic",
+        "description": "Free for beginners",
+        "price": "Free",
+        "features": [
+          "1 analysis per day",
+          "Basic gold analysis",
+          "Email support"
+        ]
+      },
+      "premium": {
+        "name": "Premium",
+        "description": "For active traders",
+        "price": "$19/month",
+        "features": [
+          "5 analyses per day",
+          "Analysis history",
+          "Advanced analysis",
+          "Advanced charts"
+        ]
+      },
+      "vip": {
+        "name": "VIP",
+        "description": "For professionals",
+        "price": "$49/month",
+        "features": [
+          "Unlimited analyses",
+          "Priority support",
+          "Voice analysis",
+          "Custom indicators",
+          "All features"
+        ]
+      }
+    }
+  },
+  "errors": {
+    "network": "Network connection error",
+    "unauthorized": "Unauthorized access",
+    "forbidden": "Forbidden",
+    "notFound": "Not found",
+    "serverError": "Server error",
+    "unknown": "Unknown error occurred"
+  }
+}
