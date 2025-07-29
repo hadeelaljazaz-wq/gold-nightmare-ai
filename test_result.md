@@ -367,10 +367,10 @@ frontend:
 
 metadata:
   created_by: "main_agent"
-  version: "1.3"
-  test_sequence: 3
+  version: "1.4"
+  test_sequence: 4
   run_ui: false
-  phase: "Backend Testing Complete - All High Priority Tasks Verified"
+  phase: "Frontend Testing Complete - Critical Navigation Issues Found"
 
 test_plan:
   current_focus:
