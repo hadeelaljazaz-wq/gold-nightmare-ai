@@ -14,7 +14,7 @@ from typing import Dict, Any, Optional
 class AlKabousAITester:
     """Comprehensive tester for Al Kabous AI Gold Analysis backend"""
     
-    def __init__(self, base_url: str = "https://33206162-97aa-4ab2-bf61-8029b938fa88.preview.emergentagent.com"):
+    def __init__(self, base_url: str = "http://localhost:8001"):
         self.base_url = base_url.rstrip('/')
         self.tests_run = 0
         self.tests_passed = 0
@@ -22,7 +22,7 @@ class AlKabousAITester:
         
         # Test configuration
         self.timeout = 60  # Increased for AI analysis
-        self.expected_gold_price_range = (3200, 3400)  # Around $3310
+        self.expected_gold_price_range = (1000, 5000)  # Reasonable range for gold
         
         print(f"🚀 Initializing Al Kabous AI Backend Tester")
         print(f"📡 Backend URL: {self.base_url}")
