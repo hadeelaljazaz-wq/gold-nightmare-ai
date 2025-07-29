@@ -523,6 +523,204 @@ function App() {
     </div>
   );
 
+  const renderChartAnalysisView = () => (
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 p-4">
+      <div className="max-w-4xl mx-auto">
+        
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-white mb-4 flex items-center justify-center">
+            <span className="text-orange-400 mr-3">📊</span>
+            تحليل الشارت الاحترافي
+          </h1>
+          <p className="text-purple-200">ارفع صورة الشارت واحصل على تحليل فني شامل مدعوم بالذكاء الاصطناعي</p>
+        </div>
+
+        <div className="glass-card p-6 mb-6">
+          
+          {/* Image Upload Section */}
+          <div className="mb-8">
+            <h3 className="text-white font-semibold mb-4 flex items-center">
+              <span className="text-orange-400 mr-2">📷</span>
+              ارفع صورة الشارت
+            </h3>
+            
+            <div className="border-2 border-dashed border-orange-400/50 rounded-xl p-8 text-center bg-gradient-to-br from-orange-900/20 to-red-900/20">
+              {imagePreview ? (
+                <div className="space-y-4">
+                  <img 
+                    src={imagePreview} 
+                    alt="Chart preview" 
+                    className="max-w-full max-h-96 mx-auto rounded-lg shadow-lg"
+                  />
+                  <div className="text-green-400 font-medium">
+                    ✅ تم تحميل الصورة بنجاح
+                  </div>
+                  <button
+                    onClick={() => {
+                      setSelectedImage(null);
+                      setImagePreview(null);
+                      document.getElementById('chart-upload').value = '';
+                    }}
+                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                  >
+                    🗑️ حذف الصورة
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="text-6xl mb-4">📊</div>
+                  <p className="text-white text-lg font-medium">اضغط لرفع الشارت أو اسحب الملف هنا</p>
+                  <p className="text-purple-300 text-sm">PNG, JPG, JPEG (أقل من 10 ميجابايت)</p>
+                  <input
+                    id="chart-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                  <button
+                    onClick={() => document.getElementById('chart-upload').click()}
+                    className="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg font-medium transition-all transform hover:scale-105"
+                  >
+                    📁 اختيار ملف
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Quick Analysis Buttons */}
+          <div className="mb-6">
+            <h3 className="text-white font-semibold mb-4 flex items-center">
+              <span className="text-yellow-400 mr-2">⚡</span>
+              تحليل سريع
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <button
+                onClick={() => {
+                  setCurrencyPair('XAU/USD');
+                  setTimeframe('H1');
+                  setAnalysisNotes('تحليل سريع للذهب');
+                }}
+                className="p-3 bg-gradient-to-r from-yellow-600/80 to-orange-600/80 hover:from-yellow-500/80 hover:to-orange-500/80 text-white rounded-lg font-medium transition-all"
+              >
+                🥇 XAU/USD
+              </button>
+              <button
+                onClick={() => {
+                  setCurrencyPair('EUR/USD');
+                  setTimeframe('H1');
+                  setAnalysisNotes('تحليل سريع لليورو');
+                }}
+                className="p-3 bg-gradient-to-r from-blue-600/80 to-cyan-600/80 hover:from-blue-500/80 hover:to-cyan-500/80 text-white rounded-lg font-medium transition-all"
+              >
+                🇪🇺 EUR/USD
+              </button>
+              <button
+                onClick={() => {
+                  setCurrencyPair('GBP/USD');
+                  setTimeframe('H1');
+                  setAnalysisNotes('تحليل سريع للجنيه');
+                }}
+                className="p-3 bg-gradient-to-r from-purple-600/80 to-indigo-600/80 hover:from-purple-500/80 hover:to-indigo-500/80 text-white rounded-lg font-medium transition-all"
+              >
+                🇬🇧 GBP/USD
+              </button>
+              <button
+                onClick={() => {
+                  setCurrencyPair('USD/JPY');
+                  setTimeframe('H1');
+                  setAnalysisNotes('تحليل سريع للين');
+                }}
+                className="p-3 bg-gradient-to-r from-red-600/80 to-pink-600/80 hover:from-red-500/80 hover:to-pink-500/80 text-white rounded-lg font-medium transition-all"
+              >
+                🇯🇵 USD/JPY
+              </button>
+            </div>
+          </div>
+
+          {/* Detailed Settings */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            
+            {/* Currency Pair */}
+            <div>
+              <label className="block text-white font-semibold mb-2">
+                <span className="text-green-400 mr-2">💱</span>
+                زوج العملة
+              </label>
+              <input
+                type="text"
+                value={currencyPair}
+                onChange={(e) => setCurrencyPair(e.target.value)}
+                placeholder="مثال: XAU/USD"
+                className="w-full p-3 bg-purple-800/30 border border-purple-600/50 rounded-lg text-white placeholder-purple-300 focus:outline-none focus:border-orange-400"
+              />
+            </div>
+
+            {/* Timeframe */}
+            <div>
+              <label className="block text-white font-semibold mb-2">
+                <span className="text-blue-400 mr-2">⏰</span>
+                الإطار الزمني
+              </label>
+              <select
+                value={timeframe}
+                onChange={(e) => setTimeframe(e.target.value)}
+                className="w-full p-3 bg-purple-800/30 border border-purple-600/50 rounded-lg text-white focus:outline-none focus:border-orange-400"
+              >
+                <option value="M1">دقيقة واحدة (M1)</option>
+                <option value="M5">5 دقائق (M5)</option>
+                <option value="M15">15 دقيقة (M15)</option>
+                <option value="M30">30 دقيقة (M30)</option>
+                <option value="H1">ساعة (H1)</option>
+                <option value="H4">4 ساعات (H4)</option>
+                <option value="D1">يومي (D1)</option>
+                <option value="W1">أسبوعي (W1)</option>
+                <option value="MN1">شهري (MN1)</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Analysis Notes */}
+          <div className="mb-6">
+            <label className="block text-white font-semibold mb-2">
+              <span className="text-pink-400 mr-2">📝</span>
+              ملاحظات إضافية للتحليل
+            </label>
+            <textarea
+              value={analysisNotes}
+              onChange={(e) => setAnalysisNotes(e.target.value)}
+              placeholder="أضف أي ملاحظات أو أسئلة خاصة حول الشارت..."
+              rows="3"
+              className="w-full p-3 bg-purple-800/30 border border-purple-600/50 rounded-lg text-white placeholder-purple-300 focus:outline-none focus:border-orange-400 resize-none"
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-4">
+            <button
+              onClick={() => setCurrentView('dashboard')}
+              className="flex-1 py-3 px-6 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
+            >
+              العودة
+            </button>
+            <button
+              onClick={handleChartAnalysis}
+              disabled={!selectedImage}
+              className="flex-2 py-3 px-8 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-gray-500 disabled:to-gray-600 text-white rounded-lg font-bold transition-all disabled:cursor-not-allowed transform hover:scale-105"
+            >
+              <span className="mr-2">🚀</span>
+              تحليل الشارت الآن
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  );
+
   const renderResultsView = () => (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 p-4">
       <div className="max-w-4xl mx-auto">
@@ -533,7 +731,7 @@ function App() {
             <span className="text-yellow-400 mr-3">🏆</span>
             تحليل al_kabous ai
           </h1>
-          <p className="text-purple-200">تحليل ذكي ومتقدم لأسعار الذهب</p>
+          <p className="text-purple-200">تحليل ذكي ومتقدم للأسواق المالية</p>
           <button 
             onClick={fetchGoldPrice}
             className="mt-4 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-colors text-sm"
@@ -576,43 +774,60 @@ function App() {
           </h2>
           <p className="text-purple-200 mb-6">تحليل ذكي مدعوم بالذكاء الاصطناعي مع التوصيات</p>
           
-          {analysisLoading ? (
+          {/* Handle both regular analysis and chart analysis */}
+          {analysisLoading || chartAnalysisLoading ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-16 w-16 border-4 border-green-400 border-t-transparent mx-auto mb-6"></div>
               <p className="text-white text-lg">جاري إجراء التحليل الذكي...</p>
               <p className="text-purple-300 text-sm mt-2">قد يستغرق هذا بعض الوقت</p>
             </div>
-          ) : analysisResult ? (
-            analysisResult.success ? (
-              <div className="space-y-4">
-                <div className="bg-purple-800/30 rounded-lg p-6 border border-purple-600/30">
-                  <div className="prose prose-invert max-w-none">
-                    <div className="text-white whitespace-pre-line leading-relaxed">
-                      {analysisResult.analysis}
+          ) : (analysisResult || chartAnalysisResult) ? (
+            // Show results
+            (() => {
+              const result = analysisResult || chartAnalysisResult;
+              return result.success ? (
+                <div className="space-y-4">
+                  {/* Show image info if it's chart analysis */}
+                  {chartAnalysisResult && chartAnalysisResult.image_info && (
+                    <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-500/30 mb-4">
+                      <h4 className="text-blue-300 font-medium mb-2">📊 معلومات الصورة:</h4>
+                      <div className="text-sm text-blue-200">
+                        <p>الأبعاد: {chartAnalysisResult.image_info.width} × {chartAnalysisResult.image_info.height}</p>
+                        <p>الحجم: {chartAnalysisResult.image_info.size_kb.toFixed(1)} كيلوبايت</p>
+                        <p>النوع: {chartAnalysisResult.image_info.format}</p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="bg-purple-800/30 rounded-lg p-6 border border-purple-600/30">
+                    <div className="prose prose-invert max-w-none">
+                      <div className="text-white whitespace-pre-line leading-relaxed">
+                        {result.analysis}
+                      </div>
                     </div>
                   </div>
+                  
+                  {result.processing_time && (
+                    <div className="text-center text-purple-300 text-sm">
+                      ⏱️ وقت المعالجة: {result.processing_time.toFixed(2)} ثانية
+                    </div>
+                  )}
                 </div>
-                
-                {analysisResult.processing_time && (
-                  <div className="text-center text-purple-300 text-sm">
-                    ⏱️ وقت المعالجة: {analysisResult.processing_time.toFixed(2)} ثانية
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <div className="text-6xl mb-4">⚠️</div>
-                <p className="text-red-300 text-lg">لا يوجد تحليل بعد</p>
-                <p className="text-purple-300 text-sm mt-2">
-                  {analysisResult.error || '"اكتب سؤالك واضغط على "تحليل الذهب'}
-                </p>
-              </div>
-            )
+              ) : (
+                <div className="text-center py-8">
+                  <div className="text-6xl mb-4">⚠️</div>
+                  <p className="text-red-300 text-lg">حدث خطأ في التحليل</p>
+                  <p className="text-purple-300 text-sm mt-2">
+                    {result.error || 'خطأ غير معروف'}
+                  </p>
+                </div>
+              );
+            })()
           ) : (
             <div className="text-center py-8">
               <div className="text-6xl mb-4">⚠️</div>
               <p className="text-yellow-300 text-lg">لا يوجد تحليل بعد</p>
-              <p className="text-purple-300 text-sm mt-2">ارفع دليلاً بيانياً واضغط على "تحليل الذهب"</p>
+              <p className="text-purple-300 text-sm mt-2">قم بطلب تحليل للحصول على النتائج</p>
             </div>
           )}
         </div>
@@ -621,7 +836,16 @@ function App() {
         <div className="text-center space-y-4">
           <div className="flex gap-4 justify-center">
             <button
-              onClick={() => setCurrentView('analyze')}
+              onClick={() => {
+                // Reset states and go back to appropriate view
+                if (chartAnalysisResult) {
+                  setCurrentView('chart-analysis');
+                  setChartAnalysisResult(null);
+                } else {
+                  setCurrentView('analyze');
+                  setAnalysisResult(null);
+                }
+              }}
               className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
             >
               طلب تحليل جديد
