@@ -90,6 +90,37 @@ function App() {
     }
   };
 
+  // Forex Analysis Function
+  const handleForexAnalysis = async (pair) => {
+    setSelectedForexPair(pair);
+    setForexAnalysisLoading(true);
+    setCurrentView('results');
+    
+    try {
+      const response = await fetch(`${API_URL}/api/analyze-forex`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pair: pair,
+          analysis_type: 'detailed',
+          additional_context: `تحليل شامل لزوج العملة ${pair}`
+        })
+      });
+      
+      const data = await response.json();
+      setForexAnalysisResult(data);
+      
+    } catch (err) {
+      console.error('Error analyzing forex:', err);
+      setForexAnalysisResult({
+        success: false,
+        error: 'حدث خطأ في تحليل العملة'
+      });
+    } finally {
+      setForexAnalysisLoading(false);
+    }
+  };
+
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
