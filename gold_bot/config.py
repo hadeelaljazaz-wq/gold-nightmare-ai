@@ -14,35 +14,27 @@ logger = logging.getLogger(__name__)
 class BotConfig:
     """Bot configuration class"""
     
-    # Telegram Bot Settings
+    # Required fields first
     telegram_token: str
     master_user_id: int  
     activation_password: str
-    session_timeout: int = 86400
-    
-    # Claude AI Settings
     claude_api_key: str
+    gold_api_token: str
+    
+    # Optional fields with defaults
+    session_timeout: int = 86400
     claude_model: str = "claude-sonnet-4-20250514"
     claude_max_tokens: int = 4000
     claude_temperature: float = 0.7
-    
-    # Gold API Settings
-    gold_api_token: str
     metals_api_key: Optional[str] = None
     forex_api_key: Optional[str] = None
-    
-    # Bot Behavior
     prompt_language: str = "arabic"
     bot_signature: str = "Gold Nightmare Bot"
-    
-    # Cache & Rate Limiting
     price_cache_ttl: int = 300
     analysis_cache_ttl: int = 1800
     rate_limit_basic: int = 5
     rate_limit_premium: int = 20
     rate_limit_vip: int = 50
-    
-    # Database
     mongo_url: str = "mongodb://localhost:27017"
     db_name: str = "gold_nightmare_bot"
 
