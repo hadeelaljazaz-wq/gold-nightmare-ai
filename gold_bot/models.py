@@ -152,6 +152,15 @@ class UserDailySummary:
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary"""
         return asdict(self)
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'UserDailySummary':
+        """Create UserDailySummary from dictionary"""
+        # Remove MongoDB's _id field if present
+        if '_id' in data:
+            data = data.copy()
+            del data['_id']
+        return cls(**data)
 
 @dataclass
 class BotStats:
