@@ -165,7 +165,7 @@ class GoldPriceManager:
                     logger.info(f"🔍 Trying {api_name} API...")
                     price = await self._fetch_from_api(api_name, api_config)
                     
-                    if price:
+                    if price and self._validate_price_data(price):
                         # Store in internal 15-minute cache
                         self.gold_cache["price"] = price
                         self.gold_cache["timestamp"] = now
@@ -174,8 +174,10 @@ class GoldPriceManager:
                         if self.cache_manager:
                             await self.cache_manager.cache_gold_price(price)
                         
-                        logger.info(f"✅ Got gold price from {api_name}: ${price.price_usd:.2f}")
+                        logger.info(f"✅ Got valid gold price from {api_name}: ${price.price_usd:.2f}")
                         return price
+                    else:
+                        logger.warning(f"⚠️ {api_name} returned invalid price data")
                         
                 except Exception as e:
                     logger.warning(f"⚠️ {api_name} API failed: {e}")
