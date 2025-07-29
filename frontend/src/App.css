@@ -1,38 +1,215 @@
-.App {
-    text-align: center;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Global Styles */
+body {
+  font-family: 'Arial', 'Helvetica', 'Tahoma', sans-serif;
+  direction: rtl;
+  text-align: right;
 }
 
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+/* Custom Utilities */
+.shadow-text {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+/* Glass morphism effect */
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
-.App-link {
-    color: #61dafb;
+/* Smooth animations */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+}
+
+/* Loading spinner */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive typography */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Custom gold gradient */
+.bg-gold-gradient {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 25%, #f59e0b 75%, #d97706 100%);
+}
+
+/* Hover effects */
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Status indicators */
+.status-online {
+  background-color: #10b981;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+.status-offline {
+  background-color: #ef4444;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+}
+
+/* Arabic number formatting */
+.ltr-numbers {
+  direction: ltr;
+  display: inline-block;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Button styles */
+.btn-gold {
+  @apply bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 transform hover:-translate-y-1;
+}
+
+/* Card styles */
+.glass-card {
+  @apply bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-2xl border border-white border-opacity-20 shadow-xl;
+}
+
+/* Text effects */
+.glow-text {
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+}
+
+/* Animation delays */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-500 { animation-delay: 500ms; }
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .text-4xl {
+    font-size: 2.5rem;
+  }
+  
+  .text-6xl {
+    font-size: 3.5rem;
+  }
+  
+  .grid-cols-3 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  
+  .gap-6 {
+    gap: 1rem;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .bg-white\/10 {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  .border-white\/20 {
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .animate-spin,
+  .animate-pulse {
+    animation: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .bg-gradient-to-br {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .text-white {
+    color: black !important;
+  }
+  
+  .backdrop-blur-md {
+    backdrop-filter: none !important;
+    background: white !important;
+    border: 1px solid #ccc !important;
+  }
 }
