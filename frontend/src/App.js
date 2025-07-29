@@ -184,12 +184,13 @@ function App() {
 
       <div className="max-w-6xl mx-auto px-4 pb-8">
 
-        {/* Live Gold Price Chart */}
-        <div className="glass-card p-6 mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-white flex items-center">
-              <span className="text-yellow-400 mr-2">💰</span>
-              سعر الذهب الحالي
+        
+        {/* Current Gold Price */}
+        {goldPrice && (
+          <div className="glass-card p-6 mb-8">
+            <h2 className="text-2xl font-bold royal-text mb-6 flex items-center justify-center">
+              <span className="gold-text mr-3">💰</span>
+              السعر الحالي للذهب
             </h2>
             <button 
               onClick={fetchGoldPrice}
