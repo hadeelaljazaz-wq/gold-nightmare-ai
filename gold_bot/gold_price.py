@@ -400,32 +400,34 @@ class GoldPriceManager:
             raise GoldAPIError(f"Failed to parse Forex API response: {e}")
     
     def _parse_yahoo_finance_response(self, data: Dict[str, Any]) -> GoldPrice:
-        """Parse Yahoo Finance response"""
+        """Parse Yahoo Finance response (updated format)"""
         try:
-            # Yahoo Finance response format
-            chart = data.get("chart", {})
-            result = chart.get("result", [])
+            # Yahoo Finance v7 quote response format
+            quote_response = data.get("quoteResponse", {})
+            result = quote_response.get("result", [])
+            
             if not result:
                 raise GoldAPIError("Empty result from Yahoo Finance API")
             
             gold_data = result[0]
-            meta = gold_data.get("meta", {})
-            indicators = gold_data.get("indicators", {})
-            quote = indicators.get("quote", [{}])[0] if indicators.get("quote") else {}
             
-            current_price = meta.get("regularMarketPrice", 0)
-            previous_close = meta.get("previousClose", current_price)
-            price_change = current_price - previous_close
-            price_change_pct = (price_change / previous_close * 100) if previous_close else 0
+            current_price = gold_data.get("regularMarketPrice", 0)
+            previous_close = gold_data.get("regularMarketPreviousClose", current_price)
+            price_change = gold_data.get("regularMarketChange", current_price - previous_close)
+            price_change_pct = gold_data.get("regularMarketChangePercent", 0)
+            
+            # Validate the price
+            if not current_price or current_price <= 0:
+                raise GoldAPIError("Invalid price from Yahoo Finance")
             
             return GoldPrice(
                 price_usd=float(current_price),
                 price_change=float(price_change),
                 price_change_pct=float(price_change_pct),
-                ask=float(meta.get("ask", current_price)),
-                bid=float(meta.get("bid", current_price)),
-                high_24h=float(meta.get("regularMarketDayHigh", current_price)),
-                low_24h=float(meta.get("regularMarketDayLow", current_price)),
+                ask=float(gold_data.get("ask", current_price + 1)),
+                bid=float(gold_data.get("bid", current_price - 1)),
+                high_24h=float(gold_data.get("regularMarketDayHigh", current_price + 10)),
+                low_24h=float(gold_data.get("regularMarketDayLow", current_price - 10)),
                 source="yahoo_finance",
                 timestamp=datetime.utcnow()
             )
