@@ -674,3 +674,45 @@ async def get_gold_price_text() -> str:
         """.strip()
     
     return price.to_arabic_text()
+
+def convert_gold_price_to_grams(price_per_ounce: float) -> Dict[str, float]:
+    """
+    Convert gold price from USD per ounce to USD per gram for different karats
+    1 ounce = 31.1035 grams
+    """
+    OUNCE_TO_GRAM = 31.1035
+    
+    # Price per gram for pure gold (24k)
+    price_per_gram_24k = price_per_ounce / OUNCE_TO_GRAM
+    
+    return {
+        "24k": price_per_gram_24k,  # Pure gold (100%)
+        "22k": price_per_gram_24k * 0.917,  # 91.7% pure
+        "21k": price_per_gram_24k * 0.875,  # 87.5% pure  
+        "18k": price_per_gram_24k * 0.750,  # 75% pure
+        "14k": price_per_gram_24k * 0.583,  # 58.3% pure
+        "10k": price_per_gram_24k * 0.417   # 41.7% pure
+    }
+
+async def get_gold_price_with_conversions() -> Dict[str, Any]:
+    """Get gold price with conversions to different units and karats"""
+    price = await get_current_gold_price()
+    
+    if not price:
+        return {"error": "Unable to fetch gold price"}
+    
+    # Convert to different formats
+    gram_prices = convert_gold_price_to_grams(price.price_usd)
+    
+    return {
+        "ounce_usd": price.price_usd,
+        "gram_prices_usd": gram_prices,
+        "price_change": price.price_change,
+        "price_change_pct": price.price_change_pct,
+        "source": price.source,
+        "timestamp": price.timestamp.isoformat() if price.timestamp else None,
+        "ask": price.ask,
+        "bid": price.bid,
+        "high_24h": price.high_24h,
+        "low_24h": price.low_24h
+    }
