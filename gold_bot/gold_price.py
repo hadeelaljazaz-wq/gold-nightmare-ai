@@ -39,25 +39,34 @@ class GoldPriceManager:
                 "active": bool(self.config.gold_api_token),
                 "priority": 1
             },
-            "metals": {
-                "url": "https://api.metals.live/v1/spot/gold",
-                "headers": {"x-api-key": self.config.metals_api_key} if self.config.metals_api_key else {},
-                "active": bool(self.config.metals_api_key),
+            "yahoo_finance": {
+                "url": "https://query1.finance.yahoo.com/v8/finance/chart/GC=F",
+                "headers": {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                },
+                "active": True,
                 "priority": 2
             },
-            "forex": {
-                "url": "https://fcsapi.com/api-v3/forex/latest?symbol=XAU/USD",
-                "headers": {"access_key": self.config.forex_api_key} if self.config.forex_api_key else {},
-                "active": bool(self.config.forex_api_key),
+            "metals_api": {
+                "url": "https://api.metals.live/v1/spot/gold",
+                "headers": {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                },
+                "active": True,
                 "priority": 3
+            },
+            "fxempire": {
+                "url": "https://api.fxempire.com/v1/en/markets/data",
+                "headers": {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                },
+                "active": True,
+                "priority": 4
             }
         }
         
-        # Filter active APIs and sort by priority
-        self.active_apis = sorted(
-            [(name, config) for name, config in self.apis.items() if config["active"]],
-            key=lambda x: x[1]["priority"]
-        )
+        # Sort APIs by priority
+        self.apis = dict(sorted(self.apis.items(), key=lambda x: x[1]['priority']))
         
         if not self.active_apis:
             logger.error("❌ No active gold price APIs configured!")
