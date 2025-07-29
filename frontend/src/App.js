@@ -11,10 +11,28 @@ function App() {
   const [currentView, setCurrentView] = useState('dashboard'); // dashboard, analyze, results, contact, chart-analysis, admin, login, register
   const [loading, setLoading] = useState(false);
   
-  // User Authentication States
+  // Authentication States
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(false);
+  
+  // Login Form States
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginShowPassword, setLoginShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState('');
+  
+  // Register Form States
+  const [registerFormData, setRegisterFormData] = useState({
+    email: '',
+    password: '',
+    confirmPassword: '',
+    username: '',
+    firstName: '',
+    lastName: ''
+  });
+  const [registerShowPassword, setRegisterShowPassword] = useState(false);
+  const [registerError, setRegisterError] = useState('');
   
   // Language State
   const [currentLanguage, setCurrentLanguage] = useState('ar');
