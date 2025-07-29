@@ -3,7 +3,7 @@ Gold Nightmare Bot Configuration
 جميع إعدادات البوت والتكوين
 """
 import os
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from dataclasses import dataclass
 from dotenv import load_dotenv
 import logging
