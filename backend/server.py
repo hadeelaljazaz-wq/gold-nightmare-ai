@@ -10,7 +10,7 @@ import logging
 import asyncio
 from datetime import datetime
 from pydantic import BaseModel, Field
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 import uuid
 
 # Add parent directory to path for imports
@@ -20,8 +20,11 @@ sys.path.append(str(Path(__file__).parent.parent))
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# Import bot modules
-from gold_bot.bot import GoldNightmareBot
+# Import gold analysis components (no more telegram)
+from gold_bot.gold_price import get_current_gold_price, get_price_manager
+from gold_bot.ai_manager import get_ai_manager
+from gold_bot.models import AnalysisType
+from gold_bot.database import get_database
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
@@ -29,72 +32,250 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ.get('DB_NAME', 'gold_nightmare_bot')]
 
 # Initialize FastAPI
-app = FastAPI(title="Gold Nightmare Bot API", version="1.0.0")
+app = FastAPI(title="Gold Nightmare Analysis API", version="1.0.0")
 api_router = APIRouter(prefix="/api")
 
-# Initialize Bot
-bot_instance = None
+# Component managers
+price_manager = None
+ai_manager = None
+db_manager = None
 
 @app.on_event("startup")
 async def startup_event():
-    """Initialize the bot on startup"""
-    global bot_instance
+    """Initialize components on startup"""
+    global price_manager, ai_manager, db_manager
     try:
-        bot_instance = GoldNightmareBot()
-        await bot_instance.initialize()
+        # Initialize managers
+        price_manager = await get_price_manager()
+        ai_manager = await get_ai_manager()
+        db_manager = await get_database()
         
-        # Start bot in background task
-        asyncio.create_task(bot_instance.start())
-        
-        logging.info("🚀 Gold Nightmare Bot started successfully!")
+        logging.info("🚀 Gold Analysis API started successfully!")
         
     except Exception as e:
-        logging.error(f"❌ Failed to start bot: {e}")
+        logging.error(f"❌ Failed to start API: {e}")
 
 @app.on_event("shutdown")
 async def shutdown_event():
     """Cleanup on shutdown"""
-    global bot_instance
-    if bot_instance:
-        await bot_instance.stop()
     client.close()
 
-# Health check endpoints
+# Pydantic models for API
+class AnalysisRequest(BaseModel):
+    analysis_type: str
+    user_question: Optional[str] = None
+    additional_context: Optional[str] = None
+
+class AnalysisResponse(BaseModel):
+    success: bool
+    analysis: Optional[str] = None
+    gold_price: Optional[Dict[str, Any]] = None
+    error: Optional[str] = None
+    processing_time: Optional[float] = None
+
+class GoldPriceResponse(BaseModel):
+    success: bool
+    price_data: Optional[Dict[str, Any]] = None
+    formatted_text: Optional[str] = None
+    error: Optional[str] = None
+
+# API endpoints
+@api_router.get("/")
+async def root():
+    return {"message": "Gold Nightmare Analysis API", "status": "running"}
+
 @api_router.get("/health")
 async def health_check():
     return {
         "status": "healthy",
-        "bot_running": bot_instance is not None and bot_instance.is_running() if bot_instance else False,
+        "api_running": True,
         "timestamp": datetime.utcnow().isoformat()
     }
 
-@api_router.get("/bot/stats")
-async def get_bot_stats():
-    """Get bot statistics"""
-    if not bot_instance:
-        raise HTTPException(status_code=503, detail="Bot not initialized")
-    
-    stats = await bot_instance.get_stats()
-    return stats
+@api_router.get("/gold-price", response_model=GoldPriceResponse)
+async def get_gold_price():
+    """Get current gold price"""
+    try:
+        if not price_manager:
+            raise HTTPException(status_code=503, detail="Price manager not initialized")
+        
+        gold_price = await price_manager.get_current_price(use_cache=True)
+        
+        if not gold_price:
+            return GoldPriceResponse(
+                success=False,
+                error="فشل في جلب أسعار الذهب من المصادر المتاحة"
+            )
+        
+        # Convert to dict for response
+        price_data = {
+            "price_usd": gold_price.price_usd,
+            "price_change": gold_price.price_change,
+            "price_change_pct": gold_price.price_change_pct,
+            "ask": gold_price.ask,
+            "bid": gold_price.bid,
+            "high_24h": gold_price.high_24h,
+            "low_24h": gold_price.low_24h,
+            "source": gold_price.source,
+            "timestamp": gold_price.timestamp.isoformat()
+        }
+        
+        # Generate formatted Arabic text
+        formatted_text = gold_price.to_arabic_text()
+        
+        return GoldPriceResponse(
+            success=True,
+            price_data=price_data,
+            formatted_text=formatted_text
+        )
+        
+    except Exception as e:
+        logging.error(f"❌ Gold price error: {e}")
+        return GoldPriceResponse(
+            success=False,
+            error=f"خطأ في جلب أسعار الذهب: {str(e)}"
+        )
 
-@api_router.post("/bot/broadcast")
-async def broadcast_message(request: dict):
-    """Admin endpoint to broadcast messages"""
-    if not bot_instance:
-        raise HTTPException(status_code=503, detail="Bot not initialized")
-    
-    message = request.get("message")
-    admin_id = request.get("admin_id")
-    
-    if not message or not admin_id:
-        raise HTTPException(status_code=400, detail="Message and admin_id required")
-    
-    # Verify admin permissions
-    if str(admin_id) != os.environ.get('MASTER_USER_ID'):
-        raise HTTPException(status_code=403, detail="Unauthorized")
-    
-    result = await bot_instance.broadcast_message(message)
-    return {"status": "success", "sent_count": result}
+@api_router.post("/analyze", response_model=AnalysisResponse)
+async def analyze_gold(request: AnalysisRequest):
+    """Generate AI analysis of gold market"""
+    try:
+        if not ai_manager or not price_manager:
+            raise HTTPException(status_code=503, detail="Analysis services not initialized")
+        
+        # Validate analysis type
+        try:
+            analysis_type = AnalysisType(request.analysis_type)
+        except ValueError:
+            return AnalysisResponse(
+                success=False,
+                error="نوع التحليل غير صحيح. الأنواع المتاحة: quick, detailed, chart, news, forecast"
+            )
+        
+        start_time = datetime.utcnow()
+        
+        # Get current gold price
+        gold_price = await price_manager.get_current_price(use_cache=True)
+        
+        # Generate analysis
+        analysis = await ai_manager.generate_analysis(
+            user_id=1,  # Default user for web app
+            analysis_type=analysis_type,
+            gold_price=gold_price,
+            additional_context=request.additional_context or request.user_question or ""
+        )
+        
+        if not analysis:
+            return AnalysisResponse(
+                success=False,
+                error="فشل في إجراء التحليل. يرجى المحاولة مرة أخرى."
+            )
+        
+        end_time = datetime.utcnow()
+        processing_time = (end_time - start_time).total_seconds()
+        
+        # Convert gold price to dict if available
+        gold_price_data = None
+        if gold_price:
+            gold_price_data = {
+                "price_usd": gold_price.price_usd,
+                "price_change": gold_price.price_change,
+                "price_change_pct": gold_price.price_change_pct,
+                "source": gold_price.source
+            }
+        
+        return AnalysisResponse(
+            success=True,
+            analysis=analysis.content,
+            gold_price=gold_price_data,
+            processing_time=processing_time
+        )
+        
+    except Exception as e:
+        logging.error(f"❌ Analysis error: {e}")
+        return AnalysisResponse(
+            success=False,
+            error=f"خطأ في إجراء التحليل: {str(e)}"
+        )
+
+@api_router.get("/analysis-types")
+async def get_analysis_types():
+    """Get available analysis types"""
+    return {
+        "types": [
+            {
+                "id": "quick",
+                "name": "تحليل سريع",
+                "description": "تحليل مختصر وسريع للوضع الحالي",
+                "icon": "⚡"
+            },
+            {
+                "id": "detailed", 
+                "name": "تحليل مفصل",
+                "description": "تحليل شامل ومفصل للسوق",
+                "icon": "📊"
+            },
+            {
+                "id": "chart",
+                "name": "تحليل فني",
+                "description": "تحليل المخططات والمؤشرات الفنية",
+                "icon": "📈"
+            },
+            {
+                "id": "news",
+                "name": "تحليل الأخبار",
+                "description": "تحليل تأثير الأخبار على السوق",
+                "icon": "📰"
+            },
+            {
+                "id": "forecast",
+                "name": "التوقعات",
+                "description": "توقعات مستقبلية للسوق",
+                "icon": "🔮"
+            }
+        ]
+    }
+
+@api_router.get("/api-status")
+async def get_api_status():
+    """Get status of external APIs"""
+    try:
+        status = {}
+        
+        # Test Gold Price APIs
+        if price_manager:
+            price_status = await price_manager.get_api_status()
+            status["gold_apis"] = price_status
+        
+        # Test Claude AI
+        if ai_manager:
+            ai_stats = await ai_manager.get_ai_stats()
+            status["claude_ai"] = ai_stats
+        
+        return {
+            "success": True,
+            "status": status,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+@api_router.get("/quick-questions")
+async def get_quick_questions():
+    """Get predefined quick questions for analysis"""
+    return {
+        "questions": [
+            "تحليل الذهب الحالي",
+            "ما هي توقعات الذهب للأسبوع القادم؟", 
+            "هل الوقت مناسب لشراء الذهب؟",
+            "تحليل فني للذهب",
+            "تأثير التضخم على أسعار الذهب"
+        ]
+    }
 
 # Include API router
 app.include_router(api_router)
@@ -113,7 +294,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('/var/log/supervisor/gold_bot.log'),
+        logging.FileHandler('/var/log/supervisor/gold_analysis.log'),
         logging.StreamHandler()
     ]
 )
@@ -126,7 +307,7 @@ async def global_exception_handler(request: Request, exc: Exception):
     logger.error(f"Global exception: {exc}", exc_info=True)
     return JSONResponse(
         status_code=500,
-        content={"detail": "Internal server error occurred"}
+        content={"detail": "حدث خطأ داخلي في الخادم"}
     )
 
 if __name__ == "__main__":
