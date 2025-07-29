@@ -325,14 +325,14 @@ async def analyze_forex(request: ForexAnalysisRequest):
 
 @api_router.post("/analyze-chart", response_model=ChartAnalysisResponse)
 async def analyze_chart(request: ChartAnalysisRequest):
-    """Analyze trading chart image with AI"""
+    """Analyze trading chart image with advanced AI and OCR"""
     try:
         if not ai_manager or not price_manager:
             raise HTTPException(status_code=503, detail="Analysis services not initialized")
         
         start_time = datetime.utcnow()
         
-        # Validate base64 image
+        # Validate and process base64 image
         try:
             # Remove data URL prefix if present
             if request.image_data.startswith('data:image'):
@@ -340,16 +340,17 @@ async def analyze_chart(request: ChartAnalysisRequest):
             
             # Decode base64 image
             image_bytes = base64.b64decode(request.image_data)
-            image = Image.open(io.BytesIO(image_bytes))
             
-            # Get image info
-            image_info = {
-                "width": image.width,
-                "height": image.height,
-                "format": image.format,
-                "size_kb": len(image_bytes) / 1024
-            }
+            # Advanced image processing with OCR
+            logger.info("🔍 Starting advanced chart analysis with OCR...")
+            chart_analysis = await chart_processor.process_chart_image(image_bytes)
             
+            if "error" in chart_analysis:
+                return ChartAnalysisResponse(
+                    success=False,
+                    error=f"فشل في معالجة الصورة: {chart_analysis['error']}"
+                )
+                
         except Exception as e:
             return ChartAnalysisResponse(
                 success=False,
@@ -359,56 +360,17 @@ async def analyze_chart(request: ChartAnalysisRequest):
         # Get current gold price for context
         gold_price = await price_manager.get_current_price(use_cache=True)
         
-        # Create comprehensive analysis prompt for chart
-        chart_prompt = f"""
-أنت محلل فني محترف من مدرسة الكابوس الذهبية. قم بتحليل صورة الشارت المرفقة بدقة عالية.
-
-معلومات الشارت:
-- زوج العملة: {request.currency_pair}
-- الإطار الزمني: {request.timeframe}
-- ملاحظات إضافية: {request.analysis_notes or 'لا توجد'}
-
-السعر الحالي للذهب: ${gold_price.price_usd:.2f} إذا كان الشارت للذهب
-
-قم بتحليل الشارت وفقاً للنقاط التالية:
-
-📊 **تحليل الشارت التفصيلي:**
-1. 🎯 **الاتجاه العام**: (صاعد/هابط/عرضي)
-2. 📈 **النماذج الفنية**: حدد أي نماذج فنية مرئية (مثلثات، أعلام، رأس وكتفين، إلخ)
-3. 🎚️ **مستويات الدعم والمقاومة**: حدد أهم المستويات المرئية في الشارت
-4. 📊 **المؤشرات الفنية**: حلل أي مؤشرات مرئية في الشارت
-5. 🔄 **نقاط الانعكاس**: حدد النقاط المهمة للانعكاس المحتمل
-
-💡 **التوصيات التداولية:**
-- 🟢 **الدخول الصاعد**: المستويات والشروط
-- 🔴 **الدخول الهابط**: المستويات والشروط  
-- ⛔ **وقف الخسارة**: المستويات المناسبة
-- 🎯 **الأهداف**: الأهداف القريبة والبعيدة
-
-⚠️ **إدارة المخاطر:**
-- نسبة المخاطرة إلى العائد المتوقعة
-- حجم الصفقة المناسب
-- الأوقات المناسبة للدخول
-
-🔮 **السيناريوهات المحتملة:**
-- السيناريو الصاعد وشروطه
-- السيناريو الهابط وشروطه
-- النقاط الحرجة للمتابعة
-
-📋 **ملاحظات مهمة:**
-- تحذيرات خاصة بهذا الشارت
-- العوامل الخارجية المؤثرة
-- الأوقات المتوقعة للحركة
-
-التوقيع: 🏆 Gold Nightmare - عدي
-        """
+        # Build comprehensive analysis context from extracted data
+        extracted_context = _build_chart_analysis_context(
+            chart_analysis, request.currency_pair, request.timeframe, request.analysis_notes
+        )
         
-        # Generate analysis using Claude AI
+        # Generate analysis using Claude AI with extracted information
         analysis = await ai_manager.generate_analysis(
             user_id=1,  # Default user for web app
             analysis_type=AnalysisType.CHART,
             gold_price=gold_price,
-            additional_context=chart_prompt
+            additional_context=extracted_context
         )
         
         if not analysis:
@@ -423,7 +385,16 @@ async def analyze_chart(request: ChartAnalysisRequest):
         return ChartAnalysisResponse(
             success=True,
             analysis=analysis.content,
-            image_info=image_info,
+            image_info={
+                "width": chart_analysis.get("image_info", {}).get("width", 0),
+                "height": chart_analysis.get("image_info", {}).get("height", 0),
+                "format": chart_analysis.get("image_info", {}).get("format", "unknown"),
+                "size_kb": len(image_bytes) / 1024,
+                "extracted_data": chart_analysis.get("trading_context", {}),
+                "ocr_confidence": chart_analysis.get("trading_context", {}).get("confidence_score", 0.0),
+                "detected_prices": chart_analysis.get("price_analysis", {}).get("detected_prices", []),
+                "visual_signals": chart_analysis.get("trading_context", {}).get("trading_signals", [])
+            },
             processing_time=processing_time
         )
         
