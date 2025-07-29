@@ -82,6 +82,27 @@ function App() {
     checkAuthStatus(); // Check if user is logged in
   }, []);
 
+  // Reset form states when changing views
+  useEffect(() => {
+    if (currentView === 'login') {
+      setLoginEmail('');
+      setLoginPassword('');
+      setLoginShowPassword(false);
+      setLoginError('');
+    } else if (currentView === 'register') {
+      setRegisterFormData({
+        email: '',
+        password: '',
+        confirmPassword: '',
+        username: '',
+        firstName: '',
+        lastName: ''
+      });
+      setRegisterShowPassword(false);
+      setRegisterError('');
+    }
+  }, [currentView]);
+
   // Authentication Functions
   const checkAuthStatus = () => {
     const storedUser = localStorage.getItem('currentUser');
