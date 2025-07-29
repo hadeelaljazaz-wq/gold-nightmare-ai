@@ -1633,6 +1633,7 @@ function App() {
       </div>
 
       {currentView === 'dashboard' && renderDashboard()}
+      {currentView === 'analyze' && renderAnalyzeView()}
       {currentView === 'contact' && renderContactView()}
       {currentView === 'admin' && renderAdminView()}
       
