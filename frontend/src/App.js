@@ -105,7 +105,7 @@ function App() {
   const handleForexAnalysis = async (pair) => {
     setSelectedForexPair(pair);
     setForexAnalysisLoading(true);
-    setCurrentView('results');
+    setCurrentView('forex-results');
     
     try {
       const response = await fetch(`${API_URL}/api/analyze-forex`, {
