@@ -429,7 +429,97 @@ async def analyze_chart(request: ChartAnalysisRequest):
         )
 
 def _build_chart_analysis_context(chart_analysis: Dict[str, Any], currency_pair: str, timeframe: str, notes: str) -> str:
-    """Build comprehensive analysis context from extracted chart data"""
+    """Build comprehensive analysis context from extracted chart data with advanced features"""
+    
+    # التحقق من وجود النظام المحسن
+    if chart_analysis.get("advanced_analysis", {}).get("intelligent_mode"):
+        # استخدام النظام المحسن
+        return _build_advanced_chart_context(chart_analysis, currency_pair, timeframe, notes)
+    else:
+        # استخدام النظام القديم
+        return _build_legacy_chart_context(chart_analysis, currency_pair, timeframe, notes)
+
+def _build_advanced_chart_context(chart_analysis: Dict[str, Any], currency_pair: str, timeframe: str, notes: str) -> str:
+    """Build context using the new intelligent analysis system"""
+    
+    advanced_analysis = chart_analysis.get("advanced_analysis", {})
+    comprehensive_prompt = advanced_analysis.get("comprehensive_prompt", "")
+    
+    # إذا كان لدينا prompt شامل، استخدمه
+    if comprehensive_prompt:
+        context_parts = [
+            f"""أنت محلل فني محترف من مدرسة الكابوس الذهبية. 
+            
+🚀 **تم استخدام نظام التحليل الذكي المتقدم** 🚀
+
+📊 **معلومات الشارت المقدمة:**
+- زوج العملة: {currency_pair}
+- الإطار الزمني: {timeframe}
+- ملاحظات المستخدم: {notes or 'لا توجد'}
+
+{comprehensive_prompt}
+
+🎯 **التعليمات النهائية:**
+استخدم كل البيانات المستخرجة أعلاه مع الصورة المرفقة لتقديم تحليل فني شامل ودقيق.
+
+التوقيع: 🏆 Gold Nightmare - عدي"""]
+        
+        return "\n".join(context_parts)
+    
+    # إذا لم يكن هناك prompt شامل، استخدم البيانات المتاحة
+    optimization_log = advanced_analysis.get("optimization_log", {})
+    text_extraction = chart_analysis.get("text_extraction", {})
+    
+    context_parts = [
+        f"""أنت محلل فني محترف من مدرسة الكابوس الذهبية.
+        
+🚀 **تم استخدام نظام التحليل الذكي المتقدم** 🚀
+
+📊 **معلومات الشارت:**
+- زوج العملة: {currency_pair}
+- الإطار الزمني: {timeframe}
+- ملاحظات المستخدم: {notes or 'لا توجد'}"""
+    ]
+    
+    # إضافة معلومات التحسين
+    if optimization_log.get("steps_applied"):
+        steps = ", ".join(optimization_log["steps_applied"])
+        context_parts.append(f"""
+🔧 **تحسينات الصورة المطبقة:**
+- التحسينات: {steps}
+- الحجم الأصلي: {optimization_log.get('original_size', 'غير معروف')}
+- الحجم النهائي: {optimization_log.get('final_size', 'غير معروف')}""")
+    
+    # إضافة البيانات المستخرجة المحسنة
+    if text_extraction.get("prices"):
+        prices_text = ", ".join([f"${p:.2f}" for p in text_extraction["prices"][:5]])
+        context_parts.append(f"""
+💰 **الأسعار المستخرجة (محسن):**
+- الأسعار: {prices_text}
+- الثقة المتوسطة: {text_extraction.get('average_confidence', 0):.2f}""")
+    
+    if text_extraction.get("timestamps"):
+        times_text = ", ".join(text_extraction["timestamps"][:5])
+        context_parts.append(f"""
+⏰ **الأوقات المكتشفة:** {times_text}""")
+    
+    # إضافة بيانات OHLC المحاكية
+    ohlc_simulation = advanced_analysis.get("ohlc_simulation", {})
+    if ohlc_simulation.get("formatted_text"):
+        context_parts.append(f"""
+📈 **بيانات OHLC محاكية للمساعدة:**
+{ohlc_simulation["formatted_text"][:500]}...""")
+    
+    context_parts.append(f"""
+🎯 **المطلوب:**
+استخدم الصورة المحسنة مع البيانات المستخرجة أعلاه لتقديم تحليل فني شامل.
+
+التوقيع: 🏆 Gold Nightmare - عدي""")
+    
+    return "\n".join(context_parts)
+
+def _build_legacy_chart_context(chart_analysis: Dict[str, Any], currency_pair: str, timeframe: str, notes: str) -> str:
+    """Build context using the legacy analysis system"""
     
     # Extract key information
     extracted_data = chart_analysis.get("trading_context", {})
