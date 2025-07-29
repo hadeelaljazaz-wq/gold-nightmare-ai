@@ -103,15 +103,125 @@
 #====================================================================================================
 
 user_problem_statement: |
-  تحديث نظام سعر الذهب للاعتماد على Metals-API مع كاش 15 دقيقة، وتطوير لوحة تحكم الأدمن شاملة مع:
-  1. تحديث نظام سعر الذهب ليستخدم APIs مجانية بديلة مع كاش داخلي 15 دقيقة
-  2. تطوير لوحة تحكم الأدمن شاملة مع إحصائيات المستخدمين ونوع الاشتراك
-  3. إضافة سجل تحليلات لكل مستخدم مع عداد يومي
-  4. خيار إيقاف/تفعيل الحسابات يدوياً
-  5. إضافة validation للتأكد من صحة البيانات المسترجعة
-  6. معالجة الأخطاء وإظهار رسائل مناسبة للمستخدم
+  اختبار نظام المصادقة والاشتراكات الجديد:
+
+  **النظام الجديد المُطبق:**
+  1. **نظام تسجيل المستخدمين:**
+     - Register: POST /api/auth/register
+     - Login: POST /api/auth/login
+     - Get user info: GET /api/auth/user/{user_id}
+     - Check permissions: GET /api/auth/check-analysis-permission/{user_id}
+
+  2. **نظام الاشتراكات:**
+     - Basic: 1 تحليل يومي (افتراضي)
+     - Premium: 5 تحليلات يومي
+     - VIP: غير محدود
+     - تتبع العدد اليومي وإعادة تعيينه كل يوم
+
+  3. **تحديث التحليل:**
+     - الآن يتطلب user_id في الطلب
+     - يفحص صلاحيات المستخدم قبل التحليل
+     - يسجل التحليل ويخفض العدد المتبقي
+
+  4. **Admin Panel المحدث:**
+     - تحديث subscription للمستخدمين عبر auth_manager
 
 backend:
+  - task: "User Registration System"
+    implemented: true
+    working: true
+    file: "gold_bot/auth_manager.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: User registration working perfectly. Valid registration creates users with correct ID, email, tier (basic), and daily limit (1). Properly rejects duplicate emails, invalid email formats, and weak passwords with Arabic error messages. All validation working correctly."
+
+  - task: "User Login System"
+    implemented: true
+    working: true
+    file: "gold_bot/auth_manager.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: User login working perfectly. Valid credentials return correct user info (ID, email, tier, remaining analyses). Properly rejects invalid passwords and non-existent emails with Arabic error messages. Password hashing and verification working correctly."
+
+  - task: "Get User Info Endpoint"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Get user info endpoint working perfectly. Returns complete user information including ID, email, tier, status, daily analyses remaining, total analyses, features, and creation date. Properly handles non-existent users with Arabic error messages."
+
+  - task: "Check Analysis Permission System"
+    implemented: true
+    working: true
+    file: "gold_bot/auth_manager.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Analysis permission checking working correctly. Returns can_analyze status, remaining analyses count, and appropriate messages. Correctly handles user permissions based on tier and daily limits. Minor: Non-existent user handling returns success=true with error message (acceptable behavior)."
+
+  - task: "Analysis with User ID Integration"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Analysis endpoint with user_id working perfectly. Requires user_id parameter, checks permissions before analysis, generates proper Arabic analysis content, records analysis usage, and updates daily count. FastAPI properly validates required user_id field (422 error for missing field is correct behavior)."
+
+  - task: "Daily Limit Enforcement"
+    implemented: true
+    working: true
+    file: "gold_bot/auth_manager.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Daily limit enforcement working correctly. Basic tier users get 1 analysis per day, system properly tracks usage and prevents exceeding limits. After consuming daily limit, users receive Arabic error message about upgrading subscription. Analysis counting and daily reset logic working properly."
+
+  - task: "Admin Subscription Update System"
+    implemented: true
+    working: true
+    file: "gold_bot/auth_manager.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Admin subscription update system working perfectly. Successfully upgrades users from Basic→Premium→VIP with correct daily limits (1→5→unlimited). Updates are verified in user info, subscription dates are set, daily counts are reset. Properly rejects invalid tiers with Arabic error messages."
+
+  - task: "Subscription Tiers System"
+    implemented: true
+    working: true
+    file: "gold_bot/models.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Subscription tiers working correctly. Basic tier: 1 daily analysis, Premium tier: 5 daily analyses, VIP tier: unlimited (-1). Tier features and limits are properly applied. User tier upgrades work correctly and are reflected in permissions and daily limits."
   - task: "Gold price system update with 15-minute cache"
     implemented: true
     working: true
