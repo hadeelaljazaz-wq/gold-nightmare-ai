@@ -2051,20 +2051,58 @@ function App() {
             onClick={() => setCurrentView('dashboard')}
             className={currentView === 'dashboard' ? 'active' : ''}
           >
-            🏠 الرئيسية
+            🏠 {t('header.nav.home')}
           </button>
           <button 
             onClick={() => setCurrentView('contact')}
             className={currentView === 'contact' ? 'active' : ''}
           >
-            📞 تواصل معنا
+            📞 {t('header.nav.contact')}
           </button>
           <button 
             onClick={() => setCurrentView('admin')}
             className={currentView === 'admin' ? 'active' : ''}
           >
-            🔧 لوحة التحكم
+            🔧 {t('header.nav.admin')}
           </button>
+          
+          {/* Language Toggle */}
+          <button
+            onClick={toggleLanguage}
+            className="nav-language-btn"
+          >
+            {currentLanguage === 'ar' ? '🇺🇸 EN' : '🇸🇦 AR'}
+          </button>
+          
+          {/* Authentication Buttons */}
+          {isAuthenticated ? (
+            <>
+              <span className="nav-user-info">
+                👤 {currentUser?.email?.split('@')[0] || 'مستخدم'}
+              </span>
+              <button 
+                onClick={handleLogout}
+                className="nav-logout-btn"
+              >
+                🚪 {t('header.nav.logout')}
+              </button>
+            </>
+          ) : (
+            <>
+              <button 
+                onClick={() => setCurrentView('login')}
+                className={currentView === 'login' ? 'active' : ''}
+              >
+                🔐 {t('header.nav.login')}
+              </button>
+              <button 
+                onClick={() => setCurrentView('register')}
+                className={currentView === 'register' ? 'active' : ''}
+              >
+                📝 {t('header.nav.register')}
+              </button>
+            </>
+          )}
         </nav>
       </div>
 
