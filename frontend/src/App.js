@@ -73,6 +73,10 @@ function App() {
       return;
     }
 
+    // Set the selected analysis type for display
+    setSelectedAnalysisType(actualType);
+    setUserQuestion(actualQuestion);
+    
     setAnalysisLoading(true);
     setCurrentView('results');
     
