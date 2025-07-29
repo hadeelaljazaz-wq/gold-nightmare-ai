@@ -78,11 +78,11 @@ function App() {
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 flex items-center justify-center">
-            <span className="text-yellow-400 mr-3">💎</span>
-            التحليل المالي الذكي
+            <span className="text-yellow-400 mr-3">🏆</span>
+            al_kabous ai
           </h1>
           <p className="text-purple-200 text-lg">
-            الأسعار الحية للعملات الأجنبية
+            مدرسة الكابوس الذهبية - تحليل الذهب والعملات الذكي
           </p>
         </div>
 
