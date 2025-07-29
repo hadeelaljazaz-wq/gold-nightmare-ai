@@ -5,12 +5,16 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
 from pathlib import Path
 import os
+import sys
 import logging
 import asyncio
 from datetime import datetime
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any
 import uuid
+
+# Add parent directory to path for imports
+sys.path.append(str(Path(__file__).parent.parent))
 
 # Load environment variables
 ROOT_DIR = Path(__file__).parent
