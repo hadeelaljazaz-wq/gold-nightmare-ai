@@ -900,19 +900,49 @@ function App() {
           </h2>
           <p className="text-purple-200 mb-6">تحليل ذكي مدعوم بالذكاء الاصطناعي مع التوصيات</p>
           
-          {/* Handle both regular analysis and chart analysis */}
-          {analysisLoading || chartAnalysisLoading ? (
+          {/* Handle both regular analysis and chart analysis and forex analysis */}
+          {analysisLoading || chartAnalysisLoading || forexAnalysisLoading ? (
             <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-16 w-16 border-4 border-green-400 border-t-transparent mx-auto mb-6"></div>
-              <p className="text-white text-lg">جاري إجراء التحليل الذكي...</p>
+              <div className="royal-loading mx-auto mb-6"></div>
+              <p className="royal-text text-lg">جاري إجراء التحليل الذكي...</p>
               <p className="text-purple-300 text-sm mt-2">قد يستغرق هذا بعض الوقت</p>
             </div>
-          ) : (analysisResult || chartAnalysisResult) ? (
+          ) : (analysisResult || chartAnalysisResult || forexAnalysisResult) ? (
             // Show results
             (() => {
-              const result = analysisResult || chartAnalysisResult;
+              const result = analysisResult || chartAnalysisResult || forexAnalysisResult;
               return result.success ? (
                 <div className="space-y-4">
+                  {/* Show forex price info if it's forex analysis */}
+                  {forexAnalysisResult && forexAnalysisResult.forex_price && (
+                    <div className="glass-card p-6 mb-4">
+                      <h4 className="gold-text font-medium mb-4 flex items-center">
+                        <span className="mr-2">💱</span>
+                        معلومات السعر - {forexAnalysisResult.forex_price.pair}
+                      </h4>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                        <div>
+                          <p className="text-purple-300 text-sm">السعر الحالي</p>
+                          <p className="text-xl font-bold gold-text">{forexAnalysisResult.forex_price.price_usd?.toFixed(4)}</p>
+                        </div>
+                        <div>
+                          <p className="text-purple-300 text-sm">التغيير</p>
+                          <p className={`text-xl font-bold ${forexAnalysisResult.forex_price.price_change >= 0 ? 'price-high' : 'price-low'}`}>
+                            {forexAnalysisResult.forex_price.price_change >= 0 ? '+' : ''}{forexAnalysisResult.forex_price.price_change?.toFixed(4)}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-purple-300 text-sm">أعلى سعر</p>
+                          <p className="text-xl font-bold price-high">{forexAnalysisResult.forex_price.high_24h?.toFixed(4)}</p>
+                        </div>
+                        <div>
+                          <p className="text-purple-300 text-sm">أقل سعر</p>
+                          <p className="text-xl font-bold price-low">{forexAnalysisResult.forex_price.low_24h?.toFixed(4)}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
                   {/* Show image info if it's chart analysis */}
                   {chartAnalysisResult && chartAnalysisResult.image_info && (
                     <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-500/30 mb-4">
@@ -927,7 +957,7 @@ function App() {
                   
                   <div className="bg-purple-800/30 rounded-lg p-6 border border-purple-600/30">
                     <div className="prose prose-invert max-w-none">
-                      <div className="text-white whitespace-pre-line leading-relaxed">
+                      <div className="royal-text whitespace-pre-line leading-relaxed">
                         {result.analysis}
                       </div>
                     </div>
