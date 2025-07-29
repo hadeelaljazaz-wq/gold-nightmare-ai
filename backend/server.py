@@ -77,7 +77,8 @@ async def shutdown_event():
 # Pydantic models for API
 class AnalysisRequest(BaseModel):
     analysis_type: str
-    user_question: Optional[str] = None
+    user_question: str
+    user_id: int  # Required for user system
     additional_context: Optional[str] = None
 
 class AnalysisResponse(BaseModel):
