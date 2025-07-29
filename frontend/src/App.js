@@ -1324,6 +1324,277 @@ function App() {
     </div>
   );
 
+  const renderAdminView = () => (
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 p-4">
+      <div className="max-w-6xl mx-auto">
+        
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-white mb-4 flex items-center justify-center">
+            <span className="text-red-400 mr-3">🔧</span>
+            لوحة التحكم الإدارية
+          </h1>
+          <p className="text-purple-200">إدارة النظام والمستخدمين</p>
+        </div>
+
+        {!adminAuthenticated ? (
+          /* Login Form */
+          <div className="max-w-md mx-auto">
+            <div className="glass-card p-6">
+              <h2 className="text-2xl font-bold text-white mb-6 text-center flex items-center justify-center">
+                <span className="text-yellow-400 mr-3">🔐</span>
+                تسجيل الدخول
+              </h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-white font-medium mb-2">اسم المستخدم</label>
+                  <input
+                    type="text"
+                    value={adminUsername}
+                    onChange={(e) => setAdminUsername(e.target.value)}
+                    className="w-full p-3 bg-purple-800/30 border border-purple-600/50 rounded-lg text-white placeholder-purple-300 focus:outline-none focus:border-red-400"
+                    placeholder="أدخل اسم المستخدم"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-white font-medium mb-2">كلمة المرور</label>
+                  <input
+                    type="password"
+                    value={adminPassword}
+                    onChange={(e) => setAdminPassword(e.target.value)}
+                    className="w-full p-3 bg-purple-800/30 border border-purple-600/50 rounded-lg text-white placeholder-purple-300 focus:outline-none focus:border-red-400"
+                    placeholder="أدخل كلمة المرور"
+                  />
+                </div>
+                
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => setCurrentView('dashboard')}
+                    className="flex-1 py-3 px-6 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
+                  >
+                    العودة
+                  </button>
+                  <button
+                    onClick={handleAdminLogin}
+                    disabled={adminLoading || !adminUsername || !adminPassword}
+                    className="flex-1 py-3 px-6 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 disabled:from-gray-500 disabled:to-gray-600 text-white rounded-lg font-bold transition-all disabled:cursor-not-allowed"
+                  >
+                    {adminLoading ? (
+                      <span className="flex items-center justify-center">
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                        جاري التحقق...
+                      </span>
+                    ) : (
+                      <>
+                        <span className="mr-2">🔓</span>
+                        دخول
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* Admin Dashboard */
+          <div className="space-y-6">
+            
+            {/* Dashboard Stats */}
+            {adminData && (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="glass-card p-6 text-center">
+                  <div className="text-3xl mb-2">👥</div>
+                  <div className="text-2xl font-bold text-white">{adminData.total_users || 0}</div>
+                  <div className="text-purple-300">إجمالي المستخدمين</div>
+                </div>
+                
+                <div className="glass-card p-6 text-center">
+                  <div className="text-3xl mb-2">✅</div>
+                  <div className="text-2xl font-bold text-green-400">{adminData.active_users || 0}</div>
+                  <div className="text-purple-300">المستخدمين النشطين</div>
+                </div>
+                
+                <div className="glass-card p-6 text-center">
+                  <div className="text-3xl mb-2">📊</div>
+                  <div className="text-2xl font-bold text-blue-400">{adminData.total_analyses || 0}</div>
+                  <div className="text-purple-300">إجمالي التحليلات</div>
+                </div>
+                
+                <div className="glass-card p-6 text-center">
+                  <div className="text-3xl mb-2">📈</div>
+                  <div className="text-2xl font-bold text-yellow-400">{adminData.analyses_today || 0}</div>
+                  <div className="text-purple-300">تحليلات اليوم</div>
+                </div>
+              </div>
+            )}
+
+            {/* Users Management */}
+            <div className="glass-card p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white flex items-center">
+                  <span className="text-blue-400 mr-3">👥</span>
+                  إدارة المستخدمين
+                </h2>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => fetchAdminUsers(adminCurrentPage)}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                  >
+                    🔄 تحديث
+                  </button>
+                  <button
+                    onClick={() => fetchAdminLogs()}
+                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                  >
+                    📋 السجلات
+                  </button>
+                </div>
+              </div>
+              
+              {adminUsers.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-white">
+                    <thead>
+                      <tr className="border-b border-purple-600/50">
+                        <th className="text-right p-3">المستخدم</th>
+                        <th className="text-right p-3">نوع الاشتراك</th>
+                        <th className="text-right p-3">الحالة</th>
+                        <th className="text-right p-3">التحليلات</th>
+                        <th className="text-right p-3">تاريخ التسجيل</th>
+                        <th className="text-center p-3">الإجراءات</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {adminUsers.map((user, index) => (
+                        <tr key={user.user_id || index} className="border-b border-purple-600/30 hover:bg-purple-800/20">
+                          <td className="p-3">
+                            <div>
+                              <div className="font-medium">{user.user_id}</div>
+                              <div className="text-sm text-purple-300">{user.ip_address}</div>
+                            </div>
+                          </td>
+                          <td className="p-3">
+                            <select
+                              value={user.user_tier || 'free'}
+                              onChange={(e) => updateUserTier(user.user_id, e.target.value)}
+                              className="bg-purple-800/50 border border-purple-600/50 rounded px-2 py-1 text-white text-sm"
+                            >
+                              <option value="free">مجاني</option>
+                              <option value="premium">مميز</option>
+                              <option value="vip">VIP</option>
+                            </select>
+                          </td>
+                          <td className="p-3">
+                            <span className={`px-2 py-1 rounded text-xs font-medium ${
+                              user.is_active ? 'bg-green-600/30 text-green-300' : 'bg-red-600/30 text-red-300'
+                            }`}>
+                              {user.is_active ? 'نشط' : 'معطل'}
+                            </span>
+                          </td>
+                          <td className="p-3 text-center">{user.analysis_count || 0}</td>
+                          <td className="p-3 text-sm text-purple-300">
+                            {user.created_at ? new Date(user.created_at).toLocaleDateString('ar-SA') : 'غير محدد'}
+                          </td>
+                          <td className="p-3 text-center">
+                            <button
+                              onClick={() => toggleUserStatus(user.user_id)}
+                              className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                                user.is_active 
+                                  ? 'bg-red-600/30 hover:bg-red-600/50 text-red-300' 
+                                  : 'bg-green-600/30 hover:bg-green-600/50 text-green-300'
+                              }`}
+                            >
+                              {user.is_active ? '🚫 تعطيل' : '✅ تفعيل'}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="text-6xl mb-4">👥</div>
+                  <p className="text-purple-300">لا يوجد مستخدمين</p>
+                </div>
+              )}
+            </div>
+
+            {/* Analysis Logs */}
+            {adminLogs.length > 0 && (
+              <div className="glass-card p-6">
+                <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+                  <span className="text-green-400 mr-3">📋</span>
+                  سجل التحليلات
+                </h2>
+                
+                <div className="overflow-x-auto">
+                  <table className="w-full text-white text-sm">
+                    <thead>
+                      <tr className="border-b border-purple-600/50">
+                        <th className="text-right p-2">المستخدم</th>
+                        <th className="text-right p-2">نوع التحليل</th>
+                        <th className="text-right p-2">السؤال</th>
+                        <th className="text-right p-2">الوقت</th>
+                        <th className="text-right p-2">الحالة</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {adminLogs.slice(0, 10).map((log, index) => (
+                        <tr key={log.id || index} className="border-b border-purple-600/30 hover:bg-purple-800/20">
+                          <td className="p-2">{log.user_id}</td>
+                          <td className="p-2">{log.analysis_type}</td>
+                          <td className="p-2 max-w-xs truncate">{log.user_question}</td>
+                          <td className="p-2">{log.created_at ? new Date(log.created_at).toLocaleString('ar-SA') : 'غير محدد'}</td>
+                          <td className="p-2">
+                            <span className={`px-2 py-1 rounded text-xs ${
+                              log.success ? 'bg-green-600/30 text-green-300' : 'bg-red-600/30 text-red-300'
+                            }`}>
+                              {log.success ? 'نجح' : 'فشل'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Logout Button */}
+            <div className="text-center">
+              <div className="flex gap-4 justify-center">
+                <button
+                  onClick={() => setCurrentView('dashboard')}
+                  className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
+                >
+                  العودة للرئيسية
+                </button>
+                <button
+                  onClick={() => {
+                    setAdminAuthenticated(false);
+                    setAdminUsername('');
+                    setAdminPassword('');
+                    setAdminData(null);
+                    setAdminUsers([]);
+                    setAdminLogs([]);
+                  }}
+                  className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors"
+                >
+                  <span className="mr-2">🚪</span>
+                  تسجيل الخروج
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+
   return (
     <div className="App">
       {currentView === 'dashboard' && renderDashboard()}
