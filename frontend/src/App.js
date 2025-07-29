@@ -59,8 +59,6 @@ function App() {
     "تأثير التضخم على أسعار الذهب"
   ]);
 
-  const API_URL = process.env.REACT_APP_BACKEND_URL;
-
   useEffect(() => {
     fetchGoldPrice();
   }, []);
