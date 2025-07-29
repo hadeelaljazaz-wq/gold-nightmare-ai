@@ -444,8 +444,8 @@ function App() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white mb-4 flex items-center justify-center">
-            <span className="text-yellow-400 mr-3">💰</span>
-            تحليل الذهب
+            <span className="text-yellow-400 mr-3">🏆</span>
+            تحليل al_kabous ai
           </h1>
           <p className="text-purple-200">تحليل ذكي ومتقدم لأسعار الذهب</p>
           <button 
