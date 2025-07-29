@@ -503,22 +503,17 @@ function App() {
 
   // Authentication Views
   const renderLoginView = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState('');
-
     const handleSubmit = async (e) => {
       e.preventDefault();
       
-      if (!email || !password) {
-        setError(t('auth.messages.emailRequired'));
+      if (!loginEmail || !loginPassword) {
+        setLoginError('البريد الإلكتروني وكلمة المرور مطلوبان');
         return;
       }
 
-      const result = await handleLogin(email, password);
+      const result = await handleLogin(loginEmail, loginPassword);
       if (!result.success) {
-        setError(result.error);
+        setLoginError(result.error);
       }
     };
 
@@ -527,26 +522,26 @@ function App() {
         <div className="glass-card p-8 w-full max-w-md">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-white mb-2">
-              {t('auth.login.title')}
+              تسجيل الدخول
             </h1>
-            <p className="text-purple-200">{t('auth.login.subtitle')}</p>
+            <p className="text-purple-200">أدخل بياناتك للوصول لحسابك</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
+            {loginError && (
               <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-3 text-red-300">
-                {error}
+                {loginError}
               </div>
             )}
 
             <div>
               <label className="block text-purple-200 text-sm font-medium mb-2">
-                {t('auth.login.email')}
+                البريد الإلكتروني
               </label>
               <input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
                 className="w-full px-4 py-3 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-gold focus:outline-none transition-colors"
                 placeholder="example@email.com"
                 required
@@ -555,23 +550,23 @@ function App() {
 
             <div>
               <label className="block text-purple-200 text-sm font-medium mb-2">
-                {t('auth.login.password')}
+                كلمة المرور
               </label>
               <div className="relative">
                 <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  type={loginShowPassword ? "text" : "password"}
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
                   className="w-full px-4 py-3 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-gold focus:outline-none transition-colors pr-12"
                   placeholder="••••••••"
                   required
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setLoginShowPassword(!loginShowPassword)}
                   className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400 hover:text-gold transition-colors"
                 >
-                  {showPassword ? '🙈' : '👁️'}
+                  {loginShowPassword ? '🙈' : '👁️'}
                 </button>
               </div>
             </div>
@@ -581,18 +576,18 @@ function App() {
               disabled={authLoading}
               className="w-full royal-button py-3 font-semibold text-lg"
             >
-              {authLoading ? t('common.loading') : t('auth.login.submit')}
+              {authLoading ? 'جاري التحميل...' : 'تسجيل الدخول'}
             </button>
           </form>
 
           <div className="text-center mt-6 space-y-4">
             <p className="text-purple-300">
-              {t('auth.login.noAccount')}{' '}
+              ليس لديك حساب؟{' '}
               <button
                 onClick={() => setCurrentView('register')}
                 className="text-gold hover:text-yellow-300 font-medium transition-colors"
               >
-                {t('auth.login.createAccount')}
+                إنشاء حساب جديد
               </button>
             </p>
             
@@ -600,7 +595,7 @@ function App() {
               onClick={() => setCurrentView('dashboard')}
               className="text-purple-400 hover:text-purple-200 transition-colors"
             >
-              {t('common.back')}
+              العودة
             </button>
           </div>
         </div>
