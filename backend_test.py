@@ -1461,6 +1461,13 @@ class AlKabousAITester:
         print("\n🧠 === ANALYSIS TESTS ===")
         self.test_regular_analysis_endpoint()  # HIGH PRIORITY
         self.test_chart_analysis_endpoint()  # HIGH PRIORITY  
+        
+        # ADVANCED CHART ANALYSIS SYSTEM TESTS (NEW IMPLEMENTATION)
+        print("\n🚀 === ADVANCED CHART ANALYSIS SYSTEM TESTS ===")
+        self.test_advanced_chart_analysis_system()  # HIGH PRIORITY - New advanced system
+        self.test_chart_analysis_user_context_passing()  # HIGH PRIORITY - User context integration
+        self.test_chart_analysis_fallback_system()  # HIGH PRIORITY - Fallback to legacy system
+        
         self.test_analysis_logging_integration()  # HIGH PRIORITY - New logging system
         
         # Supporting API Tests
