@@ -317,6 +317,11 @@ class User:
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'User':
         """Create User from dictionary"""
+        # Remove MongoDB's _id field if present
+        if '_id' in data:
+            data = data.copy()
+            del data['_id']
+            
         if 'tier' in data and isinstance(data['tier'], str):
             data['tier'] = UserTier(data['tier'])
         if 'status' in data and isinstance(data['status'], str):
