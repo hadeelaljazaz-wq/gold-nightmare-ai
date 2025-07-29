@@ -351,9 +351,22 @@ async def analyze_chart(request: ChartAnalysisRequest):
             # Decode base64 image
             image_bytes = base64.b64decode(request.image_data)
             
-            # Advanced image processing with OCR
-            logger.info("🔍 Starting advanced chart analysis with OCR...")
-            chart_analysis = await chart_processor.process_chart_image(image_bytes)
+            # Advanced image processing with OCR and intelligent analysis
+            logger.info("🔍 Starting advanced chart analysis with intelligent processing...")
+            
+            # استخدام النظام المحسن مع السياق
+            user_context = f"""
+معلومات الشارت المقدمة:
+- زوج العملة: {request.currency_pair}
+- الإطار الزمني: {request.timeframe}
+- ملاحظات التحليل: {request.analysis_notes or 'لا توجد ملاحظات إضافية'}
+
+معلومات إضافية:
+- نوع التحليل: تحليل شارت متقدم
+- التاريخ والوقت: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')}
+"""
+            
+            chart_analysis = await chart_processor.process_chart_image(image_bytes, user_context)
             
             if "error" in chart_analysis:
                 return ChartAnalysisResponse(
