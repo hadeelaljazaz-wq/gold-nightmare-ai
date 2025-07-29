@@ -318,8 +318,8 @@ function App() {
         </div>
         {/* Quick Analysis Section */}
         <div className="glass-card p-6 mb-8">
-          <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-            <span className="text-purple-400 mr-2">⚡</span>
+          <h2 className="text-2xl font-bold royal-text mb-6 flex items-center">
+            <span className="gold-text mr-2">⚡</span>
             تحليل فوري للذهب
           </h2>
           <p className="text-purple-200 mb-6">اضغط على نوع التحليل للحصول على تحليل فوري</p>
@@ -327,7 +327,7 @@ function App() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             <button 
               onClick={() => handleAnalyze('quick', 'تحليل سريع للذهب')}
-              className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-4 rounded-xl font-semibold hover:from-yellow-600 hover:to-orange-600 transition-all transform hover:scale-105"
+              className="analysis-button font-semibold transition-all transform hover:scale-105"
             >
               <div className="text-2xl mb-2">📉</div>
               سريع
@@ -335,7 +335,7 @@ function App() {
             
             <button 
               onClick={() => handleAnalyze('chart', 'التحليل الفني للذهب')}
-              className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-xl font-semibold hover:from-blue-600 hover:to-purple-600 transition-all transform hover:scale-105"
+              className="analysis-button font-semibold transition-all transform hover:scale-105"
             >
               <div className="text-2xl mb-2">📊</div>
               فني
@@ -343,7 +343,7 @@ function App() {
             
             <button 
               onClick={() => handleAnalyze('news', 'أخبار الذهب وتأثيرها على السوق')}
-              className="bg-gradient-to-r from-green-500 to-teal-500 text-white p-4 rounded-xl font-semibold hover:from-green-600 hover:to-teal-600 transition-all transform hover:scale-105"
+              className="analysis-button font-semibold transition-all transform hover:scale-105"
             >
               <div className="text-2xl mb-2">📰</div>
               أخبار
@@ -351,7 +351,7 @@ function App() {
             
             <button 
               onClick={() => handleAnalyze('forecast', 'توقعات الذهب المستقبلية')}
-              className="bg-gradient-to-r from-pink-500 to-red-500 text-white p-4 rounded-xl font-semibold hover:from-pink-600 hover:to-red-600 transition-all transform hover:scale-105"
+              className="analysis-button font-semibold transition-all transform hover:scale-105"
             >
               <div className="text-2xl mb-2">📈</div>
               توقعات
@@ -359,7 +359,7 @@ function App() {
             
             <button 
               onClick={() => handleAnalyze('detailed', 'تحليل مفصل وشامل للذهب')}
-              className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-4 rounded-xl font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all transform hover:scale-105"
+              className="analysis-button font-semibold transition-all transform hover:scale-105"
             >
               <div className="text-2xl mb-2">📋</div>
               مفصل
@@ -369,8 +369,8 @@ function App() {
 
         {/* Currency Analysis Section */}
         <div className="glass-card p-6 mb-8">
-          <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-            <span className="text-blue-400 mr-2">💱</span>
+          <h2 className="text-2xl font-bold royal-text mb-6 flex items-center">
+            <span className="gold-text mr-2">💱</span>
             تحليل العملات
           </h2>
           <p className="text-purple-200 mb-6">تحليل العملات الرئيسية في السوق</p>
@@ -378,7 +378,7 @@ function App() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <button 
               onClick={() => handleAnalyze('detailed', 'تحليل زوج EUR/USD')}
-              className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white p-4 rounded-xl font-semibold hover:from-blue-700 hover:to-cyan-700 transition-all transform hover:scale-105"
+              className="analysis-button font-semibold transition-all transform hover:scale-105"
             >
               <div className="text-2xl mb-2">🇪🇺</div>
               EUR/USD
@@ -386,7 +386,7 @@ function App() {
             
             <button 
               onClick={() => handleAnalyze('detailed', 'تحليل زوج USD/JPY')}
-              className="bg-gradient-to-r from-red-600 to-pink-600 text-white p-4 rounded-xl font-semibold hover:from-red-700 hover:to-pink-700 transition-all transform hover:scale-105"
+              className="analysis-button font-semibold transition-all transform hover:scale-105"
             >
               <div className="text-2xl mb-2">🇯🇵</div>
               USD/JPY
@@ -394,7 +394,7 @@ function App() {
             
             <button 
               onClick={() => handleAnalyze('detailed', 'تحليل زوج GBP/USD')}
-              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-4 rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all transform hover:scale-105"
+              className="analysis-button font-semibold transition-all transform hover:scale-105"
             >
               <div className="text-2xl mb-2">🇬🇧</div>
               GBP/USD
@@ -404,8 +404,8 @@ function App() {
 
         {/* Chart Analysis Section */}
         <div className="glass-card p-6 mb-8">
-          <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-            <span className="text-orange-400 mr-2">📊</span>
+          <h2 className="text-2xl font-bold royal-text mb-6 flex items-center">
+            <span className="gold-text mr-2">📊</span>
             تحليل الشارت بالصورة
           </h2>
           <p className="text-purple-200 mb-6">ارفع صورة الشارت واحصل على تحليل فني احترافي مدعوم بالذكاء الاصطناعي</p>
@@ -413,25 +413,27 @@ function App() {
           <div className="text-center">
             <button
               onClick={() => setCurrentView('chart-analysis')}
-              className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-orange-700 hover:to-red-700 transition-all transform hover:scale-105 shadow-xl"
+              className="royal-button px-8 py-4 text-lg font-bold shadow-xl"
             >
               <span className="mr-2">📷</span>
               تحليل الشارت بالصورة
             </button>
           </div>
         </div>
+
+        {/* Custom Analysis Button */}
         <div className="text-center">
           <div className="flex gap-4 justify-center">
             <button
               onClick={() => setCurrentView('analyze')}
-              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-purple-700 hover:to-indigo-700 transition-all transform hover:scale-105 shadow-xl"
+              className="royal-button px-8 py-4 text-lg font-bold shadow-xl"
             >
               <span className="mr-2">🎯</span>
               طلب تحليل مخصص
             </button>
             <button
               onClick={() => setCurrentView('contact')}
-              className="bg-gradient-to-r from-green-600 to-teal-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-green-700 hover:to-teal-700 transition-all transform hover:scale-105 shadow-xl"
+              className="royal-button px-8 py-4 text-lg font-bold shadow-xl"
             >
               <span className="mr-2">📞</span>
               التواصل معنا
