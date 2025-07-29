@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
-  const [currentView, setCurrentView] = useState('dashboard'); // dashboard, analyze, results
+  const [currentView, setCurrentView] = useState('dashboard'); // dashboard, analyze, results, contact
   const [goldPrice, setGoldPrice] = useState(null);
   const [loading, setLoading] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
