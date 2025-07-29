@@ -132,6 +132,142 @@ function App() {
     }
   };
 
+  const handleQuickQuestion = (question) => {
+    setUserQuestion(question);
+  };
+
+  // Admin Panel Functions
+  const handleAdminLogin = async () => {
+    if (!adminUsername || !adminPassword) {
+      alert('يرجى إدخال اسم المستخدم وكلمة المرور');
+      return;
+    }
+
+    setAdminLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/api/admin/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: adminUsername,
+          password: adminPassword
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setAdminAuthenticated(true);
+        await fetchAdminDashboard();
+        await fetchAdminUsers();
+      } else {
+        alert(data.error || 'فشل في تسجيل الدخول');
+      }
+    } catch (error) {
+      console.error('Admin login error:', error);
+      alert('خطأ في الاتصال بالخادم');
+    } finally {
+      setAdminLoading(false);
+    }
+  };
+
+  const fetchAdminDashboard = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/dashboard`);
+      const data = await response.json();
+      if (data.success) {
+        setAdminData(data.data);
+      }
+    } catch (error) {
+      console.error('Fetch admin dashboard error:', error);
+    }
+  };
+
+  const fetchAdminUsers = async (page = 1) => {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/users?page=${page}&per_page=20`);
+      const data = await response.json();
+      if (data.success) {
+        setAdminUsers(data.data.users);
+        setAdminCurrentPage(page);
+      }
+    } catch (error) {
+      console.error('Fetch admin users error:', error);
+    }
+  };
+
+  const fetchAdminLogs = async (page = 1, userId = null) => {
+    try {
+      let url = `${API_URL}/api/admin/analysis-logs?page=${page}&per_page=50`;
+      if (userId) {
+        url += `&user_id=${userId}`;
+      }
+      const response = await fetch(url);
+      const data = await response.json();
+      if (data.success) {
+        setAdminLogs(data.data.logs);
+      }
+    } catch (error) {
+      console.error('Fetch admin logs error:', error);
+    }
+  };
+
+  const toggleUserStatus = async (userId) => {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/users/toggle-status`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          admin_id: 'admin'
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        // Refresh users list
+        await fetchAdminUsers(adminCurrentPage);
+        alert(data.data.message);
+      } else {
+        alert(data.error || 'فشل في تغيير حالة المستخدم');
+      }
+    } catch (error) {
+      console.error('Toggle user status error:', error);
+      alert('خطأ في الاتصال بالخادم');
+    }
+  };
+
+  const updateUserTier = async (userId, newTier) => {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/users/update-tier`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          new_tier: newTier,
+          admin_id: 'admin'
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        // Refresh users list
+        await fetchAdminUsers(adminCurrentPage);
+        alert(data.data.message);
+      } else {
+        alert(data.error || 'فشل في تحديث نوع الاشتراك');
+      }
+    } catch (error) {
+      console.error('Update user tier error:', error);
+      alert('خطأ في الاتصال بالخادم');
+    }
+  };
+
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
