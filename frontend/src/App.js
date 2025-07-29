@@ -1505,6 +1505,8 @@ function App() {
       </div>
     </div>
   );
+
+  const renderAnalyzeView = () => (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 p-4">
       <div className="max-w-2xl mx-auto">
         
