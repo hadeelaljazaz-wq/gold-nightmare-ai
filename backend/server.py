@@ -667,7 +667,120 @@ async def get_quick_questions():
     }
 
 # ==========================================
-# ADMIN PANEL ENDPOINTS
+# USER AUTHENTICATION ENDPOINTS
+# ==========================================
+
+@api_router.post("/auth/register")
+async def register_user(request: UserRegistrationRequest):
+    """Register new user"""
+    try:
+        if not auth_manager:
+            raise HTTPException(status_code=503, detail="Auth service not initialized")
+        
+        result = await auth_manager.register_user(request)
+        
+        if result.success:
+            return {
+                "success": True,
+                "message": "تم التسجيل بنجاح",
+                "user": {
+                    "user_id": result.user_id,
+                    "email": result.email,
+                    "tier": result.tier,
+                    "daily_analyses_remaining": result.daily_analyses_remaining
+                }
+            }
+        else:
+            return {"success": False, "error": result.error}
+        
+    except Exception as e:
+        logger.error(f"❌ Registration error: {e}")
+        return {"success": False, "error": "حدث خطأ في التسجيل"}
+
+@api_router.post("/auth/login")
+async def login_user(request: UserLoginRequest):
+    """Login user"""
+    try:
+        if not auth_manager:
+            raise HTTPException(status_code=503, detail="Auth service not initialized")
+        
+        result = await auth_manager.login_user(request)
+        
+        if result.success:
+            return {
+                "success": True,
+                "message": "تم تسجيل الدخول بنجاح",
+                "user": {
+                    "user_id": result.user_id,
+                    "email": result.email,
+                    "tier": result.tier,
+                    "daily_analyses_remaining": result.daily_analyses_remaining
+                }
+            }
+        else:
+            return {"success": False, "error": result.error}
+        
+    except Exception as e:
+        logger.error(f"❌ Login error: {e}")
+        return {"success": False, "error": "حدث خطأ في تسجيل الدخول"}
+
+@api_router.get("/auth/user/{user_id}")
+async def get_user_info(user_id: int):
+    """Get user information"""
+    try:
+        if not auth_manager:
+            raise HTTPException(status_code=503, detail="Auth service not initialized")
+        
+        user = await auth_manager.get_user_by_id(user_id)
+        if not user:
+            return {"success": False, "error": "المستخدم غير موجود"}
+        
+        features = user.get_tier_features()
+        
+        return {
+            "success": True,
+            "user": {
+                "user_id": user.user_id,
+                "email": user.email,
+                "username": user.username,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "tier": user.tier.value,
+                "status": user.status.value,
+                "daily_analyses_remaining": user.get_remaining_analyses_today(),
+                "total_analyses": user.total_analyses,
+                "features": features,
+                "subscription_start": user.subscription_start_date.isoformat() if user.subscription_start_date else None,
+                "created_at": user.created_at.isoformat()
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Get user info error: {e}")
+        return {"success": False, "error": "حدث خطأ في جلب بيانات المستخدم"}
+
+@api_router.get("/auth/check-analysis-permission/{user_id}")
+async def check_analysis_permission(user_id: int):
+    """Check if user can perform analysis"""
+    try:
+        if not auth_manager:
+            raise HTTPException(status_code=503, detail="Auth service not initialized")
+        
+        can_analyze, message, remaining = await auth_manager.can_user_analyze(user_id)
+        
+        return {
+            "success": True,
+            "can_analyze": can_analyze,
+            "message": message,
+            "remaining_analyses": remaining
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Check analysis permission error: {e}")
+        return {"success": False, "error": "حدث خطأ في فحص الصلاحيات"}
+
+# ==========================================
+# GOLD ANALYSIS ENDPOINTS (Updated)
 # ==========================================
 
 class AdminLoginRequest(BaseModel):
