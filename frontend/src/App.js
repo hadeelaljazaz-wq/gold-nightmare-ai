@@ -276,11 +276,7 @@ function App() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <button 
-              onClick={() => { 
-                setSelectedAnalysisType('detailed'); 
-                setUserQuestion('تحليل زوج EUR/USD'); 
-                handleAnalyze(); 
-              }}
+              onClick={() => handleAnalyze('detailed', 'تحليل زوج EUR/USD')}
               className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white p-4 rounded-xl font-semibold hover:from-blue-700 hover:to-cyan-700 transition-all transform hover:scale-105"
             >
               <div className="text-2xl mb-2">🇪🇺</div>
@@ -288,11 +284,7 @@ function App() {
             </button>
             
             <button 
-              onClick={() => { 
-                setSelectedAnalysisType('detailed'); 
-                setUserQuestion('تحليل زوج USD/JPY'); 
-                handleAnalyze(); 
-              }}
+              onClick={() => handleAnalyze('detailed', 'تحليل زوج USD/JPY')}
               className="bg-gradient-to-r from-red-600 to-pink-600 text-white p-4 rounded-xl font-semibold hover:from-red-700 hover:to-pink-700 transition-all transform hover:scale-105"
             >
               <div className="text-2xl mb-2">🇯🇵</div>
@@ -300,11 +292,7 @@ function App() {
             </button>
             
             <button 
-              onClick={() => { 
-                setSelectedAnalysisType('detailed'); 
-                setUserQuestion('تحليل زوج GBP/USD'); 
-                handleAnalyze(); 
-              }}
+              onClick={() => handleAnalyze('detailed', 'تحليل زوج GBP/USD')}
               className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-4 rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all transform hover:scale-105"
             >
               <div className="text-2xl mb-2">🇬🇧</div>
