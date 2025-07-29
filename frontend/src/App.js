@@ -1601,6 +1601,130 @@ function App() {
       {currentView === 'analyze' && renderAnalyzeView()}
       {currentView === 'results' && renderResultsView()}
       {currentView === 'contact' && renderContactView()}
+      {currentView === 'admin' && renderAdminView()}
+      
+      {currentView === 'results' && (
+        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 p-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <h1 className="text-4xl font-bold text-white mb-4">
+                <span className="text-red-400">💎</span> نتائج التحليل
+              </h1>
+              
+              <div className="inline-block bg-black/20 backdrop-blur-sm border border-red-500/30 rounded-lg p-4 shadow-xl">
+                <div className="text-2xl font-bold text-red-400 mb-2">
+                  نوع التحليل: {selectedAnalysisType === 'quick' ? 'سريع ⚡' : 
+                                 selectedAnalysisType === 'detailed' ? 'مفصل 📊' :
+                                 selectedAnalysisType === 'chart' ? 'فني 📈' :
+                                 selectedAnalysisType === 'news' ? 'أخبار 📰' : 'توقعات 🔮'}
+                </div>
+                {goldPrice && (
+                  <div className="text-lg text-white">
+                    السعر الحالي: <span className="text-yellow-400 font-bold">${goldPrice.price_usd}</span>
+                    <span className={`ml-2 ${goldPrice.price_change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      ({goldPrice.price_change >= 0 ? '+' : ''}{goldPrice.price_change_pct}%)
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="glass-card p-8 mb-8">
+              <div className="analysis-content">
+                {analysisResult}
+              </div>
+            </div>
+            
+            <div className="text-center">
+              <button
+                onClick={() => setCurrentView('dashboard')}
+                className="royal-button px-8 py-4 text-lg font-bold shadow-xl"
+              >
+                العودة للرئيسية
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {currentView === 'chart-analysis' && (
+        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 p-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <h1 className="text-4xl font-bold text-white mb-4">
+                <span className="text-red-400">📊</span> نتائج تحليل الشارت
+              </h1>
+              
+              <div className="inline-block bg-black/20 backdrop-blur-sm border border-red-500/30 rounded-lg p-4 shadow-xl">
+                <div className="text-2xl font-bold text-red-400 mb-2">
+                  تحليل الشارت المرفوع
+                </div>
+                <div className="text-lg text-white">
+                  زوج العملة: <span className="text-yellow-400 font-bold">{currencyPair}</span>
+                  <span className="mx-2">|</span>
+                  الإطار الزمني: <span className="text-blue-400 font-bold">{timeframe}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="glass-card p-8 mb-8">
+              <div className="analysis-content">
+                {chartAnalysisResult}
+              </div>
+            </div>
+            
+            <div className="text-center">
+              <button
+                onClick={() => setCurrentView('dashboard')}
+                className="royal-button px-8 py-4 text-lg font-bold shadow-xl"
+              >
+                العودة للرئيسية
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {currentView === 'forex-results' && (
+        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 p-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <h1 className="text-4xl font-bold text-white mb-4">
+                <span className="text-red-400">💱</span> نتائج تحليل العملات
+              </h1>
+              
+              <div className="inline-block bg-black/20 backdrop-blur-sm border border-red-500/30 rounded-lg p-4 shadow-xl">
+                <div className="text-2xl font-bold text-red-400 mb-2">
+                  تحليل زوج العملة: {selectedForexPair}
+                </div>
+                {forexPrices[selectedForexPair] && (
+                  <div className="text-lg text-white">
+                    السعر الحالي: <span className="text-yellow-400 font-bold">{forexPrices[selectedForexPair].price_usd}</span>
+                    <span className={`ml-2 ${forexPrices[selectedForexPair].price_change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      ({forexPrices[selectedForexPair].price_change >= 0 ? '+' : ''}{forexPrices[selectedForexPair].price_change_pct}%)
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="glass-card p-8 mb-8">
+              <div className="analysis-content">
+                {forexAnalysisResult}
+              </div>
+            </div>
+            
+            <div className="text-center">
+              <button
+                onClick={() => setCurrentView('dashboard')}
+                className="royal-button px-8 py-4 text-lg font-bold shadow-xl"
+              >
+                العودة للرئيسية
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {currentView === 'chart-analysis' && renderChartAnalysisView()}
       {currentView === 'admin' && renderAdminView()}
     </div>
