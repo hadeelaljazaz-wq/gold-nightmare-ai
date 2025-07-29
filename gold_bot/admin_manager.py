@@ -32,7 +32,7 @@ class AdminManager:
     async def initialize(self):
         """Initialize admin manager"""
         try:
-            self.db = await self.db_manager.get_database()
+            self.db = self.db_manager.db
             
             # Initialize collections
             self.users_collection = self.db.users
