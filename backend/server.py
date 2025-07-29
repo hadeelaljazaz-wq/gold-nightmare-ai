@@ -510,10 +510,21 @@ def _build_chart_analysis_context(chart_analysis: Dict[str, Any], currency_pair:
 
 @api_router.post("/analyze", response_model=AnalysisResponse)
 async def analyze_gold(request: AnalysisRequest):
-    """Generate AI analysis of gold market"""
+    """Analyze gold prices with user authentication"""
+    if not ai_manager or not price_manager:
+        raise HTTPException(status_code=503, detail="Services not initialized")
+    
+    start_time = datetime.utcnow()
+    
     try:
-        if not ai_manager or not price_manager:
-            raise HTTPException(status_code=503, detail="Analysis services not initialized")
+        # Check user permissions
+        if auth_manager:
+            can_analyze, message, remaining = await auth_manager.can_user_analyze(request.user_id)
+            if not can_analyze:
+                return AnalysisResponse(
+                    success=False,
+                    error=message
+                )
         
         # Validate analysis type
         try:
@@ -521,17 +532,20 @@ async def analyze_gold(request: AnalysisRequest):
         except ValueError:
             return AnalysisResponse(
                 success=False,
-                error="نوع التحليل غير صحيح. الأنواع المتاحة: quick, detailed, chart, news, forecast"
+                error="نوع تحليل غير صحيح"
             )
         
-        start_time = datetime.utcnow()
-        
         # Get current gold price
-        gold_price = await price_manager.get_current_price(use_cache=True)
+        gold_price = await price_manager.get_current_price()
+        if not gold_price:
+            return AnalysisResponse(
+                success=False,
+                error="فشل في الحصول على سعر الذهب الحالي"
+            )
         
         # Generate analysis
         analysis = await ai_manager.generate_analysis(
-            user_id=1,  # Default user for web app
+            user_id=request.user_id,
             analysis_type=analysis_type,
             gold_price=gold_price,
             additional_context=request.additional_context or request.user_question or ""
@@ -540,16 +554,20 @@ async def analyze_gold(request: AnalysisRequest):
         end_time = datetime.utcnow()
         processing_time = (end_time - start_time).total_seconds()
         
+        # Record analysis if successful
+        if analysis and auth_manager:
+            await auth_manager.record_analysis(request.user_id)
+        
         # Log the analysis request
         if admin_manager:
             await admin_manager.log_analysis(
-                user_id=1,  # Default web user
+                user_id=request.user_id,
                 analysis_type=analysis_type,
                 success=analysis is not None,
                 processing_time=processing_time,
                 error_message=None if analysis else "Analysis generation failed",
                 gold_price=gold_price.price_usd if gold_price else None,
-                user_tier=UserTier.BASIC
+                user_tier=UserTier.BASIC  # Will be updated with actual user tier
             )
         
         if not analysis:
@@ -558,34 +576,33 @@ async def analyze_gold(request: AnalysisRequest):
                 error="فشل في إجراء التحليل. يرجى المحاولة مرة أخرى."
             )
         
-        end_time = datetime.utcnow()
-        processing_time = (end_time - start_time).total_seconds()
-        
-        end_time = datetime.utcnow()
-        processing_time = (end_time - start_time).total_seconds()
-        
-        # Convert gold price to dict if available
-        gold_price_data = None
-        if gold_price:
-            gold_price_data = {
-                "price_usd": gold_price.price_usd,
-                "price_change": gold_price.price_change,
-                "price_change_pct": gold_price.price_change_pct,
-                "source": gold_price.source
-            }
-        
         return AnalysisResponse(
             success=True,
-            analysis=analysis.content,
-            gold_price=gold_price_data,
+            analysis=analysis,
+            gold_price=gold_price,
             processing_time=processing_time
         )
         
     except Exception as e:
-        logging.error(f"❌ Analysis error: {e}")
+        error_msg = f"Analysis error: {str(e)}"
+        logger.error(error_msg)
+        
+        end_time = datetime.utcnow()
+        processing_time = (end_time - start_time).total_seconds()
+        
+        # Log the failed analysis
+        if admin_manager:
+            await admin_manager.log_analysis(
+                user_id=request.user_id,
+                analysis_type=AnalysisType.QUICK,
+                success=False,
+                processing_time=processing_time,
+                error_message=error_msg
+            )
+        
         return AnalysisResponse(
             success=False,
-            error=f"خطأ في إجراء التحليل: {str(e)}"
+            error="حدث خطأ في التحليل، يرجى المحاولة لاحقاً"
         )
 
 @api_router.get("/analysis-types")
