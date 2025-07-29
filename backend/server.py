@@ -55,15 +55,16 @@ auth_manager = None
 @app.on_event("startup")
 async def startup_event():
     """Initialize components on startup"""
-    global price_manager, ai_manager, db_manager, admin_manager
+    global price_manager, ai_manager, db_manager, admin_manager, auth_manager
     try:
         # Initialize managers
         price_manager = await get_price_manager()
         ai_manager = await get_ai_manager()
         db_manager = await get_database()
         admin_manager = await get_admin_manager()
+        auth_manager = await get_auth_manager()
         
-        logging.info("🚀 Gold Analysis API started successfully!")
+        logging.info("🚀 Gold Analysis API with User Authentication started successfully!")
         
     except Exception as e:
         logging.error(f"❌ Failed to start API: {e}")
