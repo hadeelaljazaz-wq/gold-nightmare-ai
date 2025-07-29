@@ -416,7 +416,16 @@ async def analyze_chart(request: ChartAnalysisRequest):
                 "extracted_data": chart_analysis.get("trading_context", {}),
                 "ocr_confidence": chart_analysis.get("trading_context", {}).get("confidence_score", 0.0),
                 "detected_prices": chart_analysis.get("price_analysis", {}).get("detected_prices", []),
-                "visual_signals": chart_analysis.get("trading_context", {}).get("trading_signals", [])
+                "visual_signals": chart_analysis.get("trading_context", {}).get("trading_signals", []),
+                # الميزات المحسنة الجديدة
+                "advanced_features": {
+                    "intelligent_mode": chart_analysis.get("advanced_analysis", {}).get("intelligent_mode", False),
+                    "optimization_applied": chart_analysis.get("advanced_analysis", {}).get("optimization_log", {}).get("steps_applied", []),
+                    "text_extraction_methods": chart_analysis.get("text_extraction", {}).get("extraction_methods", []),
+                    "average_confidence": chart_analysis.get("text_extraction", {}).get("average_confidence", 0.0),
+                    "ohlc_simulation": chart_analysis.get("advanced_analysis", {}).get("ohlc_simulation", {}).get("statistics", {}),
+                    "enhancement_quality": len(chart_analysis.get("advanced_analysis", {}).get("optimization_log", {}).get("steps_applied", [])) / 6.0  # نسبة التحسينات المطبقة
+                }
             },
             processing_time=processing_time
         )
