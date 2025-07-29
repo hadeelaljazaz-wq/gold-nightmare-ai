@@ -642,6 +642,218 @@ async def get_quick_questions():
         ]
     }
 
+# ==========================================
+# ADMIN PANEL ENDPOINTS
+# ==========================================
+
+class AdminLoginRequest(BaseModel):
+    username: str
+    password: str
+
+class AdminToggleUserRequest(BaseModel):
+    user_id: int
+    admin_id: str = "admin"
+
+class AdminUpdateTierRequest(BaseModel):
+    user_id: int
+    new_tier: str
+    admin_id: str = "admin"
+
+@api_router.post("/admin/login")
+async def admin_login(request: AdminLoginRequest):
+    """Simple admin authentication (for MVP)"""
+    try:
+        # Simple hardcoded authentication for MVP
+        # In production, this should use proper authentication
+        if request.username == "admin" and request.password == "GOLD_NIGHTMARE_205":
+            return {
+                "success": True,
+                "token": "admin_token_placeholder",
+                "admin_info": {
+                    "username": "admin",
+                    "permissions": ["manage_users", "view_analytics", "modify_settings"]
+                }
+            }
+        else:
+            return {"success": False, "error": "Invalid credentials"}
+            
+    except Exception as e:
+        logger.error(f"❌ Admin login error: {e}")
+        return {"success": False, "error": str(e)}
+
+@api_router.get("/admin/dashboard")
+async def get_admin_dashboard():
+    """Get admin dashboard statistics"""
+    try:
+        if not admin_manager:
+            raise HTTPException(status_code=503, detail="Admin service not initialized")
+        
+        stats = await admin_manager.get_dashboard_stats()
+        return {"success": True, "data": stats}
+        
+    except Exception as e:
+        logger.error(f"❌ Admin dashboard error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/users")
+async def get_admin_users(page: int = 1, per_page: int = 50):
+    """Get all users for admin panel"""
+    try:
+        if not admin_manager:
+            raise HTTPException(status_code=503, detail="Admin service not initialized")
+        
+        users_data = await admin_manager.get_all_users(page=page, per_page=per_page)
+        return {"success": True, "data": users_data}
+        
+    except Exception as e:
+        logger.error(f"❌ Admin get users error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/users/{user_id}")
+async def get_admin_user_details(user_id: int):
+    """Get detailed user information"""
+    try:
+        if not admin_manager:
+            raise HTTPException(status_code=503, detail="Admin service not initialized")
+        
+        user_details = await admin_manager.get_user_details(user_id)
+        if not user_details:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        return {"success": True, "data": user_details}
+        
+    except Exception as e:
+        logger.error(f"❌ Admin get user details error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/admin/users/toggle-status")
+async def admin_toggle_user_status(request: AdminToggleUserRequest):
+    """Toggle user active/inactive status"""
+    try:
+        if not admin_manager:
+            raise HTTPException(status_code=503, detail="Admin service not initialized")
+        
+        result = await admin_manager.toggle_user_status(request.user_id, request.admin_id)
+        
+        if result["success"]:
+            return {"success": True, "data": result}
+        else:
+            return {"success": False, "error": result["error"]}
+        
+    except Exception as e:
+        logger.error(f"❌ Admin toggle user status error: {e}")
+        return {"success": False, "error": str(e)}
+
+@api_router.post("/admin/users/update-tier")
+async def admin_update_user_tier(request: AdminUpdateTierRequest):
+    """Update user subscription tier"""
+    try:
+        if not admin_manager:
+            raise HTTPException(status_code=503, detail="Admin service not initialized")
+        
+        result = await admin_manager.update_user_tier(request.user_id, request.new_tier, request.admin_id)
+        
+        if result["success"]:
+            return {"success": True, "data": result}
+        else:
+            return {"success": False, "error": result["error"]}
+        
+    except Exception as e:
+        logger.error(f"❌ Admin update tier error: {e}")
+        return {"success": False, "error": str(e)}
+
+@api_router.get("/admin/analysis-logs")
+async def get_admin_analysis_logs(page: int = 1, per_page: int = 100, user_id: Optional[int] = None):
+    """Get analysis logs for admin panel"""
+    try:
+        if not admin_manager:
+            raise HTTPException(status_code=503, detail="Admin service not initialized")
+        
+        # Get logs with optional user filtering
+        skip = (page - 1) * per_page
+        
+        # Build query
+        query = {}
+        if user_id:
+            query["user_id"] = user_id
+        
+        # Get logs from database
+        logs_cursor = admin_manager.analysis_logs_collection.find(query).sort("timestamp", -1).skip(skip).limit(per_page)
+        logs = await logs_cursor.to_list(length=per_page)
+        
+        # Get total count
+        total_logs = await admin_manager.analysis_logs_collection.count_documents(query)
+        
+        # Format logs
+        formatted_logs = []
+        for log in logs:
+            formatted_logs.append({
+                "id": log.get("id"),
+                "user_id": log.get("user_id"),
+                "analysis_type": log.get("analysis_type"),
+                "success": log.get("success", False),
+                "processing_time": log.get("processing_time", 0),
+                "error_message": log.get("error_message"),
+                "user_tier": log.get("user_tier", "basic"),
+                "gold_price_at_request": log.get("gold_price_at_request"),
+                "tokens_used": log.get("tokens_used"),
+                "timestamp": log.get("timestamp", datetime.utcnow()).isoformat()
+            })
+        
+        return {
+            "success": True,
+            "data": {
+                "logs": formatted_logs,
+                "total": total_logs,
+                "page": page,
+                "per_page": per_page,
+                "total_pages": (total_logs + per_page - 1) // per_page
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Admin get logs error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/admin/system-status")
+async def get_admin_system_status():
+    """Get system status for admin panel"""
+    try:
+        status = {}
+        
+        # Test Gold Price APIs
+        if price_manager:
+            price_status = await price_manager.get_api_status()
+            status["gold_apis"] = price_status
+        
+        # Test Claude AI
+        if ai_manager:
+            ai_stats = await ai_manager.get_ai_stats()
+            status["claude_ai"] = ai_stats
+        
+        # Database status
+        if db_manager:
+            try:
+                await db_manager.get_database()
+                status["database"] = {"status": "connected", "type": "MongoDB"}
+            except Exception as e:
+                status["database"] = {"status": "error", "error": str(e)}
+        
+        # Admin manager status
+        status["admin_manager"] = {"status": "initialized" if admin_manager else "not_initialized"}
+        
+        return {
+            "success": True,
+            "status": status,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 # Include API router
 app.include_router(api_router)
 
