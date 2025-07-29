@@ -165,6 +165,163 @@ async def get_gold_price():
             error=f"خطأ في جلب أسعار الذهب: {str(e)}"
         )
 
+@api_router.get("/forex-price/{pair}")
+async def get_forex_price(pair: str):
+    """Get current forex price for a currency pair"""
+    try:
+        # Get forex price
+        forex_price = await forex_manager.get_forex_price(pair, use_cache=True)
+        
+        if not forex_price:
+            raise HTTPException(status_code=404, detail=f"Currency pair {pair} not found")
+        
+        return {
+            "success": True,
+            "price_data": {
+                "pair": forex_price.pair,
+                "price_usd": forex_price.price_usd,
+                "price_change": forex_price.price_change,
+                "price_change_pct": forex_price.price_change_pct,
+                "ask": forex_price.ask,
+                "bid": forex_price.bid,
+                "high_24h": forex_price.high_24h,
+                "low_24h": forex_price.low_24h,
+                "source": forex_price.source,
+                "timestamp": forex_price.timestamp.isoformat()
+            },
+            "formatted_text": forex_manager.get_formatted_text(forex_price)
+        }
+        
+    except Exception as e:
+        logging.error(f"❌ Forex price error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/forex-pairs")
+async def get_supported_forex_pairs():
+    """Get list of supported forex pairs"""
+    return {
+        "success": True,
+        "pairs": list(forex_manager.CURRENCY_PAIRS.keys()),
+        "pair_names": forex_manager.CURRENCY_NAMES_AR
+    }
+
+@api_router.post("/analyze-forex", response_model=ForexAnalysisResponse)
+async def analyze_forex(request: ForexAnalysisRequest):
+    """Analyze forex pair with AI"""
+    try:
+        if not ai_manager:
+            raise HTTPException(status_code=503, detail="Analysis service not initialized")
+        
+        start_time = datetime.utcnow()
+        
+        # Get current forex price
+        forex_price = await forex_manager.get_forex_price(request.pair, use_cache=True)
+        
+        if not forex_price:
+            return ForexAnalysisResponse(
+                success=False,
+                error=f"لا يمكن الحصول على سعر {request.pair}"
+            )
+        
+        # Get Arabic name for the pair
+        pair_name_ar = forex_manager.CURRENCY_NAMES_AR.get(request.pair, request.pair)
+        
+        # Create analysis context specific for forex
+        forex_context = f"""
+معلومات السوق الحالية:
+- زوج العملة: {pair_name_ar} ({request.pair})
+- السعر الحالي: {forex_price.price_usd:.4f}
+- التغيير 24 ساعة: {forex_price.price_change:.4f} ({forex_price.price_change_pct:.2f}%)
+- أعلى 24 ساعة: {forex_price.high_24h:.4f}
+- أدنى 24 ساعة: {forex_price.low_24h:.4f}
+- الوقت: {forex_price.timestamp.strftime('%Y-%m-%d %H:%M:%S')}
+- المصدر: {forex_price.source}
+
+{request.additional_context}
+"""
+        
+        # Generate analysis using the AI manager
+        # We'll adapt the gold analysis to work with forex
+        analysis_type = AnalysisType.DETAILED if request.analysis_type == "detailed" else AnalysisType.QUICK
+        
+        # Create a modified prompt for forex
+        forex_prompt = f"""أنت محلل عملات محترف من مدرسة الكابوس الذهبية بخبرة 20+ سنة في أسواق العملات الأجنبية.
+
+قم بتحليل زوج العملة {pair_name_ar} ({request.pair}) بناءً على المعلومات التالية:
+
+{forex_context}
+
+قدم تحليلاً شاملاً يتضمن:
+
+📊 **التحليل الفني المفصل:**
+• الاتجاه العام للزوج
+• النماذج الفنية المتكونة
+• مستويات الدعم والمقاومة المهمة
+• تحليل الحجم والزخم
+
+📈 **العوامل الاقتصادية المؤثرة:**
+• السياسة النقدية للبنوك المركزية
+• المؤشرات الاقتصادية المهمة
+• الأحداث الجيوسياسية
+• معنويات السوق
+
+💰 **التوصيات التداولية:**
+• نقاط الدخول المحتملة
+• الأهداف (TP1, TP2, TP3)
+• وقف الخسارة المناسب
+• نسبة المخاطرة/العائد
+
+⚡ **السيناريوهات المحتملة:**
+• السيناريو الصاعد: الشروط والأهداف
+• السيناريو الهابط: الشروط والأهداف
+• المستويات الحرجة للمراقبة
+
+⚠️ **إدارة المخاطر:**
+• نصائح مهمة للحماية من التقلبات
+• متى يجب تحريك وقف الخسارة
+• متى يجب أخذ أرباح جزئية
+
+التوقيع: 🏆 Gold Nightmare - عدي"""
+        
+        # Use the AI manager to generate analysis
+        analysis = await ai_manager.generate_analysis(
+            user_id=1,  # Default user for web app
+            analysis_type=analysis_type,
+            gold_price=None,  # We pass None since this is forex, not gold
+            additional_context=forex_prompt
+        )
+        
+        if not analysis:
+            return ForexAnalysisResponse(
+                success=False,
+                error="فشل في إجراء تحليل العملة. يرجى المحاولة مرة أخرى."
+            )
+        
+        end_time = datetime.utcnow()
+        processing_time = (end_time - start_time).total_seconds()
+        
+        return ForexAnalysisResponse(
+            success=True,
+            analysis=analysis.content,
+            forex_price={
+                "pair": forex_price.pair,
+                "price_usd": forex_price.price_usd,
+                "price_change": forex_price.price_change,
+                "price_change_pct": forex_price.price_change_pct,
+                "high_24h": forex_price.high_24h,
+                "low_24h": forex_price.low_24h,
+                "source": forex_price.source
+            },
+            processing_time=processing_time
+        )
+        
+    except Exception as e:
+        logging.error(f"❌ Forex analysis error: {e}")
+        return ForexAnalysisResponse(
+            success=False,
+            error=f"خطأ في تحليل العملة: {str(e)}"
+        )
+
 @api_router.post("/analyze-chart", response_model=ChartAnalysisResponse)
 async def analyze_chart(request: ChartAnalysisRequest):
     """Analyze trading chart image with AI"""
