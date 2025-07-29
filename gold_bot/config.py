@@ -69,8 +69,8 @@ def load_config() -> BotConfig:
             prompt_language=os.environ.get('PROMPT_LANGUAGE', 'arabic'),
             bot_signature=os.environ.get('BOT_SIGNATURE', 'Gold Nightmare – عدي'),
             
-            # Cache & Rate Limiting
-            price_cache_ttl=int(os.environ.get('PRICE_CACHE_TTL', 120)),
+            # Cache & Rate Limiting - Updated to 15 minutes for gold price
+            price_cache_ttl=int(os.environ.get('PRICE_CACHE_TTL', 900)),  # 15 minutes
             analysis_cache_ttl=int(os.environ.get('ANALYSIS_CACHE_TTL', 1800)),
             rate_limit_basic=int(os.environ.get('RATE_LIMIT_BASIC', 5)),
             rate_limit_premium=int(os.environ.get('RATE_LIMIT_PREMIUM', 20)),
