@@ -1665,7 +1665,28 @@ function App() {
             
             <div className="glass-card p-8 mb-8">
               <div className="analysis-content">
-                {analysisResult}
+                {analysisLoading ? (
+                  <div className="text-center py-8">
+                    <div className="text-4xl mb-4">🔄</div>
+                    <p className="text-white">جاري التحليل...</p>
+                  </div>
+                ) : analysisResult ? (
+                  analysisResult.success ? (
+                    <div className="text-white whitespace-pre-wrap">
+                      {analysisResult.analysis}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="text-4xl mb-4">❌</div>
+                      <p className="text-red-400">{analysisResult.error}</p>
+                    </div>
+                  )
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="text-4xl mb-4">⏳</div>
+                    <p className="text-white">لا توجد نتائج</p>
+                  </div>
+                )}
               </div>
             </div>
             
