@@ -152,18 +152,14 @@ class AIAnalysisManager:
         context = ""
         
         if gold_price:
-            change_direction = "ارتفع" if gold_price.price_change > 0 else "انخفض" if gold_price.price_change < 0 else "استقر"
-            
             context = f"""
-معلومات السعر الحالية:
-- سعر الذهب: ${gold_price.price_usd:.2f} لكل أونصة
-- التغيير: {gold_price.price_change:+.2f} ({gold_price.price_change_pct:+.2f}%)
-- الاتجاه: {change_direction}
-- أعلى سعر (24 ساعة): ${gold_price.high_24h:.2f}
-- أقل سعر (24 ساعة): ${gold_price.low_24h:.2f}
-- سعر الطلب: ${gold_price.ask:.2f}
-- سعر البيع: ${gold_price.bid:.2f}
-- مصدر البيانات: {gold_price.source.upper()}
+معلومات السوق الحالية:
+- السعر الحالي: ${gold_price.price_usd:.2f}
+- التغيير 24 ساعة: {gold_price.price_change:.2f} ({gold_price.price_change_pct:.2f}%)
+- أعلى 24 ساعة: ${gold_price.high_24h:.2f}
+- أدنى 24 ساعة: ${gold_price.low_24h:.2f}
+- الوقت: {gold_price.timestamp.strftime('%Y-%m-%d %H:%M:%S')}
+- المصدر: {gold_price.source}
             """.strip()
         
         if additional_context:
