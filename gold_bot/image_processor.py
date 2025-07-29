@@ -481,8 +481,76 @@ class ChartImageProcessor:
             logger.error(f"❌ Intelligent chart analysis failed: {e}")
             return {"error": str(e)}
 
-    async def process_chart_image(self, image_data: bytes) -> Dict[str, Any]:
-        """معالجة شاملة لصورة الشارت مع استخراج المعلومات"""
+    async def process_chart_image(self, image_data: bytes, user_context: Optional[str] = None) -> Dict[str, Any]:
+        """
+        معالجة شاملة محسنة لصورة الشارت مع استخراج المعلومات المتقدمة
+        """
+        try:
+            logger.info("🚀 Starting advanced chart processing...")
+            
+            # استخدام النظام الذكي الجديد
+            intelligent_analysis = self.analyze_chart_intelligently(image_data, user_context)
+            
+            if "error" in intelligent_analysis:
+                # العودة للنظام القديم في حالة الخطأ
+                logger.warning("⚠️ Intelligent analysis failed, falling back to legacy system")
+                return await self._process_chart_legacy(image_data)
+            
+            # إضافة معلومات إضافية للتحليل القديم للتوافق
+            legacy_structure = {
+                "image_info": {
+                    "width": 1920,  # من التحسين
+                    "height": 1080,
+                    "format": "PNG",
+                    "mode": "RGB",
+                    "optimization_applied": True
+                },
+                "text_extraction": intelligent_analysis.get("text_extraction", {}),
+                "price_analysis": {
+                    "detected_prices": intelligent_analysis.get("text_extraction", {}).get("prices", []),
+                    "current_price_estimate": None,
+                    "high_low_estimates": {},
+                    "axis_analysis": {}
+                },
+                "visual_analysis": {
+                    "colors": {"trend_indication": "neutral"},
+                    "patterns": {"detected_patterns": []}
+                },
+                "trading_context": {
+                    "extracted_data_summary": intelligent_analysis.get("comprehensive_prompt", "")[:200],
+                    "confidence_score": intelligent_analysis.get("confidence_score", 0.0),
+                    "trading_signals": []
+                },
+                # الميزات الجديدة
+                "advanced_analysis": {
+                    "optimization_log": intelligent_analysis.get("optimization_log", {}),
+                    "comprehensive_prompt": intelligent_analysis.get("comprehensive_prompt", ""),
+                    "ohlc_simulation": intelligent_analysis.get("ohlc_simulation", {}),
+                    "intelligent_mode": True
+                }
+            }
+            
+            # حساب تقديرات الأسعار من البيانات المستخرجة
+            prices = intelligent_analysis.get("text_extraction", {}).get("prices", [])
+            if prices:
+                sorted_prices = sorted(prices)
+                legacy_structure["price_analysis"]["high_low_estimates"] = {
+                    "highest": max(sorted_prices),
+                    "lowest": min(sorted_prices),
+                    "range": max(sorted_prices) - min(sorted_prices)
+                }
+                legacy_structure["price_analysis"]["current_price_estimate"] = sorted_prices[len(sorted_prices) // 2]
+            
+            logger.info("✅ Advanced chart processing completed successfully")
+            return legacy_structure
+            
+        except Exception as e:
+            logger.error(f"❌ Error in advanced chart processing: {e}")
+            # العودة للنظام القديم
+            return await self._process_chart_legacy(image_data)
+
+    async def _process_chart_legacy(self, image_data: bytes) -> Dict[str, Any]:
+        """النظام القديم كـ fallback"""
         try:
             # تحويل البيانات لصورة PIL
             image = Image.open(io.BytesIO(image_data))
@@ -524,11 +592,11 @@ class ChartImageProcessor:
                 "trading_context": self._build_trading_context(texts_info, prices_info, colors_info)
             }
             
-            logger.info("✅ Chart image processed successfully")
+            logger.info("✅ Legacy chart processing completed")
             return analysis_result
             
         except Exception as e:
-            logger.error(f"❌ Error processing chart image: {e}")
+            logger.error(f"❌ Error in legacy chart processing: {e}")
             return {"error": str(e)}
 
     def _extract_texts(self, image: Image.Image) -> Dict[str, Any]:
