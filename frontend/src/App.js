@@ -164,7 +164,10 @@ function App() {
   };
 
   const renderDashboard = () => (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900">
+    <div className="min-h-screen royal-text" style={{
+      background: 'linear-gradient(135deg, #0A0F2C, #3C1E70, #8C00FF)',
+      fontFamily: "'Cairo', sans-serif"
+    }}>
       
       {/* Header */}
       <div className="container mx-auto px-4 py-8">
