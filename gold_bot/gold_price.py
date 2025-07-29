@@ -237,19 +237,21 @@ class GoldPriceManager:
                 data = await response.json()
                 
                 # Parse response based on API
-                if api_name == "metals_api_primary":
-                    return self._parse_metals_live_response(data)
-                elif api_name == "yahoo_finance":
-                    return self._parse_yahoo_finance_response(data)
-                elif api_name == "metalpriceapi":
-                    return self._parse_metalpriceapi_response(data)
-                elif api_name == "commodities_api":
-                    return self._parse_commodities_api_response(data)
-                # Legacy parsers for backward compatibility
-                elif api_name == "goldapi":
-                    return self._parse_goldapi_response(data)
+                if api_name == "api_ninjas":
+                    return self._parse_api_ninjas_response(data)
                 elif api_name == "metals_api":
                     return self._parse_metals_api_response(data)
+                elif api_name == "metalpriceapi":
+                    return self._parse_metalpriceapi_response(data)
+                elif api_name == "yahoo_finance":
+                    return self._parse_yahoo_finance_response(data)
+                # Legacy parsers for backward compatibility
+                elif api_name == "metals_api_primary":
+                    return self._parse_metals_live_response(data)
+                elif api_name == "commodities_api":
+                    return self._parse_commodities_api_response(data)
+                elif api_name == "goldapi":
+                    return self._parse_goldapi_response(data)
                 elif api_name == "fxempire":
                     return self._parse_fxempire_response(data)
                 else:
