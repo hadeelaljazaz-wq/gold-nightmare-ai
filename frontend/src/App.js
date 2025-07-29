@@ -1017,6 +1017,7 @@ function App() {
       {currentView === 'analyze' && renderAnalyzeView()}
       {currentView === 'results' && renderResultsView()}
       {currentView === 'contact' && renderContactView()}
+      {currentView === 'chart-analysis' && renderChartAnalysisView()}
     </div>
   );
 }
