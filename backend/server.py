@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Request
+from fastapi import FastAPI, APIRouter, HTTPException, Request, File, UploadFile
 from fastapi.responses import JSONResponse
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -12,6 +12,9 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional
 import uuid
+import base64
+import io
+from PIL import Image
 
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
