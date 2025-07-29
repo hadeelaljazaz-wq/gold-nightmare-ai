@@ -174,10 +174,12 @@ class GoldPriceManager:
                 # Parse response based on API
                 if api_name == "goldapi":
                     return self._parse_goldapi_response(data)
-                elif api_name == "metals":
-                    return self._parse_metals_response(data)
-                elif api_name == "forex":
-                    return self._parse_forex_response(data)
+                elif api_name == "yahoo_finance":
+                    return self._parse_yahoo_finance_response(data)
+                elif api_name == "metals_api":
+                    return self._parse_metals_api_response(data)
+                elif api_name == "fxempire":
+                    return self._parse_fxempire_response(data)
                 else:
                     raise GoldAPIError(f"Unknown API: {api_name}")
                     
