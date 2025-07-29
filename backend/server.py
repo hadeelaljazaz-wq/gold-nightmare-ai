@@ -76,6 +76,19 @@ class AnalysisResponse(BaseModel):
     error: Optional[str] = None
     processing_time: Optional[float] = None
 
+class ChartAnalysisRequest(BaseModel):
+    image_data: str  # base64 encoded image
+    currency_pair: Optional[str] = "XAU/USD"
+    timeframe: Optional[str] = "H1"
+    analysis_notes: Optional[str] = ""
+
+class ChartAnalysisResponse(BaseModel):
+    success: bool
+    analysis: Optional[str] = None
+    image_info: Optional[Dict[str, Any]] = None
+    error: Optional[str] = None
+    processing_time: Optional[float] = None
+
 class GoldPriceResponse(BaseModel):
     success: bool
     price_data: Optional[Dict[str, Any]] = None
