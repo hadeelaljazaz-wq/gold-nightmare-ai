@@ -61,7 +61,106 @@ function App() {
 
   useEffect(() => {
     fetchGoldPrice();
+    checkAuthStatus(); // Check if user is logged in
   }, []);
+
+  // Authentication Functions
+  const checkAuthStatus = () => {
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        setCurrentUser(user);
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
+        localStorage.removeItem('currentUser');
+      }
+    }
+  };
+
+  const handleLogin = async (email, password) => {
+    setAuthLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setCurrentUser(data.user);
+        setIsAuthenticated(true);
+        localStorage.setItem('currentUser', JSON.stringify(data.user));
+        setCurrentView('dashboard');
+        return { success: true, message: data.message };
+      } else {
+        return { success: false, error: data.error };
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      return { success: false, error: t('errors.network') };
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleRegister = async (email, password, userData = {}) => {
+    setAuthLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/api/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          username: userData.username,
+          first_name: userData.firstName,
+          last_name: userData.lastName
+        })
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setCurrentUser(data.user);
+        setIsAuthenticated(true);
+        localStorage.setItem('currentUser', JSON.stringify(data.user));
+        setCurrentView('dashboard');
+        return { success: true, message: data.message };
+      } else {
+        return { success: false, error: data.error };
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      return { success: false, error: t('errors.network') };
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setIsAuthenticated(false);
+    localStorage.removeItem('currentUser');
+    setCurrentView('dashboard');
+  };
+
+  // Language Functions
+  const toggleLanguage = () => {
+    const newLang = currentLanguage === 'ar' ? 'en' : 'ar';
+    setCurrentLanguage(newLang);
+    i18n.changeLanguage(newLang);
+    localStorage.setItem('language', newLang);
+  };
+
+  // Gold Price Functions
 
   const fetchGoldPrice = async () => {
     setLoading(true);
