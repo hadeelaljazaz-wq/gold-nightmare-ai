@@ -331,13 +331,22 @@ function App() {
 
         {/* Custom Analysis Button */}
         <div className="text-center">
-          <button
-            onClick={() => setCurrentView('analyze')}
-            className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-purple-700 hover:to-indigo-700 transition-all transform hover:scale-105 shadow-xl"
-          >
-            <span className="mr-2">🎯</span>
-            طلب التحليل
-          </button>
+          <div className="flex gap-4 justify-center">
+            <button
+              onClick={() => setCurrentView('analyze')}
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-purple-700 hover:to-indigo-700 transition-all transform hover:scale-105 shadow-xl"
+            >
+              <span className="mr-2">🎯</span>
+              طلب تحليل مخصص
+            </button>
+            <button
+              onClick={() => setCurrentView('contact')}
+              className="bg-gradient-to-r from-green-600 to-teal-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-green-700 hover:to-teal-700 transition-all transform hover:scale-105 shadow-xl"
+            >
+              <span className="mr-2">📞</span>
+              التواصل معنا
+            </button>
+          </div>
         </div>
 
       </div>
