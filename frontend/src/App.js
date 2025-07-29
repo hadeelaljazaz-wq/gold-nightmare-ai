@@ -225,11 +225,7 @@ function App() {
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             <button 
-              onClick={() => { 
-                setSelectedAnalysisType('quick'); 
-                setUserQuestion('تحليل سريع للذهب'); 
-                handleAnalyze(); 
-              }}
+              onClick={() => handleAnalyze('quick', 'تحليل سريع للذهب')}
               className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-4 rounded-xl font-semibold hover:from-yellow-600 hover:to-orange-600 transition-all transform hover:scale-105"
             >
               <div className="text-2xl mb-2">📉</div>
@@ -237,11 +233,7 @@ function App() {
             </button>
             
             <button 
-              onClick={() => { 
-                setSelectedAnalysisType('chart'); 
-                setUserQuestion('التحليل الفني للذهب'); 
-                handleAnalyze(); 
-              }}
+              onClick={() => handleAnalyze('chart', 'التحليل الفني للذهب')}
               className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-xl font-semibold hover:from-blue-600 hover:to-purple-600 transition-all transform hover:scale-105"
             >
               <div className="text-2xl mb-2">📊</div>
@@ -249,11 +241,7 @@ function App() {
             </button>
             
             <button 
-              onClick={() => { 
-                setSelectedAnalysisType('news'); 
-                setUserQuestion('أخبار الذهب وتأثيرها على السوق'); 
-                handleAnalyze(); 
-              }}
+              onClick={() => handleAnalyze('news', 'أخبار الذهب وتأثيرها على السوق')}
               className="bg-gradient-to-r from-green-500 to-teal-500 text-white p-4 rounded-xl font-semibold hover:from-green-600 hover:to-teal-600 transition-all transform hover:scale-105"
             >
               <div className="text-2xl mb-2">📰</div>
@@ -261,11 +249,7 @@ function App() {
             </button>
             
             <button 
-              onClick={() => { 
-                setSelectedAnalysisType('forecast'); 
-                setUserQuestion('توقعات الذهب المستقبلية'); 
-                handleAnalyze(); 
-              }}
+              onClick={() => handleAnalyze('forecast', 'توقعات الذهب المستقبلية')}
               className="bg-gradient-to-r from-pink-500 to-red-500 text-white p-4 rounded-xl font-semibold hover:from-pink-600 hover:to-red-600 transition-all transform hover:scale-105"
             >
               <div className="text-2xl mb-2">📈</div>
@@ -273,11 +257,7 @@ function App() {
             </button>
             
             <button 
-              onClick={() => { 
-                setSelectedAnalysisType('detailed'); 
-                setUserQuestion('تحليل مفصل وشامل للذهب'); 
-                handleAnalyze(); 
-              }}
+              onClick={() => handleAnalyze('detailed', 'تحليل مفصل وشامل للذهب')}
               className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-4 rounded-xl font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all transform hover:scale-105"
             >
               <div className="text-2xl mb-2">📋</div>
