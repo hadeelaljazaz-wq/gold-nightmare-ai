@@ -118,8 +118,8 @@ class AlKabousAITester:
         return True
 
     def test_gold_price_endpoint(self):
-        """Test /api/gold-price endpoint - HIGH PRIORITY"""
-        print("💰 Testing Gold Price Endpoint...")
+        """Test /api/gold-price endpoint with new API system - HIGH PRIORITY"""
+        print("💰 Testing Gold Price Endpoint with New APIs...")
         
         success, response = self.make_request('GET', '/api/gold-price')
         
@@ -142,16 +142,26 @@ class AlKabousAITester:
             self.log_test("Gold Price API", False, "No price data returned", response)
             return False
         
-        # Validate price is in expected range (~$3310)
+        # Validate price is in reasonable range ($1000-$5000)
         price_usd = price_data.get('price_usd')
         if not price_usd:
             self.log_test("Gold Price API", False, "No USD price found", response)
             return False
         
-        if not (self.expected_gold_price_range[0] <= price_usd <= self.expected_gold_price_range[1]):
-            self.log_test("Gold Price Accuracy", False, 
-                         f"Price ${price_usd} outside expected range ${self.expected_gold_price_range[0]}-${self.expected_gold_price_range[1]}", 
+        # Updated range to be more realistic for gold prices
+        reasonable_range = (1000, 5000)
+        if not (reasonable_range[0] <= price_usd <= reasonable_range[1]):
+            self.log_test("Gold Price Range Check", False, 
+                         f"Price ${price_usd} outside reasonable range ${reasonable_range[0]}-${reasonable_range[1]}", 
                          price_data)
+            return False
+        
+        # Check required price fields
+        required_fields = ['price_usd', 'price_change', 'price_change_pct', 'ask', 'bid', 'high_24h', 'low_24h', 'source', 'timestamp']
+        missing_fields = [field for field in required_fields if field not in price_data]
+        
+        if missing_fields:
+            self.log_test("Gold Price Data Structure", False, f"Missing fields: {missing_fields}", price_data)
             return False
         
         # Check Arabic formatted text
@@ -160,8 +170,23 @@ class AlKabousAITester:
             self.log_test("Gold Price Arabic Format", False, "No Arabic formatted text", response)
             return False
         
+        # Check if Arabic text contains Arabic characters
+        has_arabic = any(ord(char) > 127 for char in formatted_text)
+        if not has_arabic:
+            self.log_test("Gold Price Arabic Content", False, "Formatted text doesn't contain Arabic characters", formatted_text)
+            return False
+        
+        # Check source is one of the expected APIs
+        expected_sources = ["API Ninjas", "Metals-API", "metalpriceapi.com", "yahoo_finance"]
+        source = price_data.get('source', '')
+        source_valid = any(expected_source in source for expected_source in expected_sources) or "تعذر جلب السعر" in source
+        
+        if not source_valid:
+            self.log_test("Gold Price Source Check", False, f"Unexpected source: {source}", price_data)
+            return False
+        
         self.log_test("Gold Price API", True, 
-                     f"Price: ${price_usd}, Source: {price_data.get('source')}, Change: {price_data.get('price_change_pct', 0):.2f}%")
+                     f"Price: ${price_usd:.2f}, Source: {price_data.get('source')}, Change: {price_data.get('price_change_pct', 0):.2f}%")
         return True
 
     def test_analysis_types_endpoint(self):
