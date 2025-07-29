@@ -154,116 +154,140 @@ class BotStats:
 
 @dataclass
 class User:
-    """User data model"""
+    """Enhanced User data model with authentication and subscription system"""
     user_id: int
-    username: str = None
-    first_name: str = None
-    last_name: str = None
+    email: str
+    password_hash: str
+    username: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     
-    # Status & Authentication
-    status: UserStatus = UserStatus.INACTIVE
+    # Subscription Management
     tier: UserTier = UserTier.BASIC
-    activated_at: Optional[datetime] = None
-    last_seen: Optional[datetime] = None
-    session_expires: Optional[datetime] = None
+    subscription_start_date: Optional[datetime] = None
+    subscription_end_date: Optional[datetime] = None
     
     # Usage Tracking
-    analyses_today: int = 0
     total_analyses: int = 0
-    last_analysis_at: Optional[datetime] = None
+    daily_analyses_count: int = 0
+    daily_analyses_date: Optional[str] = None  # YYYY-MM-DD format
     
-    # Rate Limiting
-    hourly_requests: Dict[int, int] = field(default_factory=dict)  # hour -> count
-    daily_requests: Dict[str, int] = field(default_factory=dict)   # date -> count
+    # Account Status
+    status: UserStatus = UserStatus.ACTIVE
+    is_email_verified: bool = False
     
-    # Metadata
+    # Timestamps
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
+    last_seen: Optional[datetime] = None
+    activated_at: Optional[datetime] = None
     
     # Database fields
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     
-    def is_active(self) -> bool:
-        """Check if user is active and session is valid"""
-        if self.status != UserStatus.ACTIVE:
+    def get_daily_limit(self) -> int:
+        """Get daily analysis limit based on subscription tier"""
+        if self.tier == UserTier.BASIC:
+            return 1  # 1 analysis per day
+        elif self.tier == UserTier.PREMIUM:
+            return 5  # 5 analyses per day
+        elif self.tier == UserTier.VIP:
+            return -1  # Unlimited (-1 means no limit)
+        return 1
+    
+    def get_remaining_analyses_today(self) -> int:
+        """Get remaining analyses for today"""
+        today = datetime.utcnow().strftime("%Y-%m-%d")
+        
+        # Reset daily count if it's a new day
+        if self.daily_analyses_date != today:
+            self.daily_analyses_count = 0
+            self.daily_analyses_date = today
+        
+        limit = self.get_daily_limit()
+        if limit == -1:  # Unlimited
+            return -1
+        
+        remaining = limit - self.daily_analyses_count
+        return max(0, remaining)
+    
+    def can_analyze_today(self) -> bool:
+        """Check if user can perform analysis today"""
+        remaining = self.get_remaining_analyses_today()
+        return remaining != 0  # -1 (unlimited) or > 0
+    
+    def increment_daily_analysis(self) -> bool:
+        """Increment daily analysis count, return True if successful"""
+        if not self.can_analyze_today():
             return False
-        if self.session_expires and datetime.utcnow() > self.session_expires:
-            return False
+        
+        today = datetime.utcnow().strftime("%Y-%m-%d")
+        if self.daily_analyses_date != today:
+            self.daily_analyses_count = 0
+            self.daily_analyses_date = today
+        
+        self.daily_analyses_count += 1
+        self.total_analyses += 1
+        self.updated_at = datetime.utcnow()
         return True
     
+    def get_tier_features(self) -> Dict[str, Any]:
+        """Get features available for current tier"""
+        features = {
+            UserTier.BASIC: {
+                "daily_analyses": 1,
+                "save_history": False,
+                "priority_support": False,
+                "advanced_charts": False,
+                "voice_analysis": False,
+                "custom_indicators": False
+            },
+            UserTier.PREMIUM: {
+                "daily_analyses": 5,
+                "save_history": True,
+                "priority_support": False,
+                "advanced_charts": True,
+                "voice_analysis": False,
+                "custom_indicators": False
+            },
+            UserTier.VIP: {
+                "daily_analyses": -1,  # Unlimited
+                "save_history": True,
+                "priority_support": True,
+                "advanced_charts": True,
+                "voice_analysis": True,
+                "custom_indicators": True
+            }
+        }
+        return features.get(self.tier, features[UserTier.BASIC])
+    
+    def is_active(self) -> bool:
+        """Check if user account is active"""
+        return self.status == UserStatus.ACTIVE
+    
     def get_rate_limit(self) -> int:
-        """Get rate limit based on user tier"""
-        limits = {
+        """Get rate limit per hour based on tier"""
+        rate_limits = {
             UserTier.BASIC: 5,
             UserTier.PREMIUM: 20,
             UserTier.VIP: 50
         }
-        return limits.get(self.tier, 5)
-    
-    def can_request_analysis(self) -> tuple[bool, str]:
-        """Check if user can request analysis"""
-        if not self.is_active():
-            return False, "غير مفعل - استخدم كلمة المرور للتفعيل"
-        
-        # Check daily limit
-        today = datetime.utcnow().strftime("%Y-%m-%d")
-        daily_count = self.daily_requests.get(today, 0)
-        daily_limit = self.get_rate_limit() * 3  # 3x hourly limit per day
-        
-        if daily_count >= daily_limit:
-            return False, f"تم تجاوز الحد اليومي ({daily_limit} تحليل/يوم)"
-        
-        # Check hourly limit
-        current_hour = datetime.utcnow().hour
-        hourly_count = self.hourly_requests.get(current_hour, 0)
-        hourly_limit = self.get_rate_limit()
-        
-        if hourly_count >= hourly_limit:
-            return False, f"تم تجاوز الحد الساعي ({hourly_limit} تحليل/ساعة)"
-        
-        return True, ""
-    
-    def record_analysis(self):
-        """Record an analysis request"""
-        now = datetime.utcnow()
-        today = now.strftime("%Y-%m-%d")
-        current_hour = now.hour
-        
-        # Update counters
-        self.analyses_today += 1
-        self.total_analyses += 1
-        self.last_analysis_at = now
-        
-        # Update rate limiting counters
-        if today not in self.daily_requests:
-            self.daily_requests = {today: 0}  # Reset for new day
-        self.daily_requests[today] += 1
-        
-        if current_hour not in self.hourly_requests:
-            # Clean old hours (keep only last 24 hours)
-            old_hours = [h for h in self.hourly_requests.keys() if h < current_hour - 24]
-            for h in old_hours:
-                del self.hourly_requests[h]
-        
-        self.hourly_requests[current_hour] = self.hourly_requests.get(current_hour, 0) + 1
-        self.updated_at = now
+        return rate_limits.get(self.tier, 5)
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for MongoDB storage"""
         data = asdict(self)
-        # Convert enums to strings
-        data['status'] = self.status.value
         data['tier'] = self.tier.value
+        data['status'] = self.status.value
         return data
     
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'User':
         """Create User from dictionary"""
-        # Convert strings back to enums
-        if 'status' in data and isinstance(data['status'], str):
-            data['status'] = UserStatus(data['status'])
         if 'tier' in data and isinstance(data['tier'], str):
             data['tier'] = UserTier(data['tier'])
+        if 'status' in data and isinstance(data['status'], str):
+            data['status'] = UserStatus(data['status'])
         return cls(**data)
 
 @dataclass  
