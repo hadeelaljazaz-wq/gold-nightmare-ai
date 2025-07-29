@@ -434,6 +434,99 @@ async def analyze_chart(request: ChartAnalysisRequest):
             error=f"خطأ في تحليل الشارت: {str(e)}"
         )
 
+def _build_chart_analysis_context(chart_analysis: Dict[str, Any], currency_pair: str, timeframe: str, notes: str) -> str:
+    """Build comprehensive analysis context from extracted chart data"""
+    
+    # Extract key information
+    extracted_data = chart_analysis.get("trading_context", {})
+    price_analysis = chart_analysis.get("price_analysis", {})
+    text_extraction = chart_analysis.get("text_extraction", {})
+    visual_analysis = chart_analysis.get("visual_analysis", {})
+    
+    context_parts = [
+        f"""أنت محلل فني محترف من مدرسة الكابوس الذهبية. تم استخراج المعلومات التالية من صورة الشارت باستخدام الذكاء الاصطناعي وOCR:
+
+📊 **معلومات الشارت الأساسية:**
+- زوج العملة: {currency_pair}
+- الإطار الزمني: {timeframe}
+- ملاحظات المستخدم: {notes or 'لا توجد'}"""
+    ]
+    
+    # Add extracted prices if available
+    if price_analysis.get("detected_prices"):
+        prices = price_analysis["detected_prices"][:5]  # أول 5 أسعار
+        prices_text = ", ".join([f"${p:.2f}" for p in prices])
+        context_parts.append(f"""
+🔢 **الأسعار المستخرجة من الشارت:**
+- الأسعار المكتشفة: {prices_text}
+- السعر المقدر الحالي: ${price_analysis.get('current_price_estimate', 'غير محدد')}""")
+        
+        if price_analysis.get("high_low_estimates"):
+            hle = price_analysis["high_low_estimates"]
+            context_parts.append(f"""- أعلى سعر مكتشف: ${hle.get('highest', 'غير محدد')}
+- أقل سعر مكتشف: ${hle.get('lowest', 'غير محدد')}
+- المدى السعري: ${hle.get('range', 'غير محدد')}""")
+    
+    # Add detected text information
+    if text_extraction.get("currency_pairs") or text_extraction.get("timeframes") or text_extraction.get("indicators"):
+        context_parts.append(f"""
+📝 **النصوص المستخرجة من الشارت:**""")
+        
+        if text_extraction.get("currency_pairs"):
+            pairs = [p["pair"] for p in text_extraction["currency_pairs"][:3]]
+            context_parts.append(f"- أزواج العملات المكتشفة: {', '.join(pairs)}")
+            
+        if text_extraction.get("timeframes"):
+            timeframes = [t["timeframe"] for t in text_extraction["timeframes"][:3]]
+            context_parts.append(f"- الإطارات الزمنية المكتشفة: {', '.join(timeframes)}")
+            
+        if text_extraction.get("indicators"):
+            indicators = [i["indicator"] for i in text_extraction["indicators"][:5]]
+            context_parts.append(f"- المؤشرات الفنية المكتشفة: {', '.join(indicators)}")
+    
+    # Add visual analysis
+    if visual_analysis.get("colors", {}).get("candlestick_analysis"):
+        candle_analysis = visual_analysis["colors"]["candlestick_analysis"]
+        context_parts.append(f"""
+🎨 **التحليل البصري للألوان:**
+- النسبة الخضراء (صعود): {candle_analysis.get('green_percentage', 0):.1f}%
+- النسبة الحمراء (هبوط): {candle_analysis.get('red_percentage', 0):.1f}%
+- إشارة الاتجاه: {candle_analysis.get('trend_indication', 'غير محدد')}""")
+    
+    # Add pattern analysis
+    if visual_analysis.get("patterns", {}).get("trend_lines"):
+        trend_lines = visual_analysis["patterns"]["trend_lines"]
+        context_parts.append(f"""
+📈 **تحليل خطوط الاتجاه:**
+- خطوط أفقية: {trend_lines.get('horizontal', 0)}
+- خطوط صاعدة: {trend_lines.get('ascending', 0)}
+- خطوط هابطة: {trend_lines.get('descending', 0)}
+- اتجاه الترند: {trend_lines.get('trend_direction', 'غير محدد')}""")
+    
+    # Add trading signals
+    if extracted_data.get("trading_signals"):
+        context_parts.append(f"""
+🚨 **إشارات التداول المكتشفة:**""")
+        for signal in extracted_data["trading_signals"][:3]:
+            context_parts.append(f"- {signal}")
+    
+    # Add confidence score
+    confidence = extracted_data.get("confidence_score", 0.0)
+    context_parts.append(f"""
+🎯 **مستوى الثقة في البيانات المستخرجة:** {confidence:.1f}/1.0
+
+بناءً على هذه المعلومات المستخرجة من الشارت، قم بتحليل فني شامل ودقيق يتضمن:
+
+1. 📊 **تحليل الأسعار المكتشفة** وعلاقتها بالحركة الحالية
+2. 🎨 **تفسير الإشارات البصرية** من الألوان وخطوط الاتجاه
+3. 📈 **ربط المؤشرات المكتشفة** بتوقعات الحركة
+4. 💡 **توصيات تداولية مبنية على البيانات المستخرجة**
+5. ⚠️ **تحذيرات** مبنية على مستوى الثقة في البيانات
+
+التوقيع: 🏆 Gold Nightmare - عدي""")
+    
+    return "\n".join(context_parts)
+
 @api_router.post("/analyze", response_model=AnalysisResponse)
 async def analyze_gold(request: AnalysisRequest):
     """Generate AI analysis of gold market"""
