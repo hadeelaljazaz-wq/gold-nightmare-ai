@@ -971,11 +971,27 @@ class AlKabousAITester:
             
         # Specific recommendations based on results
         gold_price_passed = any(r['test'] == 'Gold Price API' and r['success'] for r in self.test_results)
+        gold_cache_passed = any(r['test'] == 'Gold Price Cache System' and r['success'] for r in self.test_results)
+        admin_auth_passed = any(r['test'] == 'Admin Login - Valid Credentials' and r['success'] for r in self.test_results)
+        admin_dashboard_passed = any(r['test'] == 'Admin Dashboard' and r['success'] for r in self.test_results)
+        analysis_logging_passed = any(r['test'] == 'Analysis Logging Integration' and r['success'] for r in self.test_results)
         chart_analysis_passed = any(r['test'] == 'Chart Analysis' and r['success'] for r in self.test_results)
         regular_analysis_passed = any('Analysis -' in r['test'] and r['success'] for r in self.test_results)
         
         if not gold_price_passed:
             print("  💰 Gold price API issues - check gold price providers and API keys")
+        
+        if not gold_cache_passed:
+            print("  ⏰ Gold price cache system issues - check 15-minute cache implementation")
+        
+        if not admin_auth_passed:
+            print("  🔐 Admin authentication issues - check admin credentials (admin/GOLD_NIGHTMARE_205)")
+        
+        if not admin_dashboard_passed:
+            print("  📊 Admin dashboard issues - check admin_manager initialization and database")
+        
+        if not analysis_logging_passed:
+            print("  📝 Analysis logging issues - check admin_manager integration")
         
         if not chart_analysis_passed:
             print("  📈 Chart analysis issues - check Claude AI integration and image processing")
