@@ -696,6 +696,13 @@ function App() {
               <span className="mr-2">📞</span>
               التواصل معنا
             </button>
+            <button
+              onClick={() => setCurrentView('admin')}
+              className="royal-button px-8 py-4 text-lg font-bold shadow-xl"
+            >
+              <span className="mr-2">🔧</span>
+              لوحة التحكم
+            </button>
           </div>
         </div>
 
