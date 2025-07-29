@@ -1713,7 +1713,7 @@ function App() {
           <div className="glass-card p-6">
             <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
               <span className="text-green-400 mr-3">👤</span>
-              التواصل المباشر
+              Personal Contact
             </h2>
             <div className="space-y-4">
               <a 
