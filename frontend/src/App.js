@@ -4,9 +4,23 @@ import './i18n'; // Initialize i18n
 import { useTranslation } from 'react-i18next';
 
 function App() {
-  const [currentView, setCurrentView] = useState('dashboard'); // dashboard, analyze, results, contact, chart-analysis, admin
-  const [goldPrice, setGoldPrice] = useState(null);
+  const { t, i18n } = useTranslation();
+  const API_URL = process.env.REACT_APP_BACKEND_URL;
+
+  // Navigation and UI States
+  const [currentView, setCurrentView] = useState('dashboard'); // dashboard, analyze, results, contact, chart-analysis, admin, login, register
   const [loading, setLoading] = useState(false);
+  
+  // User Authentication States
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(false);
+  
+  // Language State
+  const [currentLanguage, setCurrentLanguage] = useState('ar');
+  
+  // Gold Price States
+  const [goldPrice, setGoldPrice] = useState(null);
   const [analysisResult, setAnalysisResult] = useState(null);
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [selectedAnalysisType, setSelectedAnalysisType] = useState('quick');
