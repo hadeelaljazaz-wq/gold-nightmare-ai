@@ -1502,6 +1502,110 @@ function App() {
                               onClick={() => toggleUserStatus(user.user_id)}
                               className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
                                 user.is_active 
+                                  ? 'bg-red-600/30 text-red-300 hover:bg-red-600/50' 
+                                  : 'bg-green-600/30 text-green-300 hover:bg-green-600/50'
+                              }`}
+                            >
+                              {user.is_active ? 'إيقاف' : 'تفعيل'}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="text-center py-8 text-purple-300">
+                  <div className="text-4xl mb-4">👥</div>
+                  <p>لا توجد بيانات مستخدمين</p>
+                  <button
+                    onClick={() => fetchAdminUsers()}
+                    className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                  >
+                    تحديث البيانات
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Analysis Logs */}
+            {adminLogs.length > 0 && (
+              <div className="glass-card p-6">
+                <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+                  <span className="text-green-400 mr-3">📋</span>
+                  سجل التحليلات
+                </h2>
+                
+                <div className="overflow-x-auto">
+                  <table className="w-full text-white text-sm">
+                    <thead>
+                      <tr className="border-b border-purple-600/50">
+                        <th className="text-right p-3">المستخدم</th>
+                        <th className="text-right p-3">نوع التحليل</th>
+                        <th className="text-right p-3">السؤال</th>
+                        <th className="text-right p-3">الوقت</th>
+                        <th className="text-center p-3">النتيجة</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {adminLogs.slice(0, 10).map((log, index) => (
+                        <tr key={log.id || index} className="border-b border-purple-600/30 hover:bg-purple-800/20">
+                          <td className="p-3">{log.user_id}</td>
+                          <td className="p-3">
+                            <span className="px-2 py-1 bg-purple-600/30 rounded text-xs">
+                              {log.analysis_type === 'quick' ? 'سريع' :
+                               log.analysis_type === 'detailed' ? 'مفصل' :
+                               log.analysis_type === 'chart' ? 'فني' :
+                               log.analysis_type === 'news' ? 'أخبار' :
+                               log.analysis_type === 'forecast' ? 'توقعات' : 'غير محدد'}
+                            </span>
+                          </td>
+                          <td className="p-3 text-purple-300 max-w-xs truncate">
+                            {log.question || 'لا توجد تفاصيل'}
+                          </td>
+                          <td className="p-3 text-purple-300">
+                            {log.timestamp ? new Date(log.timestamp).toLocaleString('ar-SA') : 'غير محدد'}
+                          </td>
+                          <td className="p-3 text-center">
+                            <span className={`px-2 py-1 rounded text-xs font-medium ${
+                              log.success ? 'bg-green-600/30 text-green-300' : 'bg-red-600/30 text-red-300'
+                            }`}>
+                              {log.success ? 'نجح' : 'فشل'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Logout Button */}
+            <div className="text-center mt-8">
+              <button
+                onClick={() => {
+                  setAdminAuthenticated(false);
+                  setAdminData(null);
+                  setAdminUsers([]);
+                  setAdminLogs([]);
+                  setAdminUsername('');
+                  setAdminPassword('');
+                  setCurrentView('dashboard');
+                }}
+                className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors"
+              >
+                🚪 تسجيل خروج
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+                              onClick={() => toggleUserStatus(user.user_id)}
+                              className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                                user.is_active 
                                   ? 'bg-red-600/30 hover:bg-red-600/50 text-red-300' 
                                   : 'bg-green-600/30 hover:bg-green-600/50 text-green-300'
                               }`}
