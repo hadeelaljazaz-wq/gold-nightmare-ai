@@ -907,10 +907,19 @@ async def admin_toggle_user_status(request: AdminToggleUserRequest):
 async def admin_update_user_tier(request: AdminUpdateTierRequest):
     """Update user subscription tier"""
     try:
-        if not admin_manager:
-            raise HTTPException(status_code=503, detail="Admin service not initialized")
+        if not admin_manager or not auth_manager:
+            raise HTTPException(status_code=503, detail="Services not initialized")
         
-        result = await admin_manager.update_user_tier(request.user_id, request.new_tier, request.admin_id)
+        from gold_bot.models import UserSubscriptionUpdate
+        
+        # Use auth_manager for subscription updates
+        subscription_update = UserSubscriptionUpdate(
+            user_id=request.user_id,
+            new_tier=request.new_tier,
+            admin_id=request.admin_id
+        )
+        
+        result = await auth_manager.update_user_subscription(subscription_update)
         
         if result["success"]:
             return {"success": True, "data": result}
