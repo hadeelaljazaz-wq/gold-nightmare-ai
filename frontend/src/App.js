@@ -217,8 +217,8 @@ function App() {
 
         {/* Contact Info & Channels */}
         <div className="glass-card p-6 mb-8">
-          <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-            <span className="text-green-400 mr-2">🔗</span>
+          <h2 className="text-2xl font-bold royal-text mb-6 flex items-center">
+            <span className="gold-text mr-2">🔗</span>
             قنوات التوصيات والتواصل
           </h2>
           
@@ -234,24 +234,24 @@ function App() {
                   href="https://t.me/odai_xauusdt" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center p-3 bg-blue-600/20 border border-blue-500/30 rounded-lg text-purple-200 hover:bg-blue-600/30 transition-all"
+                  className="contact-link"
                 >
                   <span className="text-2xl mr-3">📊</span>
                   <div>
-                    <p className="font-medium text-white">قناة التوصيات</p>
-                    <p className="text-sm">توصيات الذهب والعملات</p>
+                    <p className="font-medium royal-text">قناة التوصيات</p>
+                    <p className="text-sm text-purple-200">توصيات الذهب والعملات</p>
                   </div>
                 </a>
                 <a 
                   href="https://t.me/odai_xau_usd" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center p-3 bg-blue-600/20 border border-blue-500/30 rounded-lg text-purple-200 hover:bg-blue-600/30 transition-all"
+                  className="contact-link"
                 >
                   <span className="text-2xl mr-3">💬</span>
                   <div>
-                    <p className="font-medium text-white">قناة المناقشات</p>
-                    <p className="text-sm">نقاش وتحليل الأسواق</p>
+                    <p className="font-medium royal-text">قناة المناقشات</p>
+                    <p className="text-sm text-purple-200">نقاش وتحليل الأسواق</p>
                   </div>
                 </a>
               </div>
@@ -260,7 +260,7 @@ function App() {
             {/* Personal Contact */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-purple-200 flex items-center">
-                <span className="text-green-400 mr-2">👤</span>
+                <span className="gold-text mr-2">👤</span>
                 التواصل الشخصي
               </h3>
               <div className="space-y-3">
@@ -268,24 +268,48 @@ function App() {
                   href="https://wa.me/962786275654" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center p-3 bg-green-600/20 border border-green-500/30 rounded-lg text-purple-200 hover:bg-green-600/30 transition-all"
+                  className="contact-link"
                 >
                   <span className="text-2xl mr-3">💬</span>
                   <div>
-                    <p className="font-medium text-white">واتساب</p>
-                    <p className="text-sm">962786275654</p>
+                    <p className="font-medium royal-text">واتساب</p>
+                    <p className="text-sm price-high">962786275654</p>
                   </div>
                 </a>
                 <a 
                   href="https://t.me/Odai_xau" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center p-3 bg-blue-600/20 border border-blue-500/30 rounded-lg text-purple-200 hover:bg-blue-600/30 transition-all"
+                  className="contact-link"
                 >
                   <span className="text-2xl mr-3">📱</span>
                   <div>
-                    <p className="font-medium text-white">تليجرام شخصي</p>
-                    <p className="text-sm">@Odai_xau</p>
+                    <p className="font-medium royal-text">تليجرام شخصي</p>
+                    <p className="text-sm text-blue-300">@Odai_xau</p>
+                  </div>
+                </a>
+                <a 
+                  href="https://www.instagram.com/odai_xau?igsh=MWtrOXNleGlnY3k1aQ==" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="contact-link"
+                >
+                  <span className="text-2xl mr-3">📷</span>
+                  <div>
+                    <p className="font-medium royal-text">انستغرام</p>
+                    <p className="text-sm text-pink-300">@odai_xau</p>
+                  </div>
+                </a>
+                <a 
+                  href="https://www.facebook.com/odaiaboamera" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="contact-link"
+                >
+                  <span className="text-2xl mr-3">📘</span>
+                  <div>
+                    <p className="font-medium royal-text">فيسبوك</p>
+                    <p className="text-sm text-blue-300">عدي أبو عامرة</p>
                   </div>
                 </a>
               </div>
