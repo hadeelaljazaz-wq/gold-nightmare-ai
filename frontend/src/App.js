@@ -483,6 +483,306 @@ function App() {
     }
   };
 
+  // Authentication Views
+  const renderLoginView = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState('');
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      
+      if (!email || !password) {
+        setError(t('auth.messages.emailRequired'));
+        return;
+      }
+
+      const result = await handleLogin(email, password);
+      if (!result.success) {
+        setError(result.error);
+      }
+    };
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 flex items-center justify-center p-4">
+        <div className="glass-card p-8 w-full max-w-md">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-white mb-2">
+              {t('auth.login.title')}
+            </h1>
+            <p className="text-purple-200">{t('auth.login.subtitle')}</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-3 text-red-300">
+                {error}
+              </div>
+            )}
+
+            <div>
+              <label className="block text-purple-200 text-sm font-medium mb-2">
+                {t('auth.login.email')}
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-gold focus:outline-none transition-colors"
+                placeholder="example@email.com"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-purple-200 text-sm font-medium mb-2">
+                {t('auth.login.password')}
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-gold focus:outline-none transition-colors pr-12"
+                  placeholder="••••••••"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400 hover:text-gold transition-colors"
+                >
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={authLoading}
+              className="w-full royal-button py-3 font-semibold text-lg"
+            >
+              {authLoading ? t('common.loading') : t('auth.login.submit')}
+            </button>
+          </form>
+
+          <div className="text-center mt-6 space-y-4">
+            <p className="text-purple-300">
+              {t('auth.login.noAccount')}{' '}
+              <button
+                onClick={() => setCurrentView('register')}
+                className="text-gold hover:text-yellow-300 font-medium transition-colors"
+              >
+                {t('auth.login.createAccount')}
+              </button>
+            </p>
+            
+            <button
+              onClick={() => setCurrentView('dashboard')}
+              className="text-purple-400 hover:text-purple-200 transition-colors"
+            >
+              {t('common.back')}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderRegisterView = () => {
+    const [formData, setFormData] = useState({
+      email: '',
+      password: '',
+      confirmPassword: '',
+      username: '',
+      firstName: '',
+      lastName: ''
+    });
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState('');
+
+    const handleInputChange = (field, value) => {
+      setFormData(prev => ({ ...prev, [field]: value }));
+    };
+
+    const validateForm = () => {
+      if (!formData.email || !formData.password) {
+        return t('auth.messages.emailRequired');
+      }
+      
+      if (formData.password !== formData.confirmPassword) {
+        return t('auth.messages.passwordMismatch');
+      }
+
+      if (formData.password.length < 6) {
+        return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+      }
+
+      return null;
+    };
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      
+      const validationError = validateForm();
+      if (validationError) {
+        setError(validationError);
+        return;
+      }
+
+      const result = await handleRegister(
+        formData.email, 
+        formData.password,
+        {
+          username: formData.username,
+          firstName: formData.firstName,
+          lastName: formData.lastName
+        }
+      );
+      
+      if (!result.success) {
+        setError(result.error);
+      }
+    };
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 flex items-center justify-center p-4">
+        <div className="glass-card p-8 w-full max-w-md">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-white mb-2">
+              {t('auth.register.title')}
+            </h1>
+            <p className="text-purple-200">{t('auth.register.subtitle')}</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-3 text-red-300">
+                {error}
+              </div>
+            )}
+
+            <div>
+              <label className="block text-purple-200 text-sm font-medium mb-2">
+                {t('auth.register.email')} *
+              </label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                className="w-full px-4 py-3 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-gold focus:outline-none transition-colors"
+                placeholder="example@email.com"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-purple-200 text-sm font-medium mb-2">
+                  {t('auth.register.firstName')}
+                </label>
+                <input
+                  type="text"
+                  value={formData.firstName}
+                  onChange={(e) => handleInputChange('firstName', e.target.value)}
+                  className="w-full px-4 py-2 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-gold focus:outline-none transition-colors"
+                />
+              </div>
+              <div>
+                <label className="block text-purple-200 text-sm font-medium mb-2">
+                  {t('auth.register.lastName')}
+                </label>
+                <input
+                  type="text"
+                  value={formData.lastName}
+                  onChange={(e) => handleInputChange('lastName', e.target.value)}
+                  className="w-full px-4 py-2 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-gold focus:outline-none transition-colors"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-purple-200 text-sm font-medium mb-2">
+                {t('auth.register.username')}
+              </label>
+              <input
+                type="text"
+                value={formData.username}
+                onChange={(e) => handleInputChange('username', e.target.value)}
+                className="w-full px-4 py-2 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-gold focus:outline-none transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-purple-200 text-sm font-medium mb-2">
+                {t('auth.register.password')} *
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password}
+                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  className="w-full px-4 py-3 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-gold focus:outline-none transition-colors pr-12"
+                  placeholder="••••••••"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400 hover:text-gold transition-colors"
+                >
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-purple-200 text-sm font-medium mb-2">
+                {t('auth.register.confirmPassword')} *
+              </label>
+              <input
+                type="password"
+                value={formData.confirmPassword}
+                onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                className="w-full px-4 py-3 bg-black/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-gold focus:outline-none transition-colors"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={authLoading}
+              className="w-full royal-button py-3 font-semibold text-lg mt-6"
+            >
+              {authLoading ? t('common.loading') : t('auth.register.submit')}
+            </button>
+          </form>
+
+          <div className="text-center mt-6 space-y-4">
+            <p className="text-purple-300">
+              {t('auth.register.haveAccount')}{' '}
+              <button
+                onClick={() => setCurrentView('login')}
+                className="text-gold hover:text-yellow-300 font-medium transition-colors"
+              >
+                {t('auth.register.loginHere')}
+              </button>
+            </p>
+            
+            <button
+              onClick={() => setCurrentView('dashboard')}
+              className="text-purple-400 hover:text-purple-200 transition-colors"
+            >
+              {t('common.back')}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderDashboard = () => (
     <div className="min-h-screen royal-text" style={{
       background: 'linear-gradient(135deg, #0A0F2C, #3C1E70, #8C00FF)',
