@@ -77,6 +77,18 @@ class AnalysisResponse(BaseModel):
     error: Optional[str] = None
     processing_time: Optional[float] = None
 
+class ForexAnalysisRequest(BaseModel):
+    pair: str = Field(..., description="Currency pair (e.g., EUR/USD)")
+    analysis_type: Optional[str] = "detailed"
+    additional_context: Optional[str] = ""
+
+class ForexAnalysisResponse(BaseModel):
+    success: bool
+    analysis: Optional[str] = None
+    forex_price: Optional[Dict[str, Any]] = None
+    error: Optional[str] = None
+    processing_time: Optional[float] = None
+
 class ChartAnalysisRequest(BaseModel):
     image_data: str  # base64 encoded image
     currency_pair: Optional[str] = "XAU/USD"
