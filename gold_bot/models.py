@@ -30,6 +30,129 @@ class UserStatus(Enum):
     SUSPENDED = "suspended"
 
 @dataclass
+class AdminUser:
+    """Admin user data model for admin panel access"""
+    admin_id: str
+    username: str
+    email: str = None
+    
+    # Admin permissions
+    can_manage_users: bool = True
+    can_view_analytics: bool = True
+    can_modify_settings: bool = False
+    is_super_admin: bool = False
+    
+    # Metadata
+    last_login: Optional[datetime] = None
+    created_at: datetime = field(default_factory=datetime.utcnow)
+    
+    # Database fields
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+
+@dataclass
+class AnalysisLog:
+    """Detailed analysis log for admin tracking"""
+    user_id: int
+    analysis_type: AnalysisType
+    success: bool
+    
+    # Request details
+    processing_time: Optional[float] = None
+    error_message: Optional[str] = None
+    user_tier: UserTier = UserTier.BASIC
+    
+    # Context
+    gold_price_at_request: Optional[float] = None
+    tokens_used: Optional[int] = None
+    
+    # Timestamps
+    timestamp: datetime = field(default_factory=datetime.utcnow)
+    
+    # Database fields
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for MongoDB storage"""
+        data = asdict(self)
+        data['analysis_type'] = self.analysis_type.value
+        data['user_tier'] = self.user_tier.value
+        return data
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'AnalysisLog':
+        """Create AnalysisLog from dictionary"""
+        if 'analysis_type' in data and isinstance(data['analysis_type'], str):
+            data['analysis_type'] = AnalysisType(data['analysis_type'])
+        if 'user_tier' in data and isinstance(data['user_tier'], str):
+            data['user_tier'] = UserTier(data['user_tier'])
+        return cls(**data)
+
+@dataclass
+class UserDailySummary:
+    """Daily usage summary for each user"""
+    user_id: int
+    date: str  # YYYY-MM-DD format
+    
+    # Counts
+    total_requests: int = 0
+    successful_analyses: int = 0
+    failed_analyses: int = 0
+    
+    # Performance
+    avg_response_time: float = 0.0
+    
+    # Analysis breakdown
+    quick_analyses: int = 0
+    detailed_analyses: int = 0
+    chart_analyses: int = 0
+    news_analyses: int = 0
+    forecast_analyses: int = 0
+    
+    # Database fields
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary"""
+        return asdict(self)
+
+@dataclass
+class BotStats:
+    """Bot usage statistics"""
+    total_users: int = 0
+    active_users: int = 0
+    analyses_today: int = 0
+    analyses_total: int = 0
+    
+    # User tier breakdown
+    basic_users: int = 0
+    premium_users: int = 0
+    vip_users: int = 0
+    
+    # Status breakdown
+    active_users_count: int = 0
+    inactive_users_count: int = 0
+    blocked_users_count: int = 0
+    
+    # API usage
+    gold_api_calls: int = 0
+    claude_api_calls: int = 0
+    
+    # Performance
+    avg_response_time: float = 0.0
+    uptime_hours: float = 0.0
+    
+    # Error tracking
+    total_errors: int = 0
+    api_errors: int = 0
+    
+    # Timestamps
+    last_updated: datetime = field(default_factory=datetime.utcnow)
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary"""
+        return asdict(self)
+
+@dataclass
 class User:
     """User data model"""
     user_id: int
