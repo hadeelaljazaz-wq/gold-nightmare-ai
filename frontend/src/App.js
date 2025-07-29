@@ -404,6 +404,80 @@ function App() {
           </div>
         </div>
 
+        {/* Forex Analysis Section */}
+        <div className="glass-card p-6 mb-8">
+          <h2 className="text-2xl font-bold royal-text mb-6 flex items-center">
+            <span className="gold-text mr-2">💱</span>
+            تحليل العملات الأجنبية - Forex
+          </h2>
+          <p className="text-purple-200 mb-6">تحليل العملات الرئيسية مع الأسعار الحية</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <button 
+              onClick={() => handleForexAnalysis('EUR/USD')}
+              className="analysis-button font-semibold transition-all transform hover:scale-105 p-4"
+            >
+              <div className="text-2xl mb-2">🇪🇺</div>
+              <div className="font-bold">EUR/USD</div>
+              <div className="text-sm text-purple-200">اليورو/دولار</div>
+            </button>
+            
+            <button 
+              onClick={() => handleForexAnalysis('GBP/USD')}
+              className="analysis-button font-semibold transition-all transform hover:scale-105 p-4"
+            >
+              <div className="text-2xl mb-2">🇬🇧</div>
+              <div className="font-bold">GBP/USD</div>
+              <div className="text-sm text-purple-200">الباوند/دولار</div>
+            </button>
+            
+            <button 
+              onClick={() => handleForexAnalysis('USD/JPY')}
+              className="analysis-button font-semibold transition-all transform hover:scale-105 p-4"
+            >
+              <div className="text-2xl mb-2">🇯🇵</div>
+              <div className="font-bold">USD/JPY</div>
+              <div className="text-sm text-purple-200">الدولار/ين</div>
+            </button>
+            
+            <button 
+              onClick={() => handleForexAnalysis('AUD/USD')}
+              className="analysis-button font-semibold transition-all transform hover:scale-105 p-4"
+            >
+              <div className="text-2xl mb-2">🇦🇺</div>
+              <div className="font-bold">AUD/USD</div>
+              <div className="text-sm text-purple-200">الأسترالي/دولار</div>
+            </button>
+            
+            <button 
+              onClick={() => handleForexAnalysis('USD/CAD')}
+              className="analysis-button font-semibold transition-all transform hover:scale-105 p-4"
+            >
+              <div className="text-2xl mb-2">🇨🇦</div>
+              <div className="font-bold">USD/CAD</div>
+              <div className="text-sm text-purple-200">الدولار/كندي</div>
+            </button>
+            
+            <button 
+              onClick={() => handleForexAnalysis('USD/CHF')}
+              className="analysis-button font-semibold transition-all transform hover:scale-105 p-4"
+            >
+              <div className="text-2xl mb-2">🇨🇭</div>
+              <div className="font-bold">USD/CHF</div>
+              <div className="text-sm text-purple-200">الدولار/فرنك</div>
+            </button>
+            
+            <button 
+              onClick={() => handleForexAnalysis('NZD/USD')}
+              className="analysis-button font-semibold transition-all transform hover:scale-105 p-4"
+            >
+              <div className="text-2xl mb-2">🇳🇿</div>
+              <div className="font-bold">NZD/USD</div>
+              <div className="text-sm text-purple-200">النيوزلندي/دولار</div>
+            </button>
+          </div>
+        </div>
+
         {/* Currency Analysis Section */}
         <div className="glass-card p-6 mb-8">
           <h2 className="text-2xl font-bold royal-text mb-6 flex items-center">
