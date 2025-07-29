@@ -222,20 +222,20 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ TESTED: Subscription tiers working correctly. Basic tier: 1 daily analysis, Premium tier: 5 daily analyses, VIP tier: unlimited (-1). Tier features and limits are properly applied. User tier upgrades work correctly and are reflected in permissions and daily limits."
-  - task: "Gold price system update with 15-minute cache"
+  - task: "Gold price system fix with new APIs"
     implemented: true
-    working: true
+    working: false
     file: "gold_bot/gold_price.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: true
         agent: "main"
-        comment: "Updated gold price system to use multiple free APIs (metals.live, yahoo finance, metalpriceapi, commodities-api) with 15-minute internal cache, validation, and proper error handling"
-      - working: true
-        agent: "testing"
-        comment: "✅ TESTED: Gold price API working correctly with $3320.45 price, Arabic formatting present. Minor: Cache response time test failed (20ms vs 23ms) but cache is functional with demo data fallback system working properly."
+        comment: "Updated gold price system to use verified APIs (API Ninjas primary, Metals-API, MetalpriceAPI, Yahoo Finance) with proper error handling, rate inversion for Metals-API, and conversion functions for grams/karats"
+      - working: false
+        agent: "user"
+        comment: "User reported gold price fetching failure, provided specific API solutions with working keys and implementation details"
 
   - task: "Admin panel data models"
     implemented: true
