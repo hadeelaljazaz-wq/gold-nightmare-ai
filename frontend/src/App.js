@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
-  const [currentView, setCurrentView] = useState('dashboard'); // dashboard, analyze, results, contact, chart-analysis
+  const [currentView, setCurrentView] = useState('dashboard'); // dashboard, analyze, results, contact, chart-analysis, admin
   const [goldPrice, setGoldPrice] = useState(null);
   const [loading, setLoading] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
@@ -24,6 +24,17 @@ function App() {
   const [forexAnalysisResult, setForexAnalysisResult] = useState(null);
   const [forexAnalysisLoading, setForexAnalysisLoading] = useState(false);
   const [selectedForexPair, setSelectedForexPair] = useState('');
+  
+  // Admin Panel States
+  const [adminAuthenticated, setAdminAuthenticated] = useState(false);
+  const [adminLoading, setAdminLoading] = useState(false);
+  const [adminData, setAdminData] = useState(null);
+  const [adminUsers, setAdminUsers] = useState([]);
+  const [adminLogs, setAdminLogs] = useState([]);
+  const [adminCurrentPage, setAdminCurrentPage] = useState(1);
+  const [adminUsername, setAdminUsername] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  
   const [quickQuestions] = useState([
     "تحليل الذهب الحالي",
     "ما هي توقعات الذهب للأسبوع القادم؟",
