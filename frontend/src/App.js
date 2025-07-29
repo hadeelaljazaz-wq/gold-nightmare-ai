@@ -170,16 +170,19 @@ function App() {
     }}>
       
       {/* Header */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 flex items-center justify-center">
-            <span className="text-yellow-400 mr-3">🏆</span>
+      <div className="text-center py-8">
+        <div className="max-w-4xl mx-auto px-4">
+          <h1 className="text-4xl md:text-5xl font-bold royal-text mb-4 flex items-center justify-center">
+            <span className="gold-text mr-3">🏆</span>
             al_kabous ai
           </h1>
           <p className="text-purple-200 text-lg">
             مدرسة الكابوس الذهبية - تحليل الذهب والعملات الذكي
           </p>
         </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 pb-8">
 
         {/* Live Gold Price Chart */}
         <div className="glass-card p-6 mb-8">
