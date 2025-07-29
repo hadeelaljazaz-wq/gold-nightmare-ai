@@ -919,8 +919,20 @@ class AlKabousAITester:
         # Core API Tests (High Priority)
         self.test_health_endpoint()
         self.test_gold_price_endpoint()  # HIGH PRIORITY
-        self.test_chart_analysis_endpoint()  # HIGH PRIORITY  
+        self.test_gold_price_cache_system()  # HIGH PRIORITY - New cache system
+        
+        # Admin Panel Tests (High Priority)
+        self.test_admin_authentication()  # HIGH PRIORITY
+        self.test_admin_dashboard()  # HIGH PRIORITY
+        self.test_admin_users_management()  # HIGH PRIORITY
+        self.test_admin_user_actions()  # HIGH PRIORITY
+        self.test_admin_analysis_logs()  # HIGH PRIORITY
+        self.test_admin_system_status()  # HIGH PRIORITY
+        
+        # Analysis Tests (High Priority)
         self.test_regular_analysis_endpoint()  # HIGH PRIORITY
+        self.test_chart_analysis_endpoint()  # HIGH PRIORITY  
+        self.test_analysis_logging_integration()  # HIGH PRIORITY - New logging system
         
         # Supporting API Tests
         self.test_analysis_types_endpoint()
