@@ -445,7 +445,7 @@ function App() {
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-purple-200 flex items-center">
                 <span className="gold-text mr-2">👤</span>
-                التواصل الشخصي
+                Personal Contact
               </h3>
               <div className="space-y-3">
                 <a 
@@ -456,8 +456,8 @@ function App() {
                 >
                   <span className="text-2xl mr-3">💬</span>
                   <div>
-                    <p className="font-medium royal-text">واتساب</p>
-                    <p className="text-sm price-high">962786275654</p>
+                    <p className="font-medium royal-text">WhatsApp</p>
+                    <p className="text-sm price-high">+962786275654</p>
                   </div>
                 </a>
                 <a 
@@ -468,7 +468,7 @@ function App() {
                 >
                   <span className="text-2xl mr-3">📱</span>
                   <div>
-                    <p className="font-medium royal-text">تليجرام شخصي</p>
+                    <p className="font-medium royal-text">Personal Telegram</p>
                     <p className="text-sm text-blue-300">@Odai_xau</p>
                   </div>
                 </a>
@@ -480,7 +480,7 @@ function App() {
                 >
                   <span className="text-2xl mr-3">📷</span>
                   <div>
-                    <p className="font-medium royal-text">انستغرام</p>
+                    <p className="font-medium royal-text">Instagram</p>
                     <p className="text-sm text-pink-300">@odai_xau</p>
                   </div>
                 </a>
@@ -492,8 +492,8 @@ function App() {
                 >
                   <span className="text-2xl mr-3">📘</span>
                   <div>
-                    <p className="font-medium royal-text">فيسبوك</p>
-                    <p className="text-sm text-blue-300">عدي أبو عامرة</p>
+                    <p className="font-medium royal-text">Facebook</p>
+                    <p className="text-sm text-blue-300">Odai Abu Amera</p>
                   </div>
                 </a>
               </div>
