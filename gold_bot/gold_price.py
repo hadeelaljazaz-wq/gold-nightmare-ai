@@ -134,13 +134,13 @@ class GoldPriceManager:
             # If all APIs fail, return demo data for development
             logger.warning("⚠️ All APIs failed, using current market demo data")
             demo_price = GoldPrice(
-                price_usd=3310.06,
-                price_change=15.52,
-                price_change_pct=0.47,
-                ask=3312.00,
-                bid=3308.12,
-                high_24h=3325.89,
-                low_24h=3298.43,
+                price_usd=3320.45,  # Current market price as per user
+                price_change=12.82,
+                price_change_pct=0.39,
+                ask=3322.00,
+                bid=3318.90,
+                high_24h=3331.22,
+                low_24h=3305.18,
                 source="demo_data",
                 timestamp=datetime.utcnow()
             )
