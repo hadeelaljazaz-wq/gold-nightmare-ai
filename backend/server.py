@@ -554,6 +554,9 @@ async def analyze_gold(request: AnalysisRequest):
         end_time = datetime.utcnow()
         processing_time = (end_time - start_time).total_seconds()
         
+        end_time = datetime.utcnow()
+        processing_time = (end_time - start_time).total_seconds()
+        
         # Convert gold price to dict if available
         gold_price_data = None
         if gold_price:
