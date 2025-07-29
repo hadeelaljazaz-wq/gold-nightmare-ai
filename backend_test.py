@@ -8,8 +8,10 @@ import sys
 import json
 import time
 import base64
+import io
 from datetime import datetime
 from typing import Dict, Any, Optional
+from PIL import Image, ImageDraw
 
 class AlKabousAITester:
     """Comprehensive tester for Al Kabous AI Gold Analysis backend"""
