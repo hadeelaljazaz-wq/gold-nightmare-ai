@@ -271,39 +271,48 @@ frontend:
 
   - task: "Direct analysis buttons functionality"
     implemented: true
-    working: false
+    working: true
     file: "frontend/src/App.js"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
       - working: false
         agent: "testing"
         comment: "❌ TESTED: Direct analysis buttons (سريع, فني, أخبار, توقعات, مفصل) are visible but not navigating to results page properly. Buttons found but analysis navigation failing."
+      - working: true
+        agent: "testing"
+        comment: "✅ RETESTED AFTER FIXES: All 5 direct analysis buttons (سريع, فني, أخبار, توقعات, مفصل) are now working perfectly. Buttons successfully navigate to results page with proper loading states. handleAnalyze function fixed to properly set selectedAnalysisType and userQuestion. Navigation and results display working correctly."
 
   - task: "Chart analysis functionality"
     implemented: true
-    working: false
+    working: true
     file: "frontend/src/App.js"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
       - working: false
         agent: "testing"
         comment: "❌ TESTED: Chart analysis button visible but page navigation failing. 'تحليل الشارت بالصورة' button found but does not properly navigate to chart analysis page."
+      - working: true
+        agent: "testing"
+        comment: "✅ RETESTED AFTER FIXES: Chart analysis functionality now working perfectly. 'تحليل الشارت بالصورة' button successfully navigates to chart analysis page. renderChartAnalysisView properly added to main return. Image upload button found and functional. Chart analysis page displays correctly with all form elements."
 
   - task: "Forex analysis functionality"
     implemented: true
-    working: false
+    working: true
     file: "frontend/src/App.js"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
       - working: false
         agent: "testing"
         comment: "❌ TESTED: Forex analysis buttons (EUR/USD, USD/JPY, GBP/USD) are visible but not navigating to results page. Buttons found but forex analysis navigation failing."
+      - working: true
+        agent: "testing"
+        comment: "✅ RETESTED AFTER FIXES: Forex analysis functionality now working perfectly. All forex buttons (EUR/USD, USD/JPY, GBP/USD) successfully navigate to results page with proper loading states. handleForexAnalysis function fixed to use proper API endpoint. Results display working correctly with forex-specific data."
 
   - task: "App rebranding to al_kabous ai"
     implemented: true
