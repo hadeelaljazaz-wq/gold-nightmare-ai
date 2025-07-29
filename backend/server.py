@@ -801,6 +801,10 @@ async def check_analysis_permission(user_id: int):
 # GOLD ANALYSIS ENDPOINTS (Updated)
 # ==========================================
 
+# ==========================================
+# ADMIN PANEL ENDPOINTS
+# ==========================================
+
 class AdminLoginRequest(BaseModel):
     username: str
     password: str
