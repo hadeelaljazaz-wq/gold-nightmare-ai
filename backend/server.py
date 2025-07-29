@@ -578,8 +578,18 @@ async def analyze_gold(request: AnalysisRequest):
         
         return AnalysisResponse(
             success=True,
-            analysis=analysis,
-            gold_price=gold_price,
+            analysis=analysis.content,
+            gold_price={
+                "price_usd": gold_price.price_usd,
+                "price_change": gold_price.price_change,
+                "price_change_pct": gold_price.price_change_pct,
+                "ask": gold_price.ask,
+                "bid": gold_price.bid,
+                "high_24h": gold_price.high_24h,
+                "low_24h": gold_price.low_24h,
+                "source": gold_price.source,
+                "timestamp": gold_price.timestamp.isoformat()
+            },
             processing_time=processing_time
         )
         
