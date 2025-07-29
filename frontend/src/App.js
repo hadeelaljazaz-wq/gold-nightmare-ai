@@ -959,6 +959,274 @@ function App() {
     </div>
   );
 
+  const renderAnalysisDashboard = () => (
+    <div className="min-h-screen royal-text" style={{
+      background: 'linear-gradient(135deg, #0A0F2C, #3C1E70, #8C00FF)',
+      fontFamily: "'Cairo', sans-serif"
+    }}>
+      
+      {/* Header */}
+      <div className="text-center py-8">
+        <div className="max-w-4xl mx-auto px-4">
+          <h1 className="text-4xl md:text-5xl font-bold royal-text mb-4 flex items-center justify-center">
+            <span className="gold-text mr-3">🏆</span>
+            al_kabous ai
+          </h1>
+          <p className="text-purple-200 text-lg">
+            {currentLanguage === 'ar' ? 'مدرسة الكابوس الذهبية - تحليل الذهب والعملات الذكي' : 'Gold Nightmare School - Smart Gold & Currency Analysis'}
+          </p>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 pb-8">
+
+        {/* User Subscription Info */}
+        {isAuthenticated && currentUser && (
+          <div className="glass-card p-6 mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-white flex items-center">
+                <span className="text-blue-400 mr-3">👤</span>
+                {t('dashboard.welcome')}, {currentUser.email?.split('@')[0] || 'مستخدم'}
+              </h2>
+              <div className="text-sm text-purple-300">
+                ID: {currentUser.user_id}
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+              <div className="bg-black/20 border border-purple-500/30 rounded-lg p-4">
+                <p className="text-purple-300 text-sm mb-2">{t('dashboard.subscription.current')}</p>
+                <p className={`text-2xl font-bold ${
+                  currentUser.tier === 'basic' ? 'text-gray-400' :
+                  currentUser.tier === 'premium' ? 'text-blue-400' : 'text-yellow-400'
+                }`}>
+                  {currentUser.tier === 'basic' ? t('subscription.tiers.basic.name') :
+                   currentUser.tier === 'premium' ? t('subscription.tiers.premium.name') :
+                   t('subscription.tiers.vip.name')}
+                </p>
+              </div>
+              
+              <div className="bg-black/20 border border-purple-500/30 rounded-lg p-4">
+                <p className="text-purple-300 text-sm mb-2">{t('dashboard.subscription.analysesRemaining')}</p>
+                <p className="text-2xl font-bold text-green-400">
+                  {currentUser.daily_analyses_remaining === -1 ? 
+                    t('dashboard.subscription.unlimited') : 
+                    currentUser.daily_analyses_remaining || 0}
+                </p>
+              </div>
+              
+              <div className="bg-black/20 border border-purple-500/30 rounded-lg p-4">
+                <p className="text-purple-300 text-sm mb-2">إجمالي التحليلات</p>
+                <p className="text-2xl font-bold text-purple-400">
+                  {currentUser.total_analyses || 0}
+                </p>
+              </div>
+            </div>
+
+            {/* Upgrade message for basic users */}
+            {currentUser.tier === 'basic' && currentUser.daily_analyses_remaining === 0 && (
+              <div className="mt-4 p-4 bg-yellow-900/20 border border-yellow-500/30 rounded-lg text-center">
+                <p className="text-yellow-300 font-medium">
+                  ⚠️ تم استنفاد حد التحليلات اليومية
+                </p>
+                <p className="text-yellow-200 text-sm mt-2">
+                  تواصل مع الإدارة لترقية اشتراكك والحصول على المزيد من التحليلات
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Current Gold Price */}
+        {goldPrice && (
+          <div className="glass-card p-6 mb-8">
+            <h2 className="text-2xl font-bold royal-text mb-6 flex items-center justify-center">
+              <span className="gold-text mr-3">💰</span>
+              السعر الحالي للذهب
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+              <div>
+                <p className="text-purple-300 text-sm">السعر الحالي</p>
+                <p className="text-3xl font-bold gold-text">${goldPrice.price_usd?.toFixed(2) || '---'}</p>
+              </div>
+              <div>
+                <p className="text-purple-300 text-sm">التغيير اليومي</p>
+                <p className={`text-2xl font-bold ${goldPrice.price_change >= 0 ? 'price-high' : 'price-low'}`}>
+                  {goldPrice.price_change >= 0 ? '+' : ''}{goldPrice.price_change?.toFixed(2) || '---'}
+                </p>
+              </div>
+              <div>
+                <p className="text-purple-300 text-sm">أعلى سعر</p>
+                <p className="text-2xl font-bold price-high">${goldPrice.high_24h?.toFixed(2) || '---'}</p>
+              </div>
+              <div>
+                <p className="text-purple-300 text-sm">أقل سعر</p>
+                <p className="text-2xl font-bold price-low">${goldPrice.low_24h?.toFixed(2) || '---'}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Gold Analysis Section */}
+        <div className="glass-card p-6 mb-8">
+          <h2 className="text-2xl font-bold royal-text mb-6 flex items-center justify-center">
+            <span className="gold-text mr-3">📊</span>
+            تحليل الذهب الاحترافي
+          </h2>
+          
+          <p className="text-center text-purple-200 mb-8">
+            احصل على تحليلات احترافية للذهب مدعومة بالذكاء الاصطناعي - تحليلات فنية وأساسية وتوقعات دقيقة
+          </p>
+          
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+            <button 
+              onClick={() => handleAnalyze('quick', 'تحليل سريع للذهب الحالي')}
+              className="analysis-button font-semibold transition-all transform hover:scale-105"
+            >
+              <div className="text-2xl mb-2">⚡</div>
+              سريع
+            </button>
+            
+            <button 
+              onClick={() => handleAnalyze('technical', 'تحليل فني مفصل للذهب')}
+              className="analysis-button font-semibold transition-all transform hover:scale-105"
+            >
+              <div className="text-2xl mb-2">📈</div>
+              فني
+            </button>
+            
+            <button 
+              onClick={() => handleAnalyze('news', 'تحليل آخر أخبار الذهب')}
+              className="analysis-button font-semibold transition-all transform hover:scale-105"
+            >
+              <div className="text-2xl mb-2">📰</div>
+              أخبار
+            </button>
+            
+            <button 
+              onClick={() => handleAnalyze('forecast', 'توقعات الذهب المستقبلية')}
+              className="analysis-button font-semibold transition-all transform hover:scale-105"
+            >
+              <div className="text-2xl mb-2">🔮</div>
+              توقعات
+            </button>
+            
+            <button 
+              onClick={() => handleAnalyze('detailed', 'تحليل شامل ومفصل للذهب')}
+              className="analysis-button font-semibold transition-all transform hover:scale-105"
+            >
+              <div className="text-2xl mb-2">📋</div>
+              مفصل
+            </button>
+          </div>
+
+          {/* Custom Analysis Section */}
+          <div className="mb-6">
+            <h3 className="text-white font-semibold mb-4 flex items-center justify-center">
+              <span className="text-purple-400 mr-3">🎯</span>
+              تحليل مخصص
+            </h3>
+            <div className="flex flex-col md:flex-row gap-4">
+              <input
+                type="text"
+                value={userQuestion}
+                onChange={(e) => setUserQuestion(e.target.value)}
+                placeholder="اكتب سؤالك حول الذهب هنا..."
+                className="flex-1 px-4 py-3 bg-black/30 border border-purple-500/50 rounded-lg text-white placeholder-purple-300 focus:border-gold focus:outline-none transition-colors"
+              />
+              <button
+                onClick={() => setCurrentView('analyze')}
+                disabled={!userQuestion.trim()}
+                className="px-6 py-3 royal-button font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                طلب تحليل مخصص
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Chart Analysis Section */}
+        <div className="glass-card p-6 mb-8">
+          <h2 className="text-2xl font-bold royal-text mb-6 flex items-center justify-center">
+            <span className="gold-text mr-3">📊</span>
+            تحليل الشارت بالصورة
+          </h2>
+          
+          <p className="text-center text-purple-200 mb-8">
+            ارفع صورة الشارت واحصل على تحليل فني احترافي مدعوم بالذكاء الاصطناعي
+          </p>
+          
+          <div className="text-center">
+            <button
+              onClick={() => setCurrentView('chart-analysis')}
+              className="royal-button px-8 py-4 font-semibold text-lg"
+            >
+              📷 رفع الشارت والتحليل
+            </button>
+          </div>
+        </div>
+
+        {/* Forex Analysis Section */}
+        <div className="glass-card p-6 mb-8">
+          <h2 className="text-2xl font-bold royal-text mb-6 flex items-center justify-center">
+            <span className="gold-text mr-2">💱</span>
+            تحليل العملات
+          </h2>
+          
+          <p className="text-center text-purple-200 mb-8">
+            تحليل العملات الرئيسية في السوق العالمي بتقنية الذكاء الاصطناعي
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button 
+              onClick={() => handleForexAnalysis('EUR/USD')}
+              className="analysis-button font-semibold transition-all transform hover:scale-105"
+            >
+              <div className="text-2xl mb-2">🇪🇺</div>
+              EUR/USD
+            </button>
+            
+            <button 
+              onClick={() => handleForexAnalysis('USD/JPY')}
+              className="analysis-button font-semibold transition-all transform hover:scale-105"
+            >
+              <div className="text-2xl mb-2">🇯🇵</div>
+              USD/JPY
+            </button>
+            
+            <button 
+              onClick={() => handleForexAnalysis('GBP/USD')}
+              className="analysis-button font-semibold transition-all transform hover:scale-105"
+            >
+              <div className="text-2xl mb-2">🇬🇧</div>
+              GBP/USD
+            </button>
+          </div>
+        </div>
+
+        {/* Quick Questions */}
+        <div className="glass-card p-6">
+          <h3 className="text-2xl font-bold royal-text mb-6 flex items-center justify-center">
+            <span className="gold-text mr-3">❓</span>
+            أسئلة سريعة
+          </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {quickQuestions.map((question, index) => (
+              <button
+                key={index}
+                onClick={() => handleQuickQuestion(question)}
+                className="text-right p-4 bg-gradient-to-r from-purple-700/30 to-blue-700/30 border border-purple-500/30 rounded-lg text-purple-200 hover:bg-gradient-to-r hover:from-purple-700/50 hover:to-blue-700/50 transition-all transform hover:scale-105 font-medium"
+              >
+                💭 {question}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   const renderAnalyzeView = () => (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 p-4">
       <div className="max-w-2xl mx-auto">
