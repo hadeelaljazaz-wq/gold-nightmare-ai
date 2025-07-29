@@ -68,6 +68,13 @@ class GoldPriceManager:
             }
         }
         
+        # Internal cache system for 15-minute intervals
+        self.gold_cache = {
+            "price": None,
+            "timestamp": 0,
+            "cache_duration": 15 * 60  # 15 minutes in seconds
+        }
+        
         # Sort APIs by priority
         self.apis = dict(sorted(self.apis.items(), key=lambda x: x[1]['priority']))
         
