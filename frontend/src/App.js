@@ -1786,7 +1786,28 @@ function App() {
             
             <div className="glass-card p-8 mb-8">
               <div className="analysis-content">
-                {forexAnalysisResult}
+                {forexAnalysisLoading ? (
+                  <div className="text-center py-8">
+                    <div className="text-4xl mb-4">🔄</div>
+                    <p className="text-white">جاري تحليل العملات...</p>
+                  </div>
+                ) : forexAnalysisResult ? (
+                  forexAnalysisResult.success ? (
+                    <div className="text-white whitespace-pre-wrap">
+                      {forexAnalysisResult.analysis}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="text-4xl mb-4">❌</div>
+                      <p className="text-red-400">{forexAnalysisResult.error}</p>
+                    </div>
+                  )
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="text-4xl mb-4">⏳</div>
+                    <p className="text-white">لا توجد نتائج</p>
+                  </div>
+                )}
               </div>
             </div>
             
