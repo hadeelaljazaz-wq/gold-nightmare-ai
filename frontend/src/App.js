@@ -9,6 +9,15 @@ function App() {
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [selectedAnalysisType, setSelectedAnalysisType] = useState('quick');
   const [userQuestion, setUserQuestion] = useState('');
+  
+  // Chart Analysis States
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [currencyPair, setCurrencyPair] = useState('XAU/USD');
+  const [timeframe, setTimeframe] = useState('H1');
+  const [analysisNotes, setAnalysisNotes] = useState('');
+  const [chartAnalysisResult, setChartAnalysisResult] = useState(null);
+  const [chartAnalysisLoading, setChartAnalysisLoading] = useState(false);
   const [quickQuestions] = useState([
     "تحليل الذهب الحالي",
     "ما هي توقعات الذهب للأسبوع القادم؟",
