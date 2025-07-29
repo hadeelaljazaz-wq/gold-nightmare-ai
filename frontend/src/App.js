@@ -38,8 +38,12 @@ function App() {
     }
   };
 
-  const handleAnalyze = async () => {
-    if (!userQuestion.trim() && selectedAnalysisType === 'quick') {
+  const handleAnalyze = async (analysisType = null, question = null) => {
+    const actualQuestion = question || userQuestion;
+    const actualType = analysisType || selectedAnalysisType;
+    
+    if (!actualQuestion.trim()) {
+      console.error('No question provided for analysis');
       return;
     }
 
@@ -51,9 +55,9 @@ function App() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          analysis_type: selectedAnalysisType,
-          user_question: userQuestion,
-          additional_context: userQuestion
+          analysis_type: actualType,
+          user_question: actualQuestion,
+          additional_context: actualQuestion
         })
       });
       
