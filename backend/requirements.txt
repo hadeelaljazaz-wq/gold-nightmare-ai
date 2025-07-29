@@ -37,13 +37,10 @@ asyncio-throttle>=1.0.2
 pytesseract>=0.3.10
 opencv-python>=4.8.1.78
 easyocr>=1.7.0
-anthropic==0.11.1
+anthropic>=0.60.0
 
 # Time and date utilities
 python-dateutil==2.8.2
-
-# Async utilities  
-asyncio==3.4.3
 
 # Additional utilities
 typing-extensions==4.8.0
