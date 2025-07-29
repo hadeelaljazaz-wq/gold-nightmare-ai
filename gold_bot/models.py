@@ -114,6 +114,11 @@ class AnalysisLog:
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'AnalysisLog':
         """Create AnalysisLog from dictionary"""
+        # Remove MongoDB's _id field if present
+        if '_id' in data:
+            data = data.copy()
+            del data['_id']
+            
         if 'analysis_type' in data and isinstance(data['analysis_type'], str):
             data['analysis_type'] = AnalysisType(data['analysis_type'])
         if 'user_tier' in data and isinstance(data['user_tier'], str):
