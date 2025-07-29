@@ -192,46 +192,28 @@ function App() {
               <span className="gold-text mr-3">💰</span>
               السعر الحالي للذهب
             </h2>
-            <button 
-              onClick={fetchGoldPrice}
-              className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors text-sm font-medium"
-            >
-              تحديث السعر
-            </button>
-          </div>
-          
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-yellow-400 border-t-transparent mx-auto mb-4"></div>
-              <p className="text-purple-200">جاري تحميل الأسعار...</p>
-            </div>
-          ) : goldPrice ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="text-center">
-                <p className="text-purple-300 text-sm mb-1">السعر الحالي</p>
-                <p className="text-2xl font-bold text-white">${goldPrice.price_usd?.toFixed(2) || '---'}</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+              <div>
+                <p className="text-purple-300 text-sm">السعر الحالي</p>
+                <p className="text-3xl font-bold gold-text">${goldPrice.price_usd?.toFixed(2) || '---'}</p>
               </div>
-              <div className="text-center">
-                <p className="text-purple-300 text-sm mb-1">التغيير اليومي</p>
-                <p className={`text-xl font-semibold ${goldPrice.price_change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+              <div>
+                <p className="text-purple-300 text-sm">التغيير اليومي</p>
+                <p className={`text-2xl font-bold ${goldPrice.price_change >= 0 ? 'price-high' : 'price-low'}`}>
                   {goldPrice.price_change >= 0 ? '+' : ''}{goldPrice.price_change?.toFixed(2) || '---'}
                 </p>
               </div>
-              <div className="text-center">
-                <p className="text-purple-300 text-sm mb-1">أعلى سعر</p>
-                <p className="text-xl font-semibold text-green-400">${goldPrice.high_24h?.toFixed(2) || '---'}</p>
+              <div>
+                <p className="text-purple-300 text-sm">أعلى سعر</p>
+                <p className="text-2xl font-bold price-high">${goldPrice.high_24h?.toFixed(2) || '---'}</p>
               </div>
-              <div className="text-center">
-                <p className="text-purple-300 text-sm mb-1">أقل سعر</p>
-                <p className="text-xl font-semibold text-red-400">${goldPrice.low_24h?.toFixed(2) || '---'}</p>
+              <div>
+                <p className="text-purple-300 text-sm">أقل سعر</p>
+                <p className="text-2xl font-bold price-low">${goldPrice.low_24h?.toFixed(2) || '---'}</p>
               </div>
             </div>
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-red-300">لا يوجد بيانات متاحة</p>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Contact Info & Channels */}
         <div className="glass-card p-6 mb-8">
