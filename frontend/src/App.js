@@ -389,7 +389,24 @@ function App() {
           </div>
         </div>
 
-        {/* Custom Analysis Button */}
+        {/* Chart Analysis Section */}
+        <div className="glass-card p-6 mb-8">
+          <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+            <span className="text-orange-400 mr-2">📊</span>
+            تحليل الشارت بالصورة
+          </h2>
+          <p className="text-purple-200 mb-6">ارفع صورة الشارت واحصل على تحليل فني احترافي مدعوم بالذكاء الاصطناعي</p>
+          
+          <div className="text-center">
+            <button
+              onClick={() => setCurrentView('chart-analysis')}
+              className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-orange-700 hover:to-red-700 transition-all transform hover:scale-105 shadow-xl"
+            >
+              <span className="mr-2">📷</span>
+              تحليل الشارت بالصورة
+            </button>
+          </div>
+        </div>
         <div className="text-center">
           <div className="flex gap-4 justify-center">
             <button
