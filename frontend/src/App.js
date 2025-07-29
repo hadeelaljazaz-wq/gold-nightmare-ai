@@ -178,6 +178,13 @@ function App() {
   };
 
   const handleAnalyze = async (analysisType = null, question = null) => {
+    // Check if user is authenticated
+    if (!isAuthenticated || !currentUser) {
+      alert(t('auth.messages.loginRequired', 'يجب تسجيل الدخول للحصول على التحليل'));
+      setCurrentView('login');
+      return;
+    }
+
     const actualQuestion = question || userQuestion;
     const actualType = analysisType || selectedAnalysisType;
     
@@ -200,18 +207,30 @@ function App() {
         body: JSON.stringify({
           analysis_type: actualType,
           user_question: actualQuestion,
+          user_id: currentUser.user_id, // Include user ID
           additional_context: actualQuestion
         })
       });
       
       const data = await response.json();
-      setAnalysisResult(data);
+      
+      if (data.success) {
+        setAnalysisResult(data);
+        // Update remaining analyses count
+        if (currentUser) {
+          const updatedUser = { ...currentUser, daily_analyses_remaining: currentUser.daily_analyses_remaining - 1 };
+          setCurrentUser(updatedUser);
+          localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+        }
+      } else {
+        setAnalysisResult(data);
+      }
       
     } catch (err) {
       console.error('Error analyzing:', err);
       setAnalysisResult({
         success: false,
-        error: 'حدث خطأ في التحليل'
+        error: t('errors.network', 'حدث خطأ في التحليل')
       });
     } finally {
       setAnalysisLoading(false);
