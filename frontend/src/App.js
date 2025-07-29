@@ -804,6 +804,90 @@ function App() {
 
       <div className="max-w-6xl mx-auto px-4 pb-8">
 
+        {/* User Subscription Info */}
+        {isAuthenticated && currentUser && (
+          <div className="glass-card p-6 mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-white flex items-center">
+                <span className="text-blue-400 mr-3">👤</span>
+                {t('dashboard.welcome')}, {currentUser.email?.split('@')[0] || 'مستخدم'}
+              </h2>
+              <div className="text-sm text-purple-300">
+                ID: {currentUser.user_id}
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+              <div className="bg-black/20 border border-purple-500/30 rounded-lg p-4">
+                <p className="text-purple-300 text-sm mb-2">{t('dashboard.subscription.current')}</p>
+                <p className={`text-2xl font-bold ${
+                  currentUser.tier === 'basic' ? 'text-gray-400' :
+                  currentUser.tier === 'premium' ? 'text-blue-400' : 'text-yellow-400'
+                }`}>
+                  {currentUser.tier === 'basic' ? t('subscription.tiers.basic.name') :
+                   currentUser.tier === 'premium' ? t('subscription.tiers.premium.name') :
+                   t('subscription.tiers.vip.name')}
+                </p>
+              </div>
+              
+              <div className="bg-black/20 border border-purple-500/30 rounded-lg p-4">
+                <p className="text-purple-300 text-sm mb-2">{t('dashboard.subscription.analysesRemaining')}</p>
+                <p className="text-2xl font-bold text-green-400">
+                  {currentUser.daily_analyses_remaining === -1 ? 
+                    t('dashboard.subscription.unlimited') : 
+                    currentUser.daily_analyses_remaining || 0}
+                </p>
+              </div>
+              
+              <div className="bg-black/20 border border-purple-500/30 rounded-lg p-4">
+                <p className="text-purple-300 text-sm mb-2">إجمالي التحليلات</p>
+                <p className="text-2xl font-bold text-purple-400">
+                  {currentUser.total_analyses || 0}
+                </p>
+              </div>
+            </div>
+
+            {/* Upgrade message for basic users */}
+            {currentUser.tier === 'basic' && currentUser.daily_analyses_remaining === 0 && (
+              <div className="mt-4 p-4 bg-yellow-900/20 border border-yellow-500/30 rounded-lg text-center">
+                <p className="text-yellow-300 font-medium">
+                  ⚠️ تم استنفاد حد التحليلات اليومية
+                </p>
+                <p className="text-yellow-200 text-sm mt-2">
+                  تواصل مع الإدارة لترقية اشتراكك والحصول على المزيد من التحليلات
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Login prompt for non-authenticated users */}
+        {!isAuthenticated && (
+          <div className="glass-card p-6 mb-8 text-center">
+            <div className="text-4xl mb-4">🔐</div>
+            <h2 className="text-2xl font-bold text-white mb-4">
+              سجل دخولك للحصول على تحليلات مجانية
+            </h2>
+            <p className="text-purple-200 mb-6">
+              أنشئ حساب مجاني واحصل على تحليل يومي للذهب مدعوم بالذكاء الاصطناعي
+            </p>
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={() => setCurrentView('register')}
+                className="royal-button px-6 py-3 font-semibold"
+              >
+                📝 إنشاء حساب مجاني
+              </button>
+              <button
+                onClick={() => setCurrentView('login')}
+                className="px-6 py-3 bg-blue-600/20 border border-blue-500/30 rounded-lg text-blue-300 hover:bg-blue-600/30 transition-all font-semibold"
+              >
+                🔐 تسجيل الدخول
+              </button>
+            </div>
+          </div>
+        )}
+
         
         {/* Current Gold Price */}
         {goldPrice && (
