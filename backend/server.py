@@ -152,6 +152,117 @@ async def get_gold_price():
             error=f"خطأ في جلب أسعار الذهب: {str(e)}"
         )
 
+@api_router.post("/analyze-chart", response_model=ChartAnalysisResponse)
+async def analyze_chart(request: ChartAnalysisRequest):
+    """Analyze trading chart image with AI"""
+    try:
+        if not ai_manager or not price_manager:
+            raise HTTPException(status_code=503, detail="Analysis services not initialized")
+        
+        start_time = datetime.utcnow()
+        
+        # Validate base64 image
+        try:
+            # Remove data URL prefix if present
+            if request.image_data.startswith('data:image'):
+                request.image_data = request.image_data.split(',')[1]
+            
+            # Decode base64 image
+            image_bytes = base64.b64decode(request.image_data)
+            image = Image.open(io.BytesIO(image_bytes))
+            
+            # Get image info
+            image_info = {
+                "width": image.width,
+                "height": image.height,
+                "format": image.format,
+                "size_kb": len(image_bytes) / 1024
+            }
+            
+        except Exception as e:
+            return ChartAnalysisResponse(
+                success=False,
+                error=f"فشل في معالجة الصورة: {str(e)}"
+            )
+        
+        # Get current gold price for context
+        gold_price = await price_manager.get_current_price(use_cache=True)
+        
+        # Create comprehensive analysis prompt for chart
+        chart_prompt = f"""
+أنت محلل فني محترف من مدرسة الكابوس الذهبية. قم بتحليل صورة الشارت المرفقة بدقة عالية.
+
+معلومات الشارت:
+- زوج العملة: {request.currency_pair}
+- الإطار الزمني: {request.timeframe}
+- ملاحظات إضافية: {request.analysis_notes or 'لا توجد'}
+
+السعر الحالي للذهب: ${gold_price.price_usd:.2f} إذا كان الشارت للذهب
+
+قم بتحليل الشارت وفقاً للنقاط التالية:
+
+📊 **تحليل الشارت التفصيلي:**
+1. 🎯 **الاتجاه العام**: (صاعد/هابط/عرضي)
+2. 📈 **النماذج الفنية**: حدد أي نماذج فنية مرئية (مثلثات، أعلام، رأس وكتفين، إلخ)
+3. 🎚️ **مستويات الدعم والمقاومة**: حدد أهم المستويات المرئية في الشارت
+4. 📊 **المؤشرات الفنية**: حلل أي مؤشرات مرئية في الشارت
+5. 🔄 **نقاط الانعكاس**: حدد النقاط المهمة للانعكاس المحتمل
+
+💡 **التوصيات التداولية:**
+- 🟢 **الدخول الصاعد**: المستويات والشروط
+- 🔴 **الدخول الهابط**: المستويات والشروط  
+- ⛔ **وقف الخسارة**: المستويات المناسبة
+- 🎯 **الأهداف**: الأهداف القريبة والبعيدة
+
+⚠️ **إدارة المخاطر:**
+- نسبة المخاطرة إلى العائد المتوقعة
+- حجم الصفقة المناسب
+- الأوقات المناسبة للدخول
+
+🔮 **السيناريوهات المحتملة:**
+- السيناريو الصاعد وشروطه
+- السيناريو الهابط وشروطه
+- النقاط الحرجة للمتابعة
+
+📋 **ملاحظات مهمة:**
+- تحذيرات خاصة بهذا الشارت
+- العوامل الخارجية المؤثرة
+- الأوقات المتوقعة للحركة
+
+التوقيع: 🏆 Gold Nightmare - عدي
+        """
+        
+        # Generate analysis using Claude AI
+        analysis = await ai_manager.generate_analysis(
+            user_id=1,  # Default user for web app
+            analysis_type=AnalysisType.CHART,
+            gold_price=gold_price,
+            additional_context=chart_prompt
+        )
+        
+        if not analysis:
+            return ChartAnalysisResponse(
+                success=False,
+                error="فشل في إجراء تحليل الشارت. يرجى المحاولة مرة أخرى."
+            )
+        
+        end_time = datetime.utcnow()
+        processing_time = (end_time - start_time).total_seconds()
+        
+        return ChartAnalysisResponse(
+            success=True,
+            analysis=analysis.content,
+            image_info=image_info,
+            processing_time=processing_time
+        )
+        
+    except Exception as e:
+        logging.error(f"❌ Chart analysis error: {e}")
+        return ChartAnalysisResponse(
+            success=False,
+            error=f"خطأ في تحليل الشارت: {str(e)}"
+        )
+
 @api_router.post("/analyze", response_model=AnalysisResponse)
 async def analyze_gold(request: AnalysisRequest):
     """Generate AI analysis of gold market"""
