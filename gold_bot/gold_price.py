@@ -28,40 +28,43 @@ class GoldPriceManager:
         self.cache_manager = None
         self.session: Optional[aiohttp.ClientSession] = None
         
-        # API endpoints and configurations
+        # API endpoints and configurations with multiple free alternatives
         self.apis = {
-            "goldapi": {
-                "url": "https://www.goldapi.io/api/XAU/USD",
+            "metals_api_primary": {
+                "url": f"https://api.metals.live/v1/spot/gold",
                 "headers": {
-                    "x-access-token": self.config.gold_api_token,
-                    "Content-Type": "application/json"
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
                 },
-                "active": bool(self.config.gold_api_token),
-                "priority": 1
+                "active": True,
+                "priority": 1,
+                "cache_duration": 15 * 60  # 15 minutes for primary
             },
             "yahoo_finance": {
-                "url": "https://query1.finance.yahoo.com/v8/finance/chart/GC=F",
+                "url": "https://query1.finance.yahoo.com/v7/finance/quote?symbols=GC%3DF",
                 "headers": {
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
                 },
                 "active": True,
-                "priority": 2
+                "priority": 2,
+                "cache_duration": 15 * 60  # 15 minutes
             },
-            "metals_api": {
-                "url": "https://api.metals.live/v1/spot/gold",
+            "metalpriceapi": {
+                "url": "https://api.metalpriceapi.com/v1/latest?api_key=demo&base=USD&currencies=XAU",
                 "headers": {
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
                 },
                 "active": True,
-                "priority": 3
+                "priority": 3,
+                "cache_duration": 15 * 60  # 15 minutes
             },
-            "fxempire": {
-                "url": "https://api.fxempire.com/v1/en/markets/data",
+            "commodities_api": {
+                "url": "https://api.commodities-api.com/v1/latest?access_key=demo&base=USD&symbols=XAU",
                 "headers": {
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
                 },
                 "active": True,
-                "priority": 4
+                "priority": 4,
+                "cache_duration": 15 * 60  # 15 minutes
             }
         }
         
