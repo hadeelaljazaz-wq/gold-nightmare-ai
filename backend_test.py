@@ -232,6 +232,7 @@ class AlKabousAITester:
             test_data = {
                 "analysis_type": analysis_type,
                 "user_question": f"تحليل {analysis_type} للذهب",
+                "user_id": 1,  # Required for user system
                 "additional_context": "اختبار من النظام"
             }
             
