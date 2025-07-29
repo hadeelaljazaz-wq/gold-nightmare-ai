@@ -28,12 +28,12 @@ class BotConfig:
     
     # Gold API Settings
     gold_api_token: str
-    metals_api_key: str = None
-    forex_api_key: str = None
+    metals_api_key: Optional[str] = None
+    forex_api_key: Optional[str] = None
     
     # Bot Behavior
-    prompt_language: str
-    bot_signature: str
+    prompt_language: str = "arabic"
+    bot_signature: str = "Gold Nightmare Bot"
     
     # Cache & Rate Limiting
     price_cache_ttl: int
