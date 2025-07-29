@@ -56,6 +56,286 @@ class ChartImageProcessor:
             r'\bXAUUSD\b',
         ]
 
+    def optimize_chart_image(self, image_data: bytes) -> Tuple[bytes, Dict[str, Any]]:
+        """
+        تحسين جودة الصورة قبل التحليل - تطبيق الحلول المتقدمة
+        """
+        try:
+            # فتح الصورة
+            img = Image.open(io.BytesIO(image_data))
+            
+            # تحويل لـ RGB إذا لزم الأمر
+            if img.mode != 'RGB':
+                img = img.convert('RGB')
+            
+            optimization_log = {
+                "original_size": img.size,
+                "steps_applied": []
+            }
+            
+            # 1. زيادة الحجم والدقة (كما اقترحت)
+            target_width, target_height = 1920, 1080
+            if img.size[0] < target_width or img.size[1] < target_height:
+                img = img.resize((target_width, target_height), Image.Resampling.LANCZOS)
+                optimization_log["steps_applied"].append("Resolution upscaling to 1920x1080")
+            
+            # 2. تحسين باستخدام OpenCV
+            img_cv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+            
+            # زيادة الحدة والوضوح
+            sharpening_kernel = np.array([[-1,-1,-1], 
+                                        [-1, 9,-1], 
+                                        [-1,-1,-1]])
+            img_cv = cv2.filter2D(img_cv, -1, sharpening_kernel)
+            optimization_log["steps_applied"].append("Sharpening filter applied")
+            
+            # 3. تحسين التباين باستخدام CLAHE
+            lab = cv2.cvtColor(img_cv, cv2.COLOR_BGR2LAB)
+            l, a, b = cv2.split(lab)
+            clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8,8))
+            l = clahe.apply(l)
+            img_cv = cv2.merge([l,a,b])
+            img_cv = cv2.cvtColor(img_cv, cv2.COLOR_LAB2BGR)
+            optimization_log["steps_applied"].append("CLAHE contrast enhancement")
+            
+            # 4. تقليل الضوضاء مع الحفاظ على الحواف
+            img_cv = cv2.bilateralFilter(img_cv, 9, 75, 75)
+            optimization_log["steps_applied"].append("Bilateral noise reduction")
+            
+            # 5. تحسين إضافي للنصوص
+            gray = cv2.cvtColor(img_cv, cv2.COLOR_BGR2GRAY)
+            
+            # تحسين التباين للنصوص
+            clahe_text = cv2.createCLAHE(clipLimit=4.0, tileGridSize=(4,4))
+            gray = clahe_text.apply(gray)
+            
+            # تحويل مرة أخرى للألوان
+            img_cv = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+            optimization_log["steps_applied"].append("Text clarity enhancement")
+            
+            # تحويل إلى PIL
+            img_optimized = Image.fromarray(cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB))
+            
+            # حفظ كـ bytes عالية الجودة
+            output_buffer = io.BytesIO()
+            img_optimized.save(output_buffer, format='PNG', optimize=True, quality=95)
+            optimized_data = output_buffer.getvalue()
+            
+            optimization_log["final_size"] = img_optimized.size
+            optimization_log["size_improvement"] = f"{len(optimized_data) / len(image_data):.2f}x"
+            
+            logger.info(f"✅ Image optimized: {len(optimization_log['steps_applied'])} enhancements applied")
+            
+            return optimized_data, optimization_log
+            
+        except Exception as e:
+            logger.error(f"❌ Image optimization failed: {e}")
+            return image_data, {"error": str(e)}
+
+    def extract_text_from_chart_advanced(self, image_data: bytes) -> Dict[str, Any]:
+        """
+        استخراج متقدم للنصوص مع تحسينات OCR
+        """
+        try:
+            # تحسين الصورة أولاً
+            optimized_data, optimization_log = self.optimize_chart_image(image_data)
+            
+            # فتح الصورة المحسنة
+            img = Image.open(io.BytesIO(optimized_data))
+            
+            text_data = {
+                "prices": [],
+                "timestamps": [],
+                "full_text": "",
+                "confidence_scores": [],
+                "optimization_applied": optimization_log,
+                "extraction_methods": []
+            }
+            
+            # الطريقة الأولى: EasyOCR المحسن
+            if self.ocr_reader:
+                try:
+                    # تحسين إضافي لـ EasyOCR
+                    img_for_easy = self._prepare_for_easyocr(img)
+                    easy_results = self.ocr_reader.readtext(np.array(img_for_easy), detail=1)
+                    
+                    for (bbox, text, confidence) in easy_results:
+                        if confidence > 0.6:  # عتبة ثقة أعلى
+                            text_data["full_text"] += text + " "
+                            text_data["confidence_scores"].append(confidence)
+                            
+                            # استخراج الأسعار
+                            prices = re.findall(r'\b\d{1,5}(?:\.\d{1,5})?\b', text)
+                            for price_str in prices:
+                                try:
+                                    price = float(price_str)
+                                    if 1000 <= price <= 5000:
+                                        text_data["prices"].append(price)
+                                except ValueError:
+                                    continue
+                            
+                            # استخراج الأوقات
+                            times = re.findall(r'\d{1,2}:\d{2}', text)
+                            text_data["timestamps"].extend(times)
+                    
+                    text_data["extraction_methods"].append("EasyOCR_Advanced")
+                    
+                except Exception as e:
+                    logger.warning(f"⚠️ Advanced EasyOCR failed: {e}")
+            
+            # الطريقة الثانية: Tesseract المحسن
+            try:
+                # تحسين خاص لـ Tesseract
+                img_for_tess = self._prepare_for_tesseract(img)
+                cv_img = cv2.cvtColor(np.array(img_for_tess), cv2.COLOR_RGB2BGR)
+                
+                # إعدادات متعددة لـ Tesseract
+                configs = [
+                    '--oem 3 --psm 6',  # للنصوص العامة
+                    '--oem 3 --psm 8',  # للكلمات المفردة
+                    '--oem 3 --psm 13',  # للنصوص في خط واحد
+                    '--oem 3 --psm 6 -c tessedit_char_whitelist=0123456789.,:$'  # للأرقام فقط
+                ]
+                
+                for config in configs:
+                    try:
+                        tessearct_text = pytesseract.image_to_string(cv_img, config=config)
+                        if tessearct_text.strip():
+                            text_data["full_text"] += " " + tessearct_text
+                            
+                            # استخراج إضافي للأسعار من Tesseract
+                            prices = re.findall(r'\b\d{1,5}(?:\.\d{1,5})?\b', tessearct_text)
+                            for price_str in prices:
+                                try:
+                                    price = float(price_str)
+                                    if 1000 <= price <= 5000:
+                                        text_data["prices"].append(price)
+                                except ValueError:
+                                    continue
+                    
+                    except Exception as e:
+                        continue
+                
+                text_data["extraction_methods"].append("Tesseract_Multi_Config")
+                
+            except Exception as e:
+                logger.warning(f"⚠️ Advanced Tesseract failed: {e}")
+            
+            # تنظيف وتلخيص البيانات
+            text_data["prices"] = list(set(text_data["prices"]))  # إزالة المكررات
+            text_data["timestamps"] = list(set(text_data["timestamps"]))
+            text_data["full_text"] = text_data["full_text"].strip()
+            text_data["average_confidence"] = np.mean(text_data["confidence_scores"]) if text_data["confidence_scores"] else 0.0
+            
+            logger.info(f"✅ Advanced text extraction: {len(text_data['prices'])} prices, {len(text_data['timestamps'])} timestamps")
+            
+            return text_data
+            
+        except Exception as e:
+            logger.error(f"❌ Advanced text extraction failed: {e}")
+            return {"error": str(e)}
+
+    def _prepare_for_easyocr(self, image: Image.Image) -> Image.Image:
+        """تحضير الصورة لـ EasyOCR بشكل محسن"""
+        try:
+            # تحويل لمقياس الرمادي للنصوص
+            gray_img = image.convert('L')
+            
+            # تحسين التباين للنصوص
+            enhancer = ImageEnhance.Contrast(gray_img)
+            enhanced = enhancer.enhance(2.0)
+            
+            # تحويل مرة أخرى للألوان (EasyOCR يفضل RGB)
+            rgb_img = enhanced.convert('RGB')
+            
+            return rgb_img
+            
+        except Exception as e:
+            logger.error(f"❌ EasyOCR preparation failed: {e}")
+            return image
+
+    def _prepare_for_tesseract(self, image: Image.Image) -> Image.Image:
+        """تحضير الصورة لـ Tesseract بشكل محسن"""
+        try:
+            # تحويل لـ OpenCV
+            cv_img = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+            gray = cv2.cvtColor(cv_img, cv2.COLOR_BGR2GRAY)
+            
+            # تطبيق threshold للحصول على نص أسود على خلفية بيضاء
+            _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+            
+            # تنظيف الضوضاء
+            kernel = np.ones((1,1), np.uint8)
+            thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
+            thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel)
+            
+            # تحويل مرة أخرى لـ PIL
+            result_img = Image.fromarray(thresh).convert('RGB')
+            
+            return result_img
+            
+        except Exception as e:
+            logger.error(f"❌ Tesseract preparation failed: {e}")
+            return image
+
+    def chart_to_data_context(self, image_data: bytes, user_context: Optional[str] = None) -> str:
+        """
+        تحويل الشارت إلى بيانات منسقة مع السياق
+        """
+        try:
+            # استخراج البيانات المتقدمة
+            text_data = self.extract_text_from_chart_advanced(image_data)
+            
+            # بناء السياق الشامل
+            context_parts = []
+            
+            # معلومات الشارت الأساسية
+            context_parts.append("=== تحليل شامل للشارت ===")
+            
+            # الأسعار المستخرجة
+            if text_data.get("prices"):
+                prices = sorted(text_data["prices"])
+                context_parts.append(f"الأسعار المكتشفة: {prices}")
+                context_parts.append(f"أعلى سعر مرئي: ${max(prices):.2f}")
+                context_parts.append(f"أدنى سعر مرئي: ${min(prices):.2f}")
+                context_parts.append(f"نطاق الأسعار: ${max(prices) - min(prices):.2f}")
+            
+            # الأوقات المستخرجة
+            if text_data.get("timestamps"):
+                context_parts.append(f"الأوقات المكتشفة: {text_data['timestamps']}")
+            
+            # النصوص الكاملة
+            if text_data.get("full_text"):
+                context_parts.append(f"النصوص المستخرجة: {text_data['full_text'][:200]}...")
+            
+            # معلومات الثقة
+            if text_data.get("average_confidence"):
+                context_parts.append(f"مستوى الثقة في استخراج البيانات: {text_data['average_confidence']:.2f}")
+            
+            # السياق المقدم من المستخدم
+            if user_context:
+                context_parts.append(f"السياق المقدم من المستخدم: {user_context}")
+            
+            # تعليمات للتحليل
+            context_parts.extend([
+                "",
+                "=== تعليمات التحليل ===",
+                "1. استخدم البيانات المستخرجة أعلاه مع الصورة المرفقة",
+                "2. اربط الأسعار المستخرجة بالحركة المرئية في الشارت",
+                "3. حلل الاتجاهات بناءً على البيانات الرقمية والبصرية",
+                "4. قدم توصيات محددة بناءً على التحليل الشامل",
+                "5. إذا كانت البيانات المستخرجة غير واضحة، ركز على التحليل البصري"
+            ])
+            
+            formatted_context = "\n".join(context_parts)
+            
+            logger.info("✅ Chart context built successfully")
+            return formatted_context
+            
+        except Exception as e:
+            logger.error(f"❌ Chart context building failed: {e}")
+            return f"خطأ في بناء سياق الشارت: {str(e)}"
+
     async def process_chart_image(self, image_data: bytes) -> Dict[str, Any]:
         """معالجة شاملة لصورة الشارت مع استخراج المعلومات"""
         try:
